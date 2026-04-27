@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Court — Logistics Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E2DDD4;
+  --text: #1A1714;
+  --text2: #6B6560;
+  --text3: #9E9890;
+  --accent: #C17D3C;
+  --accent-light: #F5EBD8;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0;
+}
+/* HEADER */
+.header {
+  background: var(--text);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.header-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.05em;
+}
+.surgery-pill {
+  background: #8B1A1A;
+  color: #FFD0D0;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 54px;
+  z-index: 99;
+}
+.tab {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  padding: 12px 16px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* VIEWS */
+.view { display: none; padding: 1.5rem; }
+.view.active { display: block; }
+/* PROGRESS */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+.progress-fill {
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+}
+/* KANBAN */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.k-col {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 10px;
+  min-height: 80px;
+}
+.k-col-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding: 0 2px;
+  display: flex;
+  justify-content: space-between;
+}
+.k-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.1s, transform 0.1s;
+}
+.k-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.k-card.is-done { opacity: 0.45; }
+.k-card-title {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+.k-card.is-done .k-card-title { text-decoration: line-through; color: var(--text3); }
+.k-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.k-card-note {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+/* BADGES */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.due-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+/* ADD ROW */
+.add-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.add-row input, .add-row select {
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+.add-row input:focus, .add-row select:focus { border-color: var(--accent); }
+.add-row input { flex: 1; min-width: 160px; }
+.add-row select { min-width: 110px; }
+.add-row .due-input { min-width: 80px; flex: none; }
+.add-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 7px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-btn:hover { opacity: 0.85; }
+/* TIMELINE */
+.phase {
+  margin-bottom: 6px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.phase-header {
+  padding: 10px 14px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.phase-label {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.phase-desc {
+  font-size: 12px;
+  opacity: 0.75;
+}
+.phase-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  margin-left: auto;
+  opacity: 0.6;
+}
+.phase-tasks { display: none; background: var(--surface); }
+.phase.open .phase-tasks { display: block; }
+.tl-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.tl-task:hover { background: var(--surface2); }
+.tl-check {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  border-radius: 3px;
+  border: 1.5px solid var(--border);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, border-color 0.1s;
+}
+.tl-check.done { background: var(--accent); border-color: var(--accent); }
+.tl-check svg { display: none; }
+.tl-check.done svg { display: block; }
+.tl-body { flex: 1; }
+.tl-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+.tl-title.struck { text-decoration: line-through; color: var(--text3); }
+.tl-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tl-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+/* FINANCE */
+.finance-block { margin-bottom: 1.5rem; }
+.finance-block-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.f-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg);
+  gap: 12px;
+}
+.f-label { font-size: 13px; color: var(--text); }
+.f-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.f-right { text-align: right; flex-shrink: 0; }
+.f-amount { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.f-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.gap-box {
+  background: #FFF8F0;
+  border: 1px solid #E8C89A;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 1rem;
+}
+.gap-box-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.gap-box-text { font-size: 13px; color: #8B5E1A; line-height: 1.5; }
+.gap-amount {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+  margin: 6px 0 2px;
+}
+/* METRIC CARDS */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.metric-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
+.metric-value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
+.metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+@media (max-width: 500px) {
+  .kanban { grid-template-columns: 1fr 1fr; }
+  .view { padding: 1rem; }
+  .header { padding: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="header-name">COURT WILLIAMS</span>
+  <span class="surgery-pill">surgery may 14</span>
+  <span class="header-date" id="hdr-date"></span>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('board')">BOARD</button>
+  <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
+  <button class="tab" onclick="switchTab('finance')">FINANCE</button>
+</div>
+
+<div id="view-board" class="view active"></div>
+<div id="view-timeline" class="view"></div>
+<div id="view-finance" class="view"></div>
+
+<script>
+const CAT_STYLES = {
+  Surgery:   {bg:'#FFF0F5',color:'#8B1A4A'},
+  Loans:     {bg:'#E8F2FC',color:'#0D3D6E'},
+  Howard:    {bg:'#FFF8E0',color:'#7A4800'},
+  MICA:      {bg:'#EDFAF0',color:'#145228'},
+  Financial: {bg:'#F5EDFF',color:'#4A1275'},
+  Personal:  {bg:'#E0F7FA',color:'#00494E'},
+  EcoDepot:  {bg:'#FFF0E8',color:'#7A2C00'},
+  Housing:   {bg:'#EEF0FF',color:'#1A2060'},
+};
+const STATUS_STYLES = {
+  'Done':        {bg:'#EDFAF0',color:'#145228'},
+  'In Progress': {bg:'#FFFBE0',color:'#6B5700'},
+  'Not Started': {bg:'#F0EDE6',color:'#6B6560'},
+  'Urgent':      {bg:'#FFF0E8',color:'#7A2C00'},
+  'Blocked':     {bg:'#FFECEC',color:'#7A1212'},
+  'Pending':     {bg:'#E8F2FC',color:'#0D3D6E'},
+};
+
+const DEFAULTS = [
+  {id:1,  title:'Complete Confirmed Consent paperwork',     cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'css.confirmedconsent.com — due noon CST'},
+  {id:2,  title:'Sign surgical confirmation packet',        cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'carelynks.cranects.com PIN: 648024'},
+  {id:3,  title:'Westlake patient registration',            cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'westlakemedical.com'},
+  {id:4,  title:'Call Howard registrar',                    cat:'Howard',   status:'Not Started', due:'Apr 29', note:'202-806-2700'},
+  {id:5,  title:'TISLA consult call',                       cat:'Loans',    status:'In Progress', due:'This wk',note:'Awaiting reply'},
+  {id:6,  title:'Call DMCS re: consolidation',              cat:'Loans',    status:'Not Started', due:'May 2',  note:'800-621-3115 — after TISLA'},
+  {id:7,  title:'Initiate consolidation or rehabilitation', cat:'Loans',    status:'Not Started', due:'May 7',  note:'Must start before May 9'},
+  {id:8,  title:'Confirm $2,500 liquid for surgery',        cat:'Financial',status:'Not Started', due:'May 9',  note:'Due day-of — must be ready'},
+  {id:9,  title:'Book Court Elliott flight',                cat:'Surgery',  status:'Not Started', due:'May 9',  note:'<$500'},
+  {id:10, title:'Share Amazon supply list',                 cat:'Surgery',  status:'Not Started', due:'Apr 29', note:'Sus, brothers, others'},
+  {id:11, title:'Call Sus + brothers',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:'Surgery prep calls'},
+  {id:12, title:'Call mom re: shipping',                    cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:13, title:'Reach out to Selena',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:14, title:'Call insurance',                           cat:'Surgery',  status:'Not Started', due:'May 2',  note:'Confirm coverage'},
+  {id:15, title:'Pay friend ~$950 (Airbnb loan)',           cat:'Financial',status:'Not Started', due:'May 9',  note:'Friend absorbing $600'},
+  {id:16, title:'Confirm Howard degree pathway',            cat:'Howard',   status:'Not Started', due:'May 7',  note:'Retake vs petition vs proficiency'},
+  {id:17, title:'Contact Carolyn Case',                     cat:'MICA',     status:'Not Started', due:'May 7',  note:'Re: grad internship'},
+  {id:18, title:'Follow up Howard every 5 business days',   cat:'Howard',   status:'Not Started', due:'Ongoing',note:'Do not let slip during recovery'},
+  {id:19, title:'Send servicer letter to MICA',             cat:'Loans',    status:'Blocked',     due:'TBD',    note:'Blocked on default resolution'},
+  {id:20, title:'Confirm Howard degree to MICA',            cat:'Howard',   status:'Blocked',     due:'Summer', note:'Blocked on registrar + coursework'},
+  {id:21, title:'MICA aid disbursement',                    cat:'MICA',     status:'Blocked',     due:'Fall',   note:'Blocked on default + degree'},
+  {id:22, title:'Baltimore apartment hunt',                 cat:'Housing',  status:'Not Started', due:'May–Jun',note:'App likely due end of June'},
+  {id:23, title:'Credit score improvement',                 cat:'Financial',status:'Not Started', due:'Jun',    note:'Tied to loan resolution — 40–80pt jump expected'},
+  {id:24, title:'EcoDepot fellowship — await decision',     cat:'EcoDepot', status:'Pending',     due:'TBD',    note:'Applied Apr 20 via MICA 12twenty'},
+  {id:25, title:'EcoDepot travel prep (if selected)',        cat:'EcoDepot', status:'Pending',     due:'Jul 27', note:'In-country Aug 1–16, Ileret Kenya'},
+  {id:26, title:'Pre-op appointment',                       cat:'Surgery',  status:'Not Started', due:'May 11', note:'Monday — Austin'},
+  {id:27, title:'Surgery day',                              cat:'Surgery',  status:'Not Started', due:'May 14', note:'Ashley Deleon MD, Crane Center'},
+  {id:28, title:'Post-op appointment',                      cat:'Surgery',  status:'Not Started', due:'May 21', note:'While Loran is there'},
+  {id:29, title:'Howard registrar email sent',              cat:'Howard',   status:'Done',        due:'Done',   note:''},
+  {id:30, title:'MICA financial aid email sent',            cat:'MICA',     status:'Done',        due:'Done',   note:'Awaiting Christine reply'},
+  {id:31, title:'TISLA email sent',                         cat:'Loans',    status:'Done',        due:'Done',   note:''},
+  {id:32, title:'FAFSA 26-27 completed',                    cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:33, title:'MICA enrollment deposit paid',             cat:'MICA',     status:'Done',        due:'Done',   note:'$350'},
+  {id:34, title:'Comm Engaged Thesis grant won',            cat:'MICA',     status:'Done',        due:'Done',   note:'$4,000 + $750 to SolFood'},
+  {id:35, title:'Summer Fieldwork App submitted',           cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:36, title:'Austin Airbnb booked',                     cat:'Surgery',  status:'Done',        due:'Done',   note:'$3,200 via friend loan'},
+  {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot', status:'Done',        due:'Done',   note:'Apr 20 deadline'},
+];
+
+const PHASES = [
+  {label:'Now — May 9',      desc:'Oakland · full capacity',            bg:'#FFF3E0',color:'#7A3800', ids:[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,22,23]},
+  {label:'May 9–11',         desc:'Travel to Austin + pre-op',          bg:'#EEEDF5',color:'#2A2060', ids:[26]},
+  {label:'May 14',           desc:'Surgery day',                        bg:'#3A0000',color:'#FFD0D0', ids:[27]},
+  {label:'May 14–16',        desc:'Recovery · Court Elliott',           bg:'#FFF0EC',color:'#7A2C00', ids:[]},
+  {label:'May 17–23',        desc:'Recovery · Loran · post-op May 21',  bg:'#FFFAE0',color:'#6B4800', ids:[28]},
+  {label:'May 24–30',        desc:'Recovery · Maurice',                 bg:'#EDFAF0',color:'#145228', ids:[]},
+  {label:'May 31 – Jun 5',   desc:'Recovery · Gabby',                   bg:'#E8F2FC',color:'#0D3D6E', ids:[]},
+  {label:'Jun 6–8',          desc:'Recovery · Mom',                     bg:'#F5EDFF',color:'#4A1275', ids:[]},
+  {label:'Jun 9+',           desc:'Post-recovery · care TBD',           bg:'#F0EDE6',color:'#4A4540', ids:[19,20,21]},
+  {label:'Jun – Jul',        desc:'Baltimore apartment hunt',           bg:'#EEF0FF',color:'#1A2060', ids:[22,23]},
+  {label:'Jul 1',            desc:'Loan deadline · new borrower rules', bg:'#3A0000',color:'#FFD0D0', ids:[]},
+  {label:'Jul 27 – Aug 16',  desc:'EcoDepot Kenya (if selected)',       bg:'#FFF0E8',color:'#7A2C00', ids:[24,25]},
+  {label:'Fall 2026',        desc:'MICA begins',                        bg:'#EDFAF0',color:'#145228', ids:[21]},
+];
+
+function loadTasks() {
+  try {
+    const s = localStorage.getItem('court_v2');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+function saveTasks(tasks) {
+  try { localStorage.setItem('court_v2', JSON.stringify(tasks)); } catch(e){}
+}
+
+let tasks = loadTasks();
+
+function getNextId() { return Math.max(0, ...tasks.map(t=>t.id)) + 1; }
+
+function catBadge(cat) {
+  const s = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${cat}</span>`;
+}
+function statusBadge(status) {
+  const s = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${status}</span>`;
+}
+function checkSVG() {
+  return `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = t.status === 'Done' ? 'Not Started' : 'Done';
+  saveTasks(tasks);
+  renderAll();
+}
+
+function addTask() {
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) return;
+  const cat = document.getElementById('new-cat').value;
+  const due = document.getElementById('new-due').value.trim();
+  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:''});
+  saveTasks(tasks);
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-due').value = '';
+  renderAll();
+}
+
+function renderBoard() {
+  const cols = [
+    {key:'Urgent',      label:'urgent'},
+    {key:'Not Started', label:'not started'},
+    {key:'In Progress', label:'in progress'},
+    {key:'Pending',     label:'pending'},
+    {key:'Blocked',     label:'blocked'},
+    {key:'Done',        label:'done'},
+  ];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="metrics">`;
+
+  const urgentCount = tasks.filter(t=>t.status==='Urgent').length;
+  const blockedCount = tasks.filter(t=>t.status==='Blocked').length;
+  const daysToSurgery = Math.ceil((new Date('2026-05-14') - new Date()) / 86400000);
+  const daysToOakland = Math.ceil((new Date('2026-05-09') - new Date()) / 86400000);
+
+  html += `<div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>`;
+  html += `<div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${Math.max(0,daysToOakland)}</div><div class="metric-sub">days left</div></div>`;
+  html += `<div class="metric"><div class="metric-label">URGENT</div><div class="metric-value" style="color:#7A2C00">${urgentCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">BLOCKED</div><div class="metric-value" style="color:#7A1212">${blockedCount}</div><div class="metric-sub">items</div></div>`;
+  html += `</div><div class="kanban">`;
+
+  cols.forEach(({key, label}) => {
+    const colTasks = tasks.filter(t=>t.status===key);
+    html += `<div class="k-col"><div class="k-col-title"><span>${label}</span><span>${colTasks.length}</span></div>`;
+    colTasks.forEach(t => {
+      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+      html += `<div class="k-card ${key==='Done'?'is-done':''}" onclick="toggleTask(${t.id})">
+        <div class="k-card-title">${t.title}</div>
+        <div class="k-card-meta">
+          <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
+          ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+        </div>
+        ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `</div>
+  <div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function renderTimeline() {
+  let html = '';
+  PHASES.forEach((ph, i) => {
+    const phTasks = tasks.filter(t => ph.ids.includes(t.id));
+    const openClass = i === 0 ? 'open' : '';
+    html += `<div class="phase ${openClass}" id="phase-${i}">
+      <div class="phase-header" style="background:${ph.bg}" onclick="togglePhase(${i})">
+        <span class="phase-label" style="color:${ph.color}">${ph.label}</span>
+        <span class="phase-desc" style="color:${ph.color}">${ph.desc}</span>
+        ${phTasks.length?`<span class="phase-count" style="color:${ph.color}">${phTasks.filter(t=>t.status==='Done').length}/${phTasks.length}</span>`:''}
+      </div>
+      <div class="phase-tasks">`;
+    if (phTasks.length === 0) {
+      html += `<div style="padding:10px 14px;font-size:12px;color:var(--text3)">No tasks this phase</div>`;
+    } else {
+      phTasks.forEach(t => {
+        const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+        const isDone = t.status==='Done';
+        html += `<div class="tl-task" onclick="toggleTask(${t.id})">
+          <div class="tl-check ${isDone?'done':''}">${isDone?checkSVG():''}</div>
+          <div class="tl-body">
+            <div class="tl-title ${isDone?'struck':''}">${t.title}</div>
+            ${t.note?`<div class="tl-sub">${t.note}</div>`:''}
+          </div>
+          <div class="tl-right">
+            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
+            ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+          </div>
+        </div>`;
+      });
+    }
+    html += `</div></div>`;
+  });
+  document.getElementById('view-timeline').innerHTML = html;
+}
+
+function togglePhase(i) {
+  document.getElementById('phase-'+i).classList.toggle('open');
+}
+
+function renderFinance() {
+  const fmt = n => '$' + Math.round(n).toLocaleString();
+  const inbound = [
+    {label:'Family/friends ask (received)',   amount:1500, status:'Received', note:'First wave'},
+    {label:'Family/friends ask (outstanding)',amount:8500, status:'Pending',  note:'~$8,500 still outstanding'},
+    {label:'Comm Engaged Thesis grant',       amount:4000, status:'Confirmed',note:'Likely distributed fall semester'},
+    {label:'SolFood grant portion',           amount:750,  status:'Confirmed',note:'Timing unknown'},
+    {label:'EcoDepot stipend (if selected)',  amount:2500, status:'Pending',  note:'$2,500–4,000/mo; travel+meals covered'},
+  ];
+  const outbound = [
+    {label:'Immediate expenses',              amount:500,  status:'Paid',      note:'From first $1,500'},
+    {label:'MICA enrollment deposit',         amount:350,  status:'Paid',      note:'From first $1,500'},
+    {label:'Airbnb loan (repaid so far)',      amount:1650, status:'Paid',      note:'$3,200 total to friend'},
+    {label:'Airbnb loan (remaining)',          amount:950,  status:'Owed',      note:'Friend absorbing $600'},
+    {label:'Surgery out-of-pocket',           amount:2500, status:'Due May 14',note:'Must be liquid before May 9'},
+    {label:'Court Elliott flight',            amount:500,  status:'Not booked',note:'Book before May 9'},
+    {label:'Post-op car + care buffer',       amount:1250, status:'Estimated', note:'Car, food, supplies'},
+  ];
+
+  const confirmed = inbound.filter(r=>r.status==='Received').reduce((s,r)=>s+r.amount,0);
+  const stillNeeded = outbound.filter(r=>r.status!=='Paid').reduce((s,r)=>s+r.amount,0);
+
+  let html = `<div class="finance-block">
+    <div class="finance-block-title">INBOUND</div>`;
+  inbound.forEach(r => {
+    const ss = STATUS_STYLES[r.status]||STATUS_STYLES['Not Started'];
+    html += `<div class="f-row">
+      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
+      <div class="f-right">
+        <div class="f-amount">${fmt(r.amount)}</div>
+        <span class="badge" style="background:${ss.bg};color:${ss.color};margin-top:3px">${r.status}</span>
+      </div>
+    </div>`;
+  });
+  html += `<div class="f-total"><span>Confirmed received</span><span style="color:#145228">${fmt(confirmed)}</span></div>
+  </div>`;
+
+  html += `<div class="finance-block">
+    <div class="finance-block-title">OUTBOUND</div>`;
+  outbound.forEach(r => {
+    const isPaid = r.status==='Paid';
+    const isUrgent = r.status==='Due May 14';
+    const ss = isUrgent ? {bg:'#FFF0E8',color:'#7A2C00'} : isPaid ? {bg:'#EDFAF0',color:'#145228'} : {bg:'#F0EDE6',color:'#6B6560'};
+    html += `<div class="f-row">
+      <div><div class="f-label" style="${isPaid?'color:var(--text3);text-decoration:line-through':''}">${r.label}</div><div class="f-note">${r.note}</div></div>
+      <div class="f-right">
+        <div class="f-amount" style="${isUrgent?'color:#7A2C00':isPaid?'color:var(--text3)':''}">${fmt(r.amount)}</div>
+        <span class="badge" style="background:${ss.bg};color:${ss.color};margin-top:3px">${r.status}</span>
+      </div>
+    </div>`;
+  });
+  html += `<div class="f-total"><span>Still needed before surgery</span><span style="color:#7A1212">${fmt(stillNeeded)}</span></div>
+  </div>`;
+
+  html += `<div class="gap-box">
+    <div class="gap-box-title">IMMEDIATE GAP</div>
+    <div class="gap-amount">${fmt(stillNeeded - confirmed)}</div>
+    <div class="gap-box-text">Between confirmed received and everything needed before May 14. The $2,500 due day-of surgery is the critical number — must be liquid before you leave Oakland on May 9.</div>
+  </div>
+  <div style="margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text3);line-height:1.6">
+    Carrot benefit: $10,000 lifetime · covers HRT, labs, binders — not surgery.
+  </div>`;
+
+  document.getElementById('view-finance').innerHTML = html;
+}
+
+function renderAll() {
+  renderBoard();
+  renderTimeline();
+  renderFinance();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+
+renderAll();
+</script>
+</body>
+</html>
