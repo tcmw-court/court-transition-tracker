@@ -110,10 +110,61 @@ body {
   color: var(--text3);
   margin-bottom: 1.5rem;
 }
+/* BOARD TOGGLE */
+.board-toggle {
+  display: flex;
+  gap: 0;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+.board-toggle-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  border: none;
+  background: none;
+  color: var(--text3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.board-toggle-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+/* PROJECT BOARD */
+.proj-section { margin-bottom: 1.5rem; }
+.proj-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.proj-section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.proj-section-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+.proj-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
 /* KANBAN */
 .kanban {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
   margin-bottom: 1.5rem;
 }
@@ -507,6 +558,14 @@ const DEFAULTS = [
   {id:35, title:'Summer Fieldwork App submitted',           cat:'MICA',     status:'Done',        due:'Done',   note:''},
   {id:36, title:'Austin Airbnb booked',                     cat:'Surgery',  status:'Done',        due:'Done',   note:'$3,200 via friend loan'},
   {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot', status:'Done',        due:'Done',   note:'Apr 20 deadline'},
+  {id:38, title:'Ask Scott for support',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Also ask if anyone in his orbit would want to contribute'},
+  {id:39, title:'Thank Mr. Neal + ask for a connection',    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Reply to his message — gratitude + warm ask for intro'},
+  {id:40, title:'Follow up with Calvin',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'WhatsApp message — check in + ask for support'},
+  {id:41, title:'Maurice reaches out to Matt re: sister',   cat:'Surgery',  status:'Urgent',      due:'May 5',  note:'Matt\'s sister as potential donor — Maurice to make contact'},
+  {id:42, title:'Finish + notarize living will',            cat:'Surgery',  status:'Urgent',      due:'May 9',  note:'Must be done before leaving Oakland — blocks Westlake registration'},
+  {id:43, title:'Contact Westlake re: registration',        cat:'Surgery',  status:'Blocked',     due:'May 9',  note:'Blocked on living will being finalized'},
+  {id:44, title:'Complete Westlake patient registration',   cat:'Surgery',  status:'Blocked',     due:'May 11', note:'westlakemedical.com — blocked on living will'},
+  {id:45, title:'Johns Hopkins MBA application',            cat:'MICA',     status:'Not Started', due:'May 27', note:'Application due May 27'},
 ];
 
 
@@ -557,7 +616,11 @@ function addTask() {
   renderAll();
 }
 
+let boardView = 'status'; // 'status' | 'project'
+
 function renderBoard() {
+  if (boardView === 'project') { renderProjectBoard(); return; }
+
   const cols = [
     {key:'Urgent',      label:'urgent'},
     {key:'Not Started', label:'not started'},
@@ -571,17 +634,20 @@ function renderBoard() {
 
   let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
   <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn active" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>
   <div class="metrics">`;
 
   const urgentCount = tasks.filter(t=>t.status==='Urgent').length;
   const blockedCount = tasks.filter(t=>t.status==='Blocked').length;
-  const daysToSurgery = Math.ceil((new Date('2026-05-14') - new Date()) / 86400000);
-  const daysToOakland = Math.ceil((new Date('2026-05-09') - new Date()) / 86400000);
+  const activeCount = tasks.filter(t=>t.status==='In Progress').length;
 
-  html += `<div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>`;
-  html += `<div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${Math.max(0,daysToOakland)}</div><div class="metric-sub">days left</div></div>`;
+  html += `<div class="metric"><div class="metric-label">IN PROGRESS</div><div class="metric-value">${activeCount}</div><div class="metric-sub">active</div></div>`;
   html += `<div class="metric"><div class="metric-label">URGENT</div><div class="metric-value" style="color:#7A2C00">${urgentCount}</div><div class="metric-sub">items</div></div>`;
   html += `<div class="metric"><div class="metric-label">BLOCKED</div><div class="metric-value" style="color:#7A1212">${blockedCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">SURGERY GOAL</div><div class="metric-value" style="color:#145228">$5k</div><div class="metric-sub">before May 14</div></div>`;
   html += `</div><div class="kanban">`;
 
   cols.forEach(({key, label}) => {
@@ -612,6 +678,68 @@ function renderBoard() {
   document.getElementById('view-board').innerHTML = html;
 }
 
+function renderProjectBoard() {
+  const STATUS_ORDER = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn active" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>`;
+
+  Object.keys(CAT_STYLES).forEach(cat => {
+    const catTasks = tasks.filter(t => t.cat === cat && !t.event);
+    if (!catTasks.length) return;
+    const cs = CAT_STYLES[cat];
+    const catDone = catTasks.filter(t=>t.status==='Done').length;
+
+    html += `<div class="proj-section">
+      <div class="proj-section-header">
+        <span class="proj-section-label" style="color:${cs.color}">${cat.toUpperCase()}</span>
+        <span class="proj-section-count">${catDone}/${catTasks.length}</span>
+      </div>
+      <div class="proj-kanban">`;
+
+    STATUS_ORDER.forEach(status => {
+      const statusTasks = catTasks.filter(t => t.status === status);
+      if (!statusTasks.length) return;
+      const ss = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+      html += `<div class="k-col"><div class="k-col-title"><span>${status.toLowerCase()}</span><span>${statusTasks.length}</span></div>`;
+      statusTasks.forEach(t => {
+        const isDone = status === 'Done';
+        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}" onclick="toggleTask(${t.id})">
+          <div class="k-card-title">${t.title}</div>
+          <div class="k-card-meta">
+            <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${status}</span>
+            ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+          </div>
+          ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `<div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function setBoardView(v) {
+  boardView = v;
+  renderBoard();
+}
+
 // ── Calendar state ──────────────────────────────────────────────
 let calYear = 2026;
 let calMonth = 4; // 0-indexed → April = 3... use 1-indexed: April=4
@@ -624,8 +752,16 @@ const DUE_MAP = {
   'May 4':{m:5,d:4},'May 5':{m:5,d:5},'May 7':{m:5,d:7},
   'May 9':{m:5,d:9},'May 10':{m:5,d:10},'May 11':{m:5,d:11},
   'May 12':{m:5,d:12},'May 14':{m:5,d:14},'May 21':{m:5,d:21},
-  'Jun':{m:6,d:1},'Jul 1':{m:7,d:1},'Jul 27':{m:7,d:27},
+  'May 27':{m:5,d:27},
+  'Jun':{m:6,d:1},'Jul 1':{m:7,d:1},'Jul 25':{m:7,d:25},'Jul 27':{m:7,d:27},
 };
+
+// Calendar-only events (not tasks)
+const CAL_EVENTS = [
+  {m:7, d:25, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:26, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:27, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+];
 
 // Phase color bands: each entry has a date range and color
 const PHASE_BANDS = [
@@ -654,6 +790,10 @@ function getTasksForDay(m, d) {
   });
 }
 
+function getCalEventsForDay(m, d) {
+  return CAL_EVENTS.filter(e => e.m === m && e.d === d);
+}
+
 let selectedDay = null;
 
 function renderCalendar() {
@@ -667,7 +807,14 @@ function renderCalendar() {
   const todayD = today.getDate();
   const todayY = today.getFullYear();
 
-  let html = `<div class="cal-nav">
+  const daysToSurgery = Math.ceil((new Date('2026-05-14') - today) / 86400000);
+  const daysToOakland = Math.max(0, Math.ceil((new Date('2026-05-09') - today) / 86400000));
+
+  let html = `<div class="metrics" style="margin-bottom:1rem">
+    <div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>
+    <div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${daysToOakland}</div><div class="metric-sub">days left</div></div>
+  </div>
+  <div class="cal-nav">
     <button class="cal-nav-btn" onclick="calPrev()">← prev</button>
     <span class="cal-nav-title">${MONTH_NAMES[calMonth].toUpperCase()} ${calYear}</span>
     <button class="cal-nav-btn" onclick="calNext()">next →</button>
@@ -686,18 +833,22 @@ function renderCalendar() {
   for (let d=1; d<=daysInMonth; d++) {
     const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
     const dayTasks = getTasksForDay(calMonth, d);
+    const dayEvents = getCalEventsForDay(calMonth, d);
     const phColor = getPhaseColor(calMonth, d);
     const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
 
     let cls = 'cal-day';
     if (isToday) cls += ' today';
-    if (dayTasks.length) cls += ' has-tasks';
+    if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
     if (sel) cls += ' selected';
 
     html += `<div class="${cls}" onclick="selectDay(${calMonth},${d})">
       <div class="cal-day-num">${d}</div>
       <div class="cal-dot-row">`;
 
+    dayEvents.forEach(e => {
+      html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">📦 ${e.title}</span>`;
+    });
     dayTasks.slice(0,3).forEach(t => {
       const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
       const doneClass = t.status==='Done' ? ' done' : '';
@@ -731,11 +882,20 @@ function renderCalendar() {
   html += `<div class="cal-detail" id="cal-detail">`;
   if (selectedDay) {
     const dayTasks = getTasksForDay(selectedDay.m, selectedDay.d);
+    const dayEvents = getCalEventsForDay(selectedDay.m, selectedDay.d);
+    const total = dayTasks.length + dayEvents.length;
     const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    html += `<div class="cal-detail-title">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${dayTasks.length} task${dayTasks.length!==1?'s':''}</div>`;
-    if (dayTasks.length === 0) {
+    html += `<div class="cal-detail-title">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${total} item${total!==1?'s':''}</div>`;
+    if (total === 0) {
       html += `<div style="font-size:12px;color:var(--text3)">No tasks due this day.</div>`;
     } else {
+      dayEvents.forEach(e => {
+        html += `<div class="tl-task" style="cursor:default">
+          <div style="font-size:16px;line-height:1;margin-top:1px">📦</div>
+          <div class="tl-body"><div class="tl-title">${e.title} weekend</div></div>
+          <div class="tl-right"><span class="badge" style="background:${e.bg};color:${e.color};font-size:9px">Event</span></div>
+        </div>`;
+      });
       dayTasks.forEach(t => {
         const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
         const isDone = t.status==='Done';
@@ -786,22 +946,21 @@ function renderFinance() {
   const inbound = [
     {label:'Family/friends ask (received)',   amount:1500, status:'Received', note:'First wave'},
     {label:'Family/friends ask (outstanding)',amount:8500, status:'Pending',  note:'~$8,500 still outstanding'},
-    {label:'Comm Engaged Thesis grant',       amount:4000, status:'Confirmed',note:'Likely distributed fall semester'},
-    {label:'SolFood grant portion',           amount:750,  status:'Confirmed',note:'Timing unknown'},
     {label:'EcoDepot stipend (if selected)',  amount:2500, status:'Pending',  note:'$2,500–4,000/mo; travel+meals covered'},
   ];
   const outbound = [
-    {label:'Immediate expenses',              amount:500,  status:'Paid',      note:'From first $1,500'},
-    {label:'MICA enrollment deposit',         amount:350,  status:'Paid',      note:'From first $1,500'},
-    {label:'Airbnb loan (repaid so far)',      amount:1650, status:'Paid',      note:'$3,200 total to friend'},
-    {label:'Airbnb loan (remaining)',          amount:950,  status:'Owed',      note:'Friend absorbing $600'},
-    {label:'Surgery out-of-pocket',           amount:2500, status:'Due May 14',note:'Must be liquid before May 9'},
-    {label:'Court Elliott flight',            amount:500,  status:'Not booked',note:'Book before May 9'},
-    {label:'Post-op car + care buffer',       amount:1250, status:'Estimated', note:'Car, food, supplies'},
+    {label:'Airbnb loan (remaining)',          amount:950,  status:'Pending',   note:'$3,200 total · $1,650 already repaid · friend absorbing $600'},
+    {label:'Surgery out-of-pocket',           amount:2500, status:'Due May 14',note:'Must be liquid before May 9 · includes $680.62 Crane Center (May 11) + Westlake amount TBD'},
+    {label:'Court Elliott flight',            amount:500,  status:'Pending',   note:'Book before May 9'},
+    {label:'Post-op car + care buffer',       amount:1250, status:'Pending',   note:'Car, food, supplies'},
+  ];
+  const restricted = [
+    {label:'Comm Engaged Thesis grant',       amount:4000, note:'Restricted to thesis work only'},
+    {label:'SolFood grant portion',           amount:750,  note:'Goes to SolFood directly — not to Court'},
   ];
 
   const confirmed = inbound.filter(r=>r.status==='Received').reduce((s,r)=>s+r.amount,0);
-  const stillNeeded = outbound.filter(r=>r.status!=='Paid').reduce((s,r)=>s+r.amount,0);
+  const immediateGoal = 5200;
 
   let html = `<div class="finance-block">
     <div class="finance-block-title">INBOUND</div>`;
@@ -819,28 +978,46 @@ function renderFinance() {
   </div>`;
 
   html += `<div class="finance-block">
-    <div class="finance-block-title">OUTBOUND</div>`;
+    <div class="finance-block-title">OUTBOUND — PENDING</div>`;
   outbound.forEach(r => {
-    const isPaid = r.status==='Paid';
-    const isUrgent = r.status==='Due May 14';
-    const ss = isUrgent ? {bg:'#FFF0E8',color:'#7A2C00'} : isPaid ? {bg:'#EDFAF0',color:'#145228'} : {bg:'#F0EDE6',color:'#6B6560'};
+    const isUrgent = r.status==='Due May 14' || r.status==='Due May 11';
+    const ss = isUrgent ? {bg:'#FFF0E8',color:'#7A2C00'} : {bg:'#F0EDE6',color:'#6B6560'};
     html += `<div class="f-row">
-      <div><div class="f-label" style="${isPaid?'color:var(--text3);text-decoration:line-through':''}">${r.label}</div><div class="f-note">${r.note}</div></div>
+      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
       <div class="f-right">
-        <div class="f-amount" style="${isUrgent?'color:#7A2C00':isPaid?'color:var(--text3)':''}">${fmt(r.amount)}</div>
+        <div class="f-amount" style="${isUrgent?'color:#7A2C00':''}">${fmt(r.amount)}</div>
         <span class="badge" style="background:${ss.bg};color:${ss.color};margin-top:3px">${r.status}</span>
       </div>
     </div>`;
   });
-  html += `<div class="f-total"><span>Still needed before surgery</span><span style="color:#7A1212">${fmt(stillNeeded)}</span></div>
+  const stillNeeded = outbound.reduce((s,r)=>s+r.amount,0);
+  html += `<div class="f-total"><span>Total pending</span><span style="color:#7A1212">${fmt(stillNeeded)}</span></div>
   </div>`;
 
+  // Progress bar toward $5,200 goal
+  const pct = Math.min(100, Math.round(confirmed / immediateGoal * 100));
   html += `<div class="gap-box">
-    <div class="gap-box-title">IMMEDIATE GAP</div>
-    <div class="gap-amount">${fmt(stillNeeded - confirmed)}</div>
-    <div class="gap-box-text">Between confirmed received and everything needed before May 14. The $2,500 due day-of surgery is the critical number — must be liquid before you leave Oakland on May 9.</div>
+    <div class="gap-box-title">IMMEDIATE FUNDRAISING GOAL</div>
+    <div class="gap-amount" style="font-size:2rem">${fmt(immediateGoal)}</div>
+    <div style="margin:10px 0 4px">
+      <div style="height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden">
+        <div style="height:100%;width:${pct}%;background:#8B5E1A;border-radius:3px;transition:width 0.4s"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--text3)">
+        <span>${fmt(confirmed)} raised</span><span>${fmt(immediateGoal - confirmed)} to go</span>
+      </div>
+    </div>
+    <div class="gap-box-text" style="margin-top:8px">Covers Airbnb loan balance, surgery out-of-pocket, Court Elliott's flight, and post-op car + care. All still pending before May 14.</div>
   </div>
-  <div style="margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text3);line-height:1.6">
+
+  <div style="margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius)">
+    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--text3);margin-bottom:8px">RESTRICTED / NOT FOR SURGERY</div>
+    ${restricted.map(r=>`<div class="f-row" style="opacity:0.7">
+      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
+      <div class="f-right"><div class="f-amount" style="color:var(--text3)">${fmt(r.amount)}</div></div>
+    </div>`).join('')}
+  </div>
+  <div style="margin-top:10px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text3);line-height:1.6">
     Carrot benefit: $10,000 lifetime · covers HRT, labs, binders — not surgery.
   </div>`;
 
