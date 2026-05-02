@@ -487,7 +487,10 @@ body {
 <div class="header">
   <span class="header-name">COURT WILLIAMS</span>
   <span class="surgery-pill">2026 transition</span>
-  <span class="header-date" id="hdr-date"></span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a href="https://tcmw-court.github.io/court-transition-tracker" target="_blank" style="font-family:var(--mono);font-size:10px;color:#666;letter-spacing:0.04em;text-decoration:none;border:1px solid #444;padding:2px 8px;border-radius:20px;transition:color 0.15s" onmouseover="this.style.color='#C17D3C';this.style.borderColor='#C17D3C'" onmouseout="this.style.color='#666';this.style.borderColor='#444'">↗ live</a>
+    <span class="header-date" id="hdr-date"></span>
+  </div>
 </div>
 
 <div class="tabs">
@@ -604,6 +607,77 @@ function toggleTask(id) {
   renderAll();
 }
 
+function moveTask(id, newStatus) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = newStatus;
+  saveTasks(tasks);
+  closeContextMenu();
+  renderAll();
+}
+
+function closeContextMenu() {
+  const existing = document.getElementById('ctx-menu');
+  if (existing) existing.remove();
+}
+
+function showContextMenu(e, id) {
+  e.preventDefault();
+  e.stopPropagation();
+  closeContextMenu();
+
+  const statuses = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+
+  const menu = document.createElement('div');
+  menu.id = 'ctx-menu';
+  menu.style.cssText = \`
+    position:fixed;
+    background:#1A1714;
+    border:1px solid #333;
+    border-radius:8px;
+    padding:6px;
+    z-index:9999;
+    min-width:160px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+    font-family:'DM Mono',monospace;
+  \`;
+
+  const label = document.createElement('div');
+  label.style.cssText = 'font-size:9px;letter-spacing:0.07em;color:#666;padding:4px 8px 8px;border-bottom:1px solid #333;margin-bottom:6px';
+  label.textContent = 'MOVE TO';
+  menu.appendChild(label);
+
+  statuses.forEach(status => {
+    const ss = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+    const item = document.createElement('div');
+    item.style.cssText = \`
+      display:flex;align-items:center;gap:8px;
+      padding:6px 8px;border-radius:5px;cursor:pointer;
+      font-size:11px;letter-spacing:0.04em;
+      color:\${t.status===status?'#C17D3C':'#ccc'};
+      background:\${t.status===status?'rgba(193,125,60,0.1)':'transparent'};
+      transition:background 0.1s;
+    \`;
+    item.innerHTML = \`<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:\${ss.color};opacity:0.8"></span>\${status}\${t.status===status?' ✓':''}\`;
+    item.onmouseover = () => { if(t.status!==status) item.style.background='rgba(255,255,255,0.06)'; };
+    item.onmouseout  = () => { if(t.status!==status) item.style.background='transparent'; };
+    item.onclick = () => moveTask(id, status);
+    menu.appendChild(item);
+  });
+
+  document.body.appendChild(menu);
+  const rect = menu.getBoundingClientRect();
+  let x = e.clientX, y = e.clientY;
+  if (x + rect.width > window.innerWidth - 10) x = window.innerWidth - rect.width - 10;
+  if (y + rect.height > window.innerHeight - 10) y = window.innerHeight - rect.height - 10;
+  menu.style.left = x + 'px';
+  menu.style.top  = y + 'px';
+
+  setTimeout(() => document.addEventListener('click', closeContextMenu, {once:true}), 0);
+}
+
 function addTask() {
   const title = document.getElementById('new-title').value.trim();
   if (!title) return;
@@ -655,13 +729,16 @@ function renderBoard() {
     html += `<div class="k-col"><div class="k-col-title"><span>${label}</span><span>${colTasks.length}</span></div>`;
     colTasks.forEach(t => {
       const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-      html += `<div class="k-card ${key==='Done'?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}" onclick="toggleTask(${t.id})">
-        <div class="k-card-title">${t.title}</div>
+      html += `<div class="k-card ${key==='Done'?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+        <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
         <div class="k-card-meta">
           <span class="badge" style="background:rgba(255,255,255,0.55);color:${cs.color};font-size:9px">${t.cat}</span>
           ${t.due?`<span class="due-tag">${t.due}</span>`:''}
         </div>
         ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+        <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+          ${['Urgent','Not Started','In Progress','Pending','Blocked','Done'].map(s=>`<option value="${s}" ${s===t.status?'selected':''} >${s}</option>`).join('')}
+        </select>
       </div>`;
     });
     html += `</div>`;
@@ -710,13 +787,16 @@ function renderProjectBoard() {
       html += `<div class="k-col"><div class="k-col-title"><span>${status.toLowerCase()}</span><span>${statusTasks.length}</span></div>`;
       statusTasks.forEach(t => {
         const isDone = status === 'Done';
-        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}" onclick="toggleTask(${t.id})">
-          <div class="k-card-title">${t.title}</div>
+        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+          <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
           <div class="k-card-meta">
             <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${status}</span>
             ${t.due?`<span class="due-tag">${t.due}</span>`:''}
           </div>
           ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+          <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+            ${['Urgent','Not Started','In Progress','Pending','Blocked','Done'].map(s=>`<option value="${s}" ${s===status?'selected':''} >${s}</option>`).join('')}
+          </select>
         </div>`;
       });
       html += `</div>`;
