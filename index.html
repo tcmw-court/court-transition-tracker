@@ -1249,7 +1249,7 @@ async function renderHousing() {
   let html = '<div class="housing-wrap">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">';
   html += '<div class="housing-meta" style="margin-bottom:0">BALTIMORE HOUSING · MOVE-IN: END OF JULY OR MID-AUGUST · BUDGET: UNDER $1,800 (HARD CEILING $2,500)</div>';
-  html += '<button onclick="toggleLoranMode()" style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;padding:6px 16px;border-radius:20px;border:2px solid var(--accent);background:var(--accent-light);color:var(--accent);cursor:pointer;white-space:nowrap">✦ LORAN MODE</button>';
+  html += '<button onclick="toggleLoranMode()" style="font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:0.06em;padding:8px 20px;border-radius:20px;border:none;background:#C17D3C;color:#fff;cursor:pointer;white-space:nowrap;box-shadow:0 2px 8px rgba(193,125,60,0.4)">✦ LORAN MODE</button>';
   html += '</div>';
 
   // ── SPREADSHEET TABLE ────────────────────────────────────────────────
@@ -1630,7 +1630,7 @@ async function renderHousing() {
 function toggleLoranMode() {
   const current = localStorage.getItem('loranMode') === 'true';
   localStorage.setItem('loranMode', (!current).toString());
-  renderHousing();
+  renderHousing().catch(console.warn);
 }
 
 const SUPABASE_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
