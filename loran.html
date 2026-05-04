@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Housing Field Notes — Loran</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --bg: #F5F0E8;
+    --surface: #FDFAF4;
+    --surface2: #F0EBE0;
+    --border: #E0D8C8;
+    --text: #1A1714;
+    --text2: #4A4540;
+    --text3: #8A8480;
+    --accent: #C17D3C;
+    --mono: 'DM Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── PASSWORD GATE ── */
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .gate-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 360px;
+    text-align: center;
+  }
+
+  .gate-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 0.5rem;
+  }
+
+  .gate-title {
+    font-family: var(--mono);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .gate-sub {
+    font-size: 13px;
+    color: var(--text2);
+    margin-bottom: 2rem;
+  }
+
+  .gate-input {
+    width: 100%;
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    outline: none;
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+  }
+
+  .gate-input:focus { border-color: var(--accent); }
+
+  .gate-btn {
+    width: 100%;
+    padding: 12px;
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .gate-error {
+    font-size: 11px;
+    color: #c0392b;
+    margin-top: 0.5rem;
+    min-height: 16px;
+  }
+
+  /* ── MAIN APP ── */
+  #app { display: none; }
+
+  .top-bar {
+    background: var(--text);
+    color: #fff;
+    padding: 10px 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .top-bar-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .stat-yes { color: #7dba8e; }
+  .top-bar-right { display: flex; gap: 1rem; align-items: center; }
+  .logout-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: rgba(255,255,255,0.6);
+    cursor: pointer;
+  }
+
+  .content { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
+
+  .page-header { text-align: center; margin-bottom: 1.75rem; padding-top: 0.5rem; }
+  .page-title {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 4px;
+  }
+  .page-sub { font-size: 13px; color: var(--text2); }
+
+  /* ── PROPERTY CARDS ── */
+  .prop-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+  }
+
+  .prop-header {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .prop-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .prop-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text);
+  }
+
+  .prop-hood {
+    font-size: 11px;
+    color: var(--text3);
+    margin-top: 2px;
+  }
+
+  .prop-price {
+    font-family: var(--mono);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+
+  .prop-bd {
+    font-size: 10px;
+    color: var(--text3);
+    text-align: right;
+  }
+
+  .prop-link {
+    display: inline-block;
+    margin-top: 8px;
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--accent);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+  }
+
+  .court-notes {
+    padding: 0.75rem 1rem;
+    background: var(--surface2);
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.55;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .court-notes-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .section { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label {
+    font-family: var(--mono);
+    font-size: 8px;
+    letter-spacing: 0.08em;
+    color: var(--text3);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Status buttons */
+  .status-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+  .status-btn {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.04em;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    border: 1px solid #ddd;
+    background: var(--surface);
+    color: #999;
+    transition: all 0.1s;
+  }
+
+  /* Stars */
+  .stars { display: flex; gap: 6px; }
+  .star-btn {
+    font-size: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: #ddd;
+    transition: color 0.1s;
+    line-height: 1;
+  }
+  .star-btn.filled { color: var(--accent); }
+
+  /* Notes textarea */
+  .notes-field {
+    width: 100%;
+    min-height: 90px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--text);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.5;
+  }
+
+  .notes-field:focus { border-color: var(--accent); }
+
+  .save-indicator {
+    font-family: var(--mono);
+    font-size: 9px;
+    color: var(--text3);
+    margin-top: 4px;
+    height: 12px;
+    transition: opacity 0.3s;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+  }
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="gate-label">COURT WILLIAMS · 2026 TRANSITION</div>
+    <div class="gate-title">Housing Field Notes</div>
+    <div class="gate-sub">For Loran — enter password to access</div>
+    <input type="password" id="pw-input" class="gate-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="gate-btn" onclick="checkPassword()">ENTER</button>
+    <div class="gate-error" id="pw-error"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <div class="top-bar">
+    <div class="top-bar-stats">
+      <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
+      <span class="stat-yes">STRONG YES: <span id="stat-yes">0</span></span>
+    </div>
+    <div class="top-bar-right">
+      <span style="color:rgba(255,255,255,0.4)">loran mode</span>
+      <button class="logout-btn" onclick="logout()">lock</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="page-header">
+      <div class="page-title">FIELD NOTES</div>
+      <div class="page-sub">Tap a status after each visit · notes save automatically</div>
+    </div>
+    <div id="cards-container"><div class="loading">Loading properties...</div></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6ZmJkYm15bGV4ZG15aG55cWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyMzQsImV4cCI6MjA5MzQzNTIzNH0.slEa6mE0cZYnQYQXn1lAbyWvw4AOx6K2xzU_mGZ_BL8';
+const PASSWORD = 'baltimore2026';
+
+const PROPERTIES = [
+  { id:'lh1', name:'750 Reservoir St, Unit A',     neighborhood:'Reservoir Hill',        price:'$1,650/mo',       bd:'2bd/1ba',       type:'Townhouse', url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',   courtNotes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA. HIGH priority.' },
+  { id:'lh2', name:'750 Reservoir St, Unit B',     neighborhood:'Reservoir Hill',        price:'~$1,750/mo',      bd:'2bd/2ba',       type:'Townhouse', url:'https://www.redfin.com/MD/Baltimore/750-Reservoir-St-21217/unit-B/apartment/198836948', courtNotes:'Same building as Unit A, fully renovated 2025. 2bd/2ba — this is the one if budget allows.' },
+  { id:'lh3', name:'1121 Whitelock St',             neighborhood:'Reservoir Hill',        price:'$1,300/mo',       bd:'2bd/1ba',       type:'House',     url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',               courtNotes:'Listed below market. Pets allowed. 1,180 sqft. Check condition carefully at this price point.' },
+  { id:'lh4', name:'1339 W Lafayette Ave, Unit 1', neighborhood:'Harlem Park',           price:'$1,650/mo',       bd:'2bd/2ba',       type:'Townhouse', url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/', courtNotes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.' },
+  { id:'lh5', name:'805 Washington Blvd, Unit A',  neighborhood:'Pigtown',               price:'$1,650/mo',       bd:'2bd/2ba',       type:'House',     url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/', courtNotes:'1,050 sqft. Hardwood floors, W/D in unit. Above retail. Contact: Victoria Lin (301) 738-7777.' },
+  { id:'lh6', name:'1926 E 28th St',               neighborhood:'Coldstream/Montebello', price:'$1,950/mo',       bd:'2bd/2.5ba',     type:'Townhouse', url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',            courtNotes:'1,500 sqft — most space of all options. Kitchen island, patio, porch, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.' },
+  { id:'lh7', name:'Symphony Center Apartments',   neighborhood:'Bolton Hill area',      price:'$2,180–2,340/mo', bd:'2bd/2ba',       type:'Apartment', url:'',                                                                                        courtNotes:'Court already toured. Contact Nadine. MICA bus + JH shuttle. 3% MICA discount. Parking included. Ask about unit 10+.' },
+  { id:'lh8', name:'The Fitzgerald',               neighborhood:'Mount Royal',           price:'$2,218–2,503/mo', bd:'1bd+den to 2bd',type:'Apartment', url:'',                                                                                        courtNotes:'Court already toured. 24hr concierge, pool, gym. Note: water is $150/mo extra. Ask about Lanier and Carraway units.' },
+  { id:'lh9', name:'The Vault',                    neighborhood:'Downtown',              price:'TBD',             bd:'TBD',           type:'Apartment', url:'',                                                                                        courtNotes:'115 N Charles St. Leasing mgr: 443-851-9960. Saturday 10a tour — confirm before going.' },
+];
+
+const STATUS_OPTIONS = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
+const STATUS_STYLES = {
+  'Not Visited':{ bg:'#f0f0f0',  color:'#888' },
+  'Scheduled':  { bg:'#e8f0fe',  color:'#1a56a0' },
+  'Visited':    { bg:'#fff8e1',  color:'#7A5C00' },
+  'Strong Yes': { bg:'#e6f4ec',  color:'#145228' },
+  'Maybe':      { bg:'#fdf3e3',  color:'#C17D3C' },
+  'Pass':       { bg:'#fdeaea',  color:'#7A1212' },
+};
+
+let db = {};
+
+// ── AUTH ─────────────────────────────────────────────────────────────────
+function checkPassword() {
+  const val = document.getElementById('pw-input').value.trim();
+  if (val === PASSWORD) {
+    sessionStorage.setItem('loran_auth', 'true');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    init();
+  } else {
+    document.getElementById('pw-error').textContent = 'Incorrect password — try again';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+function logout() {
+  sessionStorage.removeItem('loran_auth');
+  location.reload();
+}
+
+// ── SUPABASE ──────────────────────────────────────────────────────────────
+async function loadNotes() {
+  try {
+    const res = await fetch(SUPABASE_URL + '/rest/v1/housing_notes?select=*', {
+      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+    });
+    const rows = await res.json();
+    rows.forEach(r => { db[r.property_id] = r; });
+  } catch(e) { console.warn('Load failed:', e); }
+}
+
+async function saveNote(id, field, value) {
+  if (!db[id]) db[id] = { property_id: id, status: 'Not Visited', rating: 0, note: '' };
+  db[id][field] = field === 'rating' ? parseInt(value) : value;
+  db[id].updated_at = new Date().toISOString();
+  try {
+    await fetch(SUPABASE_URL + '/rest/v1/housing_notes', {
+      method: 'POST',
+      headers: {
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify(db[id])
+    });
+    showSaved(id);
+  } catch(e) { console.warn('Save failed:', e); }
+  updateStats();
+}
+
+function get(id, field, def) {
+  return (db[id] && db[id][field] !== undefined && db[id][field] !== null && db[id][field] !== '')
+    ? db[id][field] : def;
+}
+
+// ── RENDER ────────────────────────────────────────────────────────────────
+async function init() {
+  await loadNotes();
+  renderCards();
+  updateStats();
+}
+
+function renderCards() {
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '';
+
+  PROPERTIES.forEach(p => {
+    const status = get(p.id, 'status', 'Not Visited');
+    const rating = parseInt(get(p.id, 'rating', 0));
+    const note = get(p.id, 'note', '');
+    const sc = STATUS_STYLES[status] || STATUS_STYLES['Not Visited'];
+
+    const card = document.createElement('div');
+    card.className = 'prop-card';
+    card.id = 'card-' + p.id;
+
+    // Header
+    let headerHTML = '<div class="prop-header">'
+      + '<div class="prop-row">'
+      + '<div><div class="prop-name">' + p.name + '</div>'
+      + '<div class="prop-hood">' + p.neighborhood + ' · ' + p.type + '</div></div>'
+      + '<div><div class="prop-price">' + p.price + '</div>'
+      + '<div class="prop-bd">' + p.bd + '</div></div>'
+      + '</div>';
+    if (p.url) headerHTML += '<a href="' + p.url + '" target="_blank" class="prop-link">↗ view listing</a>';
+    headerHTML += '</div>';
+
+    // Court notes
+    const courtHTML = '<div class="court-notes">'
+      + '<span class="court-notes-label">COURTS NOTES</span>'
+      + p.courtNotes
+      + '</div>';
+
+    // Status
+    let statusHTML = '<div class="section"><div class="section-label">STATUS</div><div class="status-grid">';
+    STATUS_OPTIONS.forEach(s => {
+      const ssc = STATUS_STYLES[s];
+      const active = s === status;
+      statusHTML += '<button class="status-btn" '
+        + 'style="' + (active ? 'border-color:' + ssc.color + ';background:' + ssc.bg + ';color:' + ssc.color : '') + '" '
+        + 'onclick="setStatus(\'' + p.id + '\', \'' + s + '\')">' + s + '</button>';
+    });
+    statusHTML += '</div></div>';
+
+    // Stars
+    let starsHTML = '<div class="section"><div class="section-label">RATING</div><div class="stars">';
+    for (let i = 1; i <= 5; i++) {
+      starsHTML += '<button class="star-btn ' + (i <= rating ? 'filled' : '') + '" '
+        + 'onclick="setRating(\'' + p.id + '\',' + i + ')">'
+        + '★</button>';
+    }
+    starsHTML += '</div></div>';
+
+    // Notes
+    const notesHTML = '<div class="section">'
+      + '<div class="section-label">YOUR NOTES</div>'
+      + '<textarea class="notes-field" id="note-' + p.id + '" '
+      + 'placeholder="Layout, condition, neighborhood feel, natural light, street vibe, red flags..." '
+      + 'onblur="setNote(\'' + p.id + '\')">' + note + '</textarea>'
+      + '<div class="save-indicator" id="saved-' + p.id + '"></div>'
+      + '</div>';
+
+    card.innerHTML = headerHTML + courtHTML + statusHTML + starsHTML + notesHTML;
+    container.appendChild(card);
+  });
+}
+
+function setStatus(id, status) {
+  saveNote(id, 'status', status);
+  // Update buttons immediately
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  card.querySelectorAll('.status-btn').forEach(btn => {
+    const s = btn.textContent;
+    const ssc = STATUS_STYLES[s];
+    const active = s === status;
+    btn.style.borderColor = active ? ssc.color : '#ddd';
+    btn.style.background = active ? ssc.bg : 'var(--surface)';
+    btn.style.color = active ? ssc.color : '#999';
+  });
+}
+
+function setRating(id, val) {
+  saveNote(id, 'rating', val);
+  const card = document.getElementById('card-' + id);
+  if (!card) return;
+  card.querySelectorAll('.star-btn').forEach((btn, i) => {
+    btn.classList.toggle('filled', i < val);
+  });
+}
+
+function setNote(id) {
+  const val = document.getElementById('note-' + id).value;
+  saveNote(id, 'note', val);
+}
+
+function showSaved(id) {
+  const el = document.getElementById('saved-' + id);
+  if (!el) return;
+  el.textContent = 'saved ✓';
+  el.style.opacity = '1';
+  setTimeout(() => { el.style.opacity = '0'; }, 2000);
+}
+
+function updateStats() {
+  const visited = PROPERTIES.filter(p => get(p.id, 'status', 'Not Visited') !== 'Not Visited').length;
+  const yes = PROPERTIES.filter(p => get(p.id, 'status', '') === 'Strong Yes').length;
+  document.getElementById('stat-visited').textContent = visited;
+  document.getElementById('stat-total').textContent = PROPERTIES.length;
+  document.getElementById('stat-yes').textContent = yes;
+}
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
+if (sessionStorage.getItem('loran_auth') === 'true') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  init();
+}
+</script>
+</body>
+</html>
