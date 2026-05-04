@@ -1179,6 +1179,7 @@ async function renderHousing() {
   // ── HOUSES / TOWNHOUSES ──────────────────────────────────────────────
   const houses = [
     {
+      id: 'lh4',
       name: '1339 W Lafayette Ave, Unit 1',
       neighborhood: 'Harlem Park',
       type: 'Townhouse',
@@ -1201,6 +1202,7 @@ async function renderHousing() {
       flag: null,
     },
     {
+      id: 'lh5',
       name: '805 Washington Blvd, Unit A',
       neighborhood: 'Pigtown',
       type: 'House',
@@ -1223,6 +1225,7 @@ async function renderHousing() {
       flag: null,
     },
     {
+      id: 'lh6',
       name: '1926 E 28th St',
       neighborhood: 'Coldstream Homestead Montebello',
       type: 'Townhouse',
@@ -1321,6 +1324,15 @@ async function renderHousing() {
     html += '</div></div>';
     html += '<div class="prop-section"><div class="prop-section-label">TRANSIT</div><div class="prop-notes">' + h.transit + '</div></div>';
     html += '<div class="prop-section"><div class="prop-section-label">CONTACT</div><div class="prop-notes">' + h.contact + '</div></div>';
+    if (h.id) {
+      const visiting = isLoranVisit(h.id);
+      html += '<div style="padding:0.75rem 1rem;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">'
+            + '<span style="font-family:var(--mono);font-size:9px;letter-spacing:0.06em;color:var(--text3)">SEND TO LORAN</span>'
+            + '<button data-hid="' + h.id + '" onclick="toggleLoranVisit(this.dataset.hid)" '
+            + 'style="font-family:var(--mono);font-size:9px;letter-spacing:0.05em;padding:5px 14px;border-radius:20px;cursor:pointer;border:1px solid ' + (visiting ? '#145228' : 'var(--border)') + ';background:' + (visiting ? '#e6f4ec' : 'var(--surface)') + ';color:' + (visiting ? '#145228' : 'var(--text2)') + '">'
+            + (visiting ? '✓ On Lorans List' : '+ Add to Lorans List') + '</button>'
+            + '</div>';
+    }
     html += '</div>';
     html += '<div class="verdict-box" style="border-color:' + (h.price<=1800?'#145228':'#7A5C00') + ';background:' + (h.price<=1800?'#e6f4ec':'#fff8e1') + ';color:' + (h.price<=1800?'#145228':'#7A5C00') + '">' + h.notes + '</div>';
     html += '</div>';
@@ -1629,8 +1641,17 @@ async function renderHousing() {
 
 function toggleLoranMode() {
   const current = localStorage.getItem('loranMode') === 'true';
-  localStorage.setItem('loranMode', (!current).toString());
-  renderHousing().catch(console.warn);
+  localStorage.setItem('loranMode', String(!current));
+  // Re-render housing view
+  const el = document.getElementById('view-housing');
+  if (!el) return;
+  if (!current) {
+    // switching TO loran mode
+    renderLoranMode(el);
+  } else {
+    // switching BACK to full view — reload full housing render
+    renderHousing();
+  }
 }
 
 const SUPABASE_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
@@ -1650,6 +1671,17 @@ async function loadAllLoranNotes() {
   } catch(e) {
     console.warn('Supabase load failed:', e);
   }
+}
+
+function toggleLoranVisit(id) {
+  const key = 'loran_visit_' + id;
+  const current = localStorage.getItem(key) === 'true';
+  localStorage.setItem(key, String(!current));
+  renderHousing();
+}
+
+function isLoranVisit(id) {
+  return localStorage.getItem('loran_visit_' + id) === 'true';
 }
 
 async function saveLoranNote(id, field, value) {
