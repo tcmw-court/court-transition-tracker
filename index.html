@@ -480,6 +480,32 @@ body {
   .view { padding: 1rem; }
   .header { padding: 1rem; }
 }
+
+/* HOUSING TAB */
+.housing-wrap { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+.housing-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.06em; margin-bottom: 1.5rem; }
+.housing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.prop-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.prop-header { padding: 1rem 1.1rem 0.75rem; border-bottom: 1px solid var(--border); }
+.prop-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
+.prop-address { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.prop-status { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+.prop-body { padding: 1rem 1.1rem; }
+.prop-section { margin-bottom: 0.85rem; }
+.prop-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.4rem; }
+.prop-units { display: flex; flex-direction: column; gap: 0.35rem; }
+.unit-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: 5px; }
+.unit-name { color: var(--text2); }
+.unit-price { font-family: var(--mono); font-weight: 500; color: var(--text); }
+.unit-avail { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+.prop-facts { display: flex; flex-wrap: wrap; gap: 5px; }
+.fact-pill { font-size: 10px; font-family: var(--mono); padding: 2px 8px; background: var(--surface2); border-radius: 20px; color: var(--text2); }
+.prop-notes { font-size: 11px; color: var(--text2); line-height: 1.55; }
+.prop-costs { display: flex; flex-direction: column; gap: 4px; }
+.cost-row { display: flex; justify-content: space-between; font-size: 11px; }
+.cost-label { color: var(--text2); }
+.cost-val { font-family: var(--mono); color: var(--text); }
+.verdict-box { margin: 0 1.1rem 1rem; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.5; border-left: 3px solid; }
 </style>
 </head>
 <body>
@@ -497,11 +523,13 @@ body {
   <button class="tab active" onclick="switchTab('board')">BOARD</button>
   <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
   <button class="tab" onclick="switchTab('finance')">FINANCE</button>
+  <button class="tab" onclick="switchTab('housing')">HOUSING</button>
 </div>
 
 <div id="view-board" class="view active"></div>
 <div id="view-timeline" class="view"></div>
 <div id="view-finance" class="view"></div>
+<div id="view-housing" class="view"></div>
 
 <script>
 const CAT_STYLES = {
@@ -1051,6 +1079,542 @@ function renderAll() {
   renderBoard();
   renderTimeline();
   renderFinance();
+  renderHousing();
+}
+
+
+function renderHousing() {
+  const el = document.getElementById('view-housing');
+  if (!el) return;
+
+  // ── APARTMENTS (toured) ──────────────────────────────────────────────
+  const apartments = [
+    {
+      name: 'Symphony Center Apartments',
+      address: 'Baltimore, MD',
+      type: 'Apartment',
+      status: 'Toured',
+      statusColor: '#145228', statusBg: '#e6f4ec',
+      contact: 'Nadine',
+      units: [
+        { name: '2bd/2ba — Unit 10+ (foyer, side window)', price: '$2,340/mo', note: 'Possible granite countertop' },
+        { name: '2bd/2ba — No balcony', price: '$2,180/mo', note: '' },
+      ],
+      costs: [
+        { label: 'Parking', val: 'Included' },
+        { label: 'Trash', val: '$5/mo' },
+        { label: 'Water', val: '$30/mo' },
+        { label: 'Electric', val: 'BGE metered' },
+        { label: 'Pet', val: '75lb · $45/mo · no deposit' },
+        { label: 'Deposit', val: 'From $500' },
+      ],
+      facts: ['Built 2004','Fitness center','Outdoor grill','Club room','MICA bus + JH shuttle','15 min to MARC','Whole Foods 15 min','3% MICA discount'],
+      notes: 'Bank statements or specific tax form. 60-day availability window. MICA job = 3% off.',
+      verdict: 'Strong pick — MICA shuttle seals it. $2,180 no-balcony is the value play.',
+      verdictColor: '#145228',
+    },
+    {
+      name: 'The Fitzgerald',
+      address: '1201 W Mount Royal Ave, Baltimore, MD',
+      type: 'Apartment',
+      status: 'Toured',
+      statusColor: '#145228', statusBg: '#e6f4ec',
+      contact: '',
+      units: [
+        { name: 'Carraway 2bd/2ba (French balcony)', price: '$2,503/mo', note: '12mo Jul 25: $2,387 · 15mo: $2,345' },
+        { name: 'Lanier 1bd/1ba + den (W facing)', price: '$2,218/mo', note: '4th fl $2,274 · avail Jul 9' },
+        { name: 'Holiday 2bd/2ba', price: '$2,402/mo', note: '' },
+        { name: 'Hendrick (Apt 229, not toured)', price: '$2,533/mo', note: '12mo Jul 25 · 15mo: $2,498' },
+      ],
+      costs: [
+        { label: 'Trash', val: '$15/mo' },
+        { label: 'Water', val: '$150/mo ⚠️' },
+        { label: 'Electric', val: 'All electric' },
+        { label: 'Pet deposit', val: '$350' },
+        { label: 'Pet rent', val: '$50/mo' },
+        { label: 'Deposit', val: 'From $500 (up to 1mo rent)' },
+      ],
+      facts: ['24hr concierge','Cyber cafe','Pool','Gym','Emergency maintenance','French balcony options'],
+      notes: 'Water at $150/mo is high — inflates true rent. Lanier den unit is most affordable entry.',
+      verdict: 'Water cost is the catch. Best value: Lanier at $2,218 if 1bd+den works for WFH + guests.',
+      verdictColor: '#7A5C00',
+    },
+    {
+      name: 'The Quill by Alta',
+      address: '1900 S Hanover St, Baltimore, MD 21230',
+      type: 'Apartment',
+      status: 'Ruled Out',
+      statusColor: '#7A1212', statusBg: '#fdeaea',
+      contact: 'Emily',
+      units: [],
+      costs: [],
+      facts: [],
+      notes: 'Too far from MICA and transit.',
+      verdict: 'Not viable — distance is a dealbreaker.',
+      verdictColor: '#7A1212',
+    },
+    {
+      name: 'The Vault',
+      address: '115 N Charles St, Baltimore, MD 21201',
+      type: 'Apartment',
+      status: 'To Visit',
+      statusColor: '#4A3800', statusBg: '#fff8e1',
+      contact: '443-851-9960',
+      units: [],
+      costs: [],
+      facts: [],
+      notes: 'Saturday 10a tour. Downtown N Charles St location.',
+      verdict: 'TBD — need to tour.',
+      verdictColor: '#4A3800',
+    },
+  ];
+
+  // ── HOUSES / TOWNHOUSES ──────────────────────────────────────────────
+  const houses = [
+    {
+      name: '1339 W Lafayette Ave, Unit 1',
+      neighborhood: 'Harlem Park',
+      type: 'Townhouse',
+      bd: 2, ba: 2,
+      sqft: null,
+      price: 1650,
+      deposit: 1500,
+      appFee: 50,
+      petPolicy: 'Case by case · $300 deposit',
+      available: 'Now (listed 2/2/26)',
+      lease: '12–34 months',
+      utilities: 'Tenant pays electric, heat, gas, internet, trash. Owner pays water.',
+      highlights: ['Central A/C','Stacked W/D in unit','LVP floors','Combo kitchen/living','3 levels + basement','Built 1920, reno 2023'],
+      transit: 'Multiple bus routes · nearby Metro Subway Link · near M&T Stadium/Camden Yards',
+      loranVisit: true,
+      status: 'Loran to Visit',
+      url: 'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/',
+      contact: 'Marcus King · (775) 237-8463 · marcus@porterhouserealtypros.com',
+      notes: 'Well below budget. Harlem Park — check neighborhood carefully. Good transit access.',
+      flag: null,
+    },
+    {
+      name: '805 Washington Blvd, Unit A',
+      neighborhood: 'Pigtown',
+      type: 'House',
+      bd: 2, ba: 2,
+      sqft: 1050,
+      price: 1650,
+      deposit: 1650,
+      appFee: 40,
+      petPolicy: 'Pets allowed · deposit required',
+      available: 'May 1, 2026',
+      lease: '12–60 months',
+      utilities: 'Tenant pays all (gas heat/cool, electric). Municipal trash.',
+      highlights: ['Central A/C (gas)','W/D in unit (Energy Star)','Hardwood floors','Open floorplan','En-suite bath','Upgraded countertops','Above retail storefront'],
+      transit: '2-min drive to highways · near Inner Harbor · M&T Stadium area',
+      loranVisit: true,
+      status: 'Loran to Visit',
+      url: 'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',
+      contact: 'Victoria Lin · (301) 738-7777 · vlin@capstarco.com',
+      notes: 'Pigtown — historic district, character neighborhood. Above retail. 1,050 sqft for $1,650 is solid value. Utilities not included, factor in gas costs.',
+      flag: null,
+    },
+    {
+      name: '1926 E 28th St',
+      neighborhood: 'Coldstream Homestead Montebello',
+      type: 'Townhouse',
+      bd: 2, ba: 2.5,
+      sqft: 1500,
+      price: 1950,
+      deposit: null,
+      appFee: null,
+      petPolicy: 'TBD',
+      available: 'May 3, 2026 (just listed)',
+      lease: 'TBD',
+      utilities: 'TBD',
+      highlights: ['Central A/C','Gas heat','Kitchen island','Stainless appliances','LVP floors','Patio + porch','Full basement','Security system','2.5 baths'],
+      transit: 'Check MICA distance — Coldstream/Montebello area is NE Baltimore',
+      loranVisit: true,
+      status: 'Loran to Visit',
+      url: 'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',
+      contact: 'Darrell Harris · (443) 632-3000 · execuhome@execuhome.com',
+      notes: '⭐ Also listed FOR SALE at $205K — aligns with your buy-later budget. Currently also listed as rental at $1,950/mo. Worth watching. 1,500 sqft is the most space of the three. Verify MICA commute distance.',
+      flag: 'Also for sale at $205K',
+    },
+  ];
+
+  let html = '<div class="housing-wrap">';
+  html += '<div class="housing-meta">BALTIMORE HOUSING · MOVE-IN TARGET: END OF JULY OR MID-AUGUST · BUDGET: UNDER $1,800 (HARD CEILING $2,500)</div>';
+
+  // ── SPREADSHEET TABLE ────────────────────────────────────────────────
+  html += '<div style="margin-bottom:2rem">';
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">HOUSES & TOWNHOUSES — QUICK COMPARE</div>';
+  html += '<div style="overflow-x:auto">';
+  html += '<table style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)">';
+  html += '<thead><tr style="border-bottom:2px solid var(--border);text-align:left">';
+  const headers = ['Address','Neighborhood','Type','Bd/Ba','Sqft','Rent','Deposit','Available','Pet','W/D','A/C','Loran Visit','Status'];
+  headers.forEach(h => {
+    html += '<th style="padding:6px 10px;font-size:9px;letter-spacing:0.07em;color:var(--text3);white-space:nowrap">' + h + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  houses.forEach((h, i) => {
+    const bg = i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)';
+    const wd = h.highlights.some(x => x.toLowerCase().includes('w/d') || x.toLowerCase().includes('washer')) ? '✓' : '?';
+    const ac = h.highlights.some(x => x.toLowerCase().includes('a/c') || x.toLowerCase().includes('central')) ? '✓' : '?';
+    const pet = h.petPolicy && h.petPolicy !== 'TBD' ? '✓' : '?';
+    const statusColor = h.status === 'Loran to Visit' ? '#7A5C00' : h.status === 'Toured' ? '#145228' : '#7A1212';
+    html += '<tr style="background:' + bg + ';border-bottom:1px solid var(--border)">';
+    html += '<td style="padding:8px 10px;white-space:nowrap"><a href="' + h.url + '" target="_blank" style="color:var(--accent);text-decoration:none">' + h.name + '</a></td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">' + h.neighborhood + '</td>';
+    html += '<td style="padding:8px 10px">' + h.type + '</td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">' + h.bd + 'bd/' + h.ba + 'ba</td>';
+    html += '<td style="padding:8px 10px">' + (h.sqft ? h.sqft + ' sf' : '—') + '</td>';
+    html += '<td style="padding:8px 10px;font-weight:500;color:' + (h.price <= 1800 ? '#145228' : h.price <= 2000 ? '#7A5C00' : '#7A1212') + '">$' + h.price.toLocaleString() + '/mo</td>';
+    html += '<td style="padding:8px 10px">' + (h.deposit ? '$' + h.deposit.toLocaleString() : '?') + '</td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">' + h.available + '</td>';
+    html += '<td style="padding:8px 10px;text-align:center">' + pet + '</td>';
+    html += '<td style="padding:8px 10px;text-align:center">' + wd + '</td>';
+    html += '<td style="padding:8px 10px;text-align:center">' + ac + '</td>';
+    html += '<td style="padding:8px 10px;text-align:center">' + (h.loranVisit ? '✓' : '') + '</td>';
+    html += '<td style="padding:8px 10px"><span style="font-size:9px;padding:2px 7px;border-radius:20px;background:' + (h.status==='Loran to Visit'?'#fff8e1':'#e6f4ec') + ';color:' + statusColor + '">' + h.status + '</span></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  // ── HOUSE DETAIL CARDS ───────────────────────────────────────────────
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">HOUSES & TOWNHOUSES — DETAIL CARDS</div>';
+  html += '<div class="housing-grid" style="margin-bottom:2rem">';
+  houses.forEach(h => {
+    const priceColor = h.price <= 1800 ? '#145228' : h.price <= 2000 ? '#7A5C00' : '#7A1212';
+    html += '<div class="prop-card">';
+    html += '<div class="prop-header">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:flex-start">';
+    html += '<div><div class="prop-name"><a href="' + h.url + '" target="_blank" style="color:var(--text);text-decoration:none">' + h.name + '</a></div>';
+    html += '<div class="prop-address">' + h.neighborhood + ' · ' + h.type + '</div>';
+    if (h.flag) html += '<div style="font-size:10px;color:var(--accent);margin-top:3px;font-family:var(--mono)">⭐ ' + h.flag + '</div>';
+    html += '</div>';
+    html += '<div style="font-family:var(--mono);font-size:16px;font-weight:500;color:' + priceColor + '">$' + h.price.toLocaleString() + '<span style="font-size:10px;font-weight:400">/mo</span></div>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">';
+    html += '<span class="prop-status" style="color:#145228;background:#e6f4ec">' + h.bd + 'bd / ' + h.ba + 'ba</span>';
+    if (h.sqft) html += '<span class="prop-status" style="color:var(--text2);background:var(--surface2)">' + h.sqft + ' sqft</span>';
+    html += '<span class="prop-status" style="color:#7A5C00;background:#fff8e1">' + h.status + '</span>';
+    html += '</div></div>';
+    html += '<div class="prop-body">';
+    html += '<div class="prop-section"><div class="prop-section-label">KEY DETAILS</div><div class="prop-costs">';
+    html += '<div class="cost-row"><span class="cost-label">Available</span><span class="cost-val">' + h.available + '</span></div>';
+    html += '<div class="cost-row"><span class="cost-label">Lease</span><span class="cost-val">' + h.lease + '</span></div>';
+    html += '<div class="cost-row"><span class="cost-label">Deposit</span><span class="cost-val">' + (h.deposit ? '$' + h.deposit.toLocaleString() : 'TBD') + '</span></div>';
+    if (h.appFee) html += '<div class="cost-row"><span class="cost-label">App fee</span><span class="cost-val">$' + h.appFee + '</span></div>';
+    html += '<div class="cost-row"><span class="cost-label">Pets</span><span class="cost-val">' + h.petPolicy + '</span></div>';
+    html += '</div></div>';
+    html += '<div class="prop-section"><div class="prop-section-label">UTILITIES</div><div class="prop-notes">' + h.utilities + '</div></div>';
+    html += '<div class="prop-section"><div class="prop-section-label">HIGHLIGHTS</div><div class="prop-facts">';
+    h.highlights.forEach(f => html += '<span class="fact-pill">' + f + '</span>');
+    html += '</div></div>';
+    html += '<div class="prop-section"><div class="prop-section-label">TRANSIT</div><div class="prop-notes">' + h.transit + '</div></div>';
+    html += '<div class="prop-section"><div class="prop-section-label">CONTACT</div><div class="prop-notes">' + h.contact + '</div></div>';
+    html += '</div>';
+    html += '<div class="verdict-box" style="border-color:' + (h.price<=1800?'#145228':'#7A5C00') + ';background:' + (h.price<=1800?'#e6f4ec':'#fff8e1') + ';color:' + (h.price<=1800?'#145228':'#7A5C00') + '">' + h.notes + '</div>';
+    html += '</div>';
+  });
+  html += '</div>';
+
+  // ── APARTMENT CARDS ───────────────────────────────────────────────────
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">APARTMENTS — TOURED</div>';
+  html += '<div class="housing-grid">';
+  apartments.forEach(p => {
+    html += '<div class="prop-card">';
+    html += '<div class="prop-header">';
+    html += '<div class="prop-name">' + p.name + '</div>';
+    if (p.address) html += '<div class="prop-address">' + p.address + '</div>';
+    html += '<div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">';
+    html += '<span class="prop-status" style="color:' + p.statusColor + ';background:' + p.statusBg + '">' + p.status + '</span>';
+    html += '<span class="prop-status" style="color:var(--text2);background:var(--surface2)">' + p.type + '</span>';
+    html += '</div>';
+    if (p.contact) html += '<div class="prop-address" style="margin-top:4px">Contact: ' + p.contact + '</div>';
+    html += '</div>';
+    html += '<div class="prop-body">';
+    if (p.units.length) {
+      html += '<div class="prop-section"><div class="prop-section-label">UNITS & PRICING</div><div class="prop-units">';
+      p.units.forEach(u => {
+        html += '<div class="unit-row"><div><div class="unit-name">' + u.name + '</div>';
+        if (u.note) html += '<div style="font-size:10px;color:var(--text3)">' + u.note + '</div>';
+        html += '</div><div class="unit-price">' + u.price + '</div></div>';
+      });
+      html += '</div></div>';
+    }
+    if (p.costs.length) {
+      html += '<div class="prop-section"><div class="prop-section-label">ADDITIONAL COSTS</div><div class="prop-costs">';
+      p.costs.forEach(c => html += '<div class="cost-row"><span class="cost-label">' + c.label + '</span><span class="cost-val">' + c.val + '</span></div>');
+      html += '</div></div>';
+    }
+    if (p.facts.length) {
+      html += '<div class="prop-section"><div class="prop-section-label">AMENITIES</div><div class="prop-facts">';
+      p.facts.forEach(f => html += '<span class="fact-pill">' + f + '</span>');
+      html += '</div></div>';
+    }
+    if (p.notes) html += '<div class="prop-section"><div class="prop-section-label">DETAILS</div><div class="prop-notes">' + p.notes + '</div></div>';
+    html += '</div>';
+    html += '<div class="verdict-box" style="border-color:' + p.verdictColor + ';background:' + p.statusBg + ';color:' + p.verdictColor + '">' + p.verdict + '</div>';
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+
+  // ── SEARCH CHANNELS & LEADS ─────────────────────────────────────────
+  html += '<div style="margin-bottom:2rem">';
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">HOT LEADS — RESEARCH SURFACED</div>';
+
+  const leads = [
+    {
+      name: '750 Reservoir St, Unit A',
+      neighborhood: 'Reservoir Hill',
+      type: 'Townhouse',
+      price: '$1,650/mo',
+      bd: '2bd/1ba',
+      sqft: '900 sqft',
+      notes: 'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park & MICA. Strong lead.',
+      url: 'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',
+      priority: 'HIGH',
+    },
+    {
+      name: '750 Reservoir St, Unit B',
+      neighborhood: 'Reservoir Hill',
+      type: 'Townhouse',
+      price: '~$1,750/mo',
+      bd: '2bd/2ba',
+      sqft: '~900 sqft',
+      notes: 'Same building as Unit A, fully renovated 2025. 2bd/2ba version. Price TBD — confirm with landlord.',
+      url: 'https://www.redfin.com/MD/Baltimore/750-Reservoir-St-21217/unit-B/apartment/198836948',
+      priority: 'HIGH',
+    },
+    {
+      name: '1121 Whitelock St',
+      neighborhood: 'Reservoir Hill',
+      type: 'House',
+      price: '$1,300/mo',
+      bd: '2bd/1ba',
+      sqft: '1,180 sqft',
+      notes: 'Flagged $352 below market. Pets allowed. Dishwasher. Whitelock is a core Reservoir Hill street. Verify availability.',
+      url: 'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',
+      priority: 'HIGH',
+    },
+    {
+      name: '525 W Lafayette Ave',
+      neighborhood: 'Bolton Hill',
+      type: 'Townhouse',
+      price: '$1,600/mo',
+      bd: '3bd/1ba',
+      sqft: '1,410 sqft',
+      notes: 'Listed 3bd at $1,600 — Bolton Hill. Oversized but may negotiate down or has smaller units nearby. Good value for area.',
+      url: 'https://www.rent.com/maryland/baltimore-townhouses/bolton-hill-neighborhood',
+      priority: 'MEDIUM',
+    },
+    {
+      name: '2314 Eutaw Pl #4',
+      neighborhood: 'Reservoir Hill / Bolton Hill border',
+      type: 'Townhouse',
+      price: '$1,800/mo',
+      bd: '3bd/1ba',
+      sqft: '4,380 sqft',
+      notes: 'Large space at the Reservoir Hill / Bolton Hill border on Eutaw Pl. 3bd — may be shareable or negotiable for 2bd rate.',
+      url: 'https://www.rent.com/maryland/baltimore-townhouses/bolton-hill-neighborhood',
+      priority: 'MEDIUM',
+    },
+    {
+      name: '2206 Eutaw Place, Unit 3',
+      neighborhood: 'Reservoir Hill',
+      type: 'Townhouse',
+      price: '$2,250/mo',
+      bd: '3bd/2ba',
+      sqft: '5,100 sqft',
+      notes: 'Above budget but massive — historic Reservoir Hill on Eutaw Pl. Master suite + walk-in closet. Good WFH potential. Contact: Floretta Davis, Samson Properties (301) 238-7555.',
+      url: 'https://www.homes.com/property/2206-eutaw-place-baltimore-md-unit-3/05p1rq5jfcm8e/',
+      priority: 'LOW',
+    },
+    {
+      name: 'Station North Rowhome',
+      neighborhood: 'Station North',
+      type: 'Rowhome',
+      price: '~$1,800-2,000/mo',
+      bd: '4bd/3.5ba',
+      sqft: '2,200+ sqft',
+      notes: 'MICA-adjacent, Penn Station walkable. Oversized but excellent neighborhood. Hardwood floors, updated kitchen. (410) 814-2408.',
+      url: 'https://www.zumper.com/houses-for-rent/baltimore-md/remington',
+      priority: 'MEDIUM',
+    },
+    {
+      name: '2bd/2ba Federal Hill Rowhouse',
+      neighborhood: 'Federal Hill',
+      type: 'Rowhouse',
+      price: '$2,000/mo',
+      bd: '2bd/2ba',
+      sqft: null,
+      notes: 'Listed on Craigslist. South of MICA — factor in commute. Federal Hill is lively, walkable neighborhood. Check listing for details.',
+      url: 'https://baltimore.craigslist.org/search/hhh',
+      priority: 'LOW',
+    },
+  ];
+
+  const priorityColors = { HIGH: { bg: '#e6f4ec', color: '#145228' }, MEDIUM: { bg: '#fff8e1', color: '#7A5C00' }, LOW: { bg: '#f5f5f5', color: '#666' } };
+
+  html += '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:11px;font-family:var(--mono)">';
+  html += '<thead><tr style="border-bottom:2px solid var(--border)">';
+  ['Priority','Address','Neighborhood','Type','Price','Bed/Bath','Notes','Link'].forEach(h => {
+    html += '<th style="padding:6px 10px;font-size:9px;letter-spacing:0.07em;color:var(--text3);white-space:nowrap;text-align:left">' + h + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  leads.forEach((l, i) => {
+    const bg = i % 2 === 0 ? 'var(--surface)' : 'var(--surface2)';
+    const pc = priorityColors[l.priority];
+    html += '<tr style="background:' + bg + ';border-bottom:1px solid var(--border)">';
+    html += '<td style="padding:8px 10px"><span style="font-size:9px;padding:2px 7px;border-radius:20px;background:' + pc.bg + ';color:' + pc.color + ';white-space:nowrap">' + l.priority + '</span></td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap;font-weight:500">' + l.name + '</td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">' + l.neighborhood + '</td>';
+    html += '<td style="padding:8px 10px">' + l.type + '</td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap;color:' + (parseFloat(l.price.replace(/[^0-9.]/g,'')) <= 1800 ? '#145228' : parseFloat(l.price.replace(/[^0-9.]/g,'')) <= 2000 ? '#7A5C00' : '#7A1212') + ';font-weight:500">' + l.price + '</td>';
+    html += '<td style="padding:8px 10px;white-space:nowrap">' + l.bd + '</td>';
+    html += '<td style="padding:8px 10px;max-width:280px;color:var(--text2)">' + l.notes + '</td>';
+    html += '<td style="padding:8px 10px"><a href="' + l.url + '" target="_blank" style="color:var(--accent);text-decoration:none;font-size:10px;white-space:nowrap">↗ view</a></td>';
+    html += '</tr>';
+  });
+  html += '</tbody></table></div></div>';
+
+  // ── SEARCH PLATFORMS ────────────────────────────────────────────────
+  html += '<div style="margin-bottom:2rem">';
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">SEARCH PLATFORMS — DIRECT LINKS</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem">';
+
+  const platforms = [
+    {
+      name: 'Homes.com — Reservoir Hill Townhouses',
+      desc: '14 townhouses currently listed. Best source for Reservoir Hill rowhouses.',
+      url: 'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',
+    },
+    {
+      name: 'Homes.com — Baltimore Houses For Rent',
+      desc: 'Broadest listing database. Filter by neighborhood, price, beds.',
+      url: 'https://www.homes.com/baltimore-md/homes-for-rent/',
+    },
+    {
+      name: 'Zillow — Reservoir Hill Rentals',
+      desc: '87 rentals listed. Set price filter to $1,800 max and save search for alerts.',
+      url: 'https://www.zillow.com/reservoir-hill-baltimore-md/rentals/',
+    },
+    {
+      name: 'Zillow — Baltimore Houses For Rent',
+      desc: '424 single-family rentals in Baltimore. Filter by neighborhood.',
+      url: 'https://www.zillow.com/baltimore-md/rent-houses/',
+    },
+    {
+      name: 'Apartments.com — Reservoir Hill 2bd',
+      desc: '27 2-bedroom units in Reservoir Hill. Avg rent $1,296/mo.',
+      url: 'https://www.apartments.com/reservoir-hill-baltimore-md/2-bedrooms/',
+    },
+    {
+      name: 'Apartments.com — Bolton Hill 2bd',
+      desc: 'Bolton Hill 2-bedroom search. Avg $1,681/mo, 76% under $2,000.',
+      url: 'https://www.apartments.com/bolton-hill-baltimore-md/2-bedrooms/',
+    },
+    {
+      name: 'ApartmentAdvisor — Reservoir Hill Deals',
+      desc: 'Shows units flagged below market. Found $1,300 2bd on Whitelock here.',
+      url: 'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',
+    },
+    {
+      name: 'Zumper — Remington / Station North Houses',
+      desc: 'Best for rowhouses near MICA. Station North and Remington listings.',
+      url: 'https://www.zumper.com/houses-for-rent/baltimore-md/remington',
+    },
+    {
+      name: 'Craigslist Baltimore — Houses For Rent',
+      desc: 'Individual landlords post here first. Freshest rowhouse inventory. Search "2 bedroom" + neighborhood name.',
+      url: 'https://baltimore.craigslist.org/search/hhh',
+    },
+    {
+      name: 'Live Baltimore — City Housing Resource',
+      desc: 'City-sponsored housing resource. Neighborhood guides, landlord listings, relocation support.',
+      url: 'https://www.livebaltimore.com/',
+    },
+    {
+      name: 'Redfin — Baltimore Townhomes For Rent',
+      desc: 'Good for filtering by price + neighborhood with map view.',
+      url: 'https://www.redfin.com/city/1073/MD/Baltimore/townhomes-for-rent',
+    },
+    {
+      name: 'HotPads — Hampden Houses',
+      desc: 'Map-based search. Good for Hampden / Remington rowhouse browsing.',
+      url: 'https://hotpads.com/hampden-baltimore-md/houses-for-rent',
+    },
+  ];
+
+  platforms.forEach(p => {
+    html += '<a href="' + p.url + '" target="_blank" style="display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.9rem 1rem;text-decoration:none">';
+    html += '<div style="font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text);margin-bottom:4px">' + p.name + ' ↗</div>';
+    html += '<div style="font-size:11px;color:var(--text2);line-height:1.45">' + p.desc + '</div>';
+    html += '</a>';
+  });
+  html += '</div></div>';
+
+  // ── FACEBOOK GROUPS ──────────────────────────────────────────────────
+  html += '<div style="margin-bottom:2rem">';
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">FACEBOOK GROUPS — OFF-MARKET INTEL</div>';
+  html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem">';
+  html += '<div style="font-size:11px;color:var(--text2);margin-bottom:0.75rem;line-height:1.5">Individual Baltimore landlords post rowhouses here before listing on Zillow/Homes.com — often 1–3 weeks earlier. Search the group + "2 bedroom" or "for rent" and post your own "looking for" post with your move-in date, budget, and pet info.</div>';
+  html += '<div style="display:flex;flex-direction:column;gap:0.5rem">';
+
+  const fbGroups = [
+    { name: 'Baltimore Housing & Rentals', desc: 'Largest Baltimore rental group. Very active. Best for broad search.', url: 'https://www.facebook.com/groups/baltimorehousingandrentals' },
+    { name: 'Reservoir Hill Community', desc: 'Neighborhood-specific. Landlords post directly. Best for rowhouse leads in Reservoir Hill.', url: 'https://www.facebook.com/groups/reservoirhillcommunity' },
+    { name: 'Bolton Hill Baltimore', desc: 'Bolton Hill neighborhood group. Watch for rental posts from local landlords.', url: 'https://www.facebook.com/groups/boltonhillbaltimore' },
+    { name: 'Station North Baltimore', desc: 'Station North arts district. Good for creative-community adjacent rentals near MICA.', url: 'https://www.facebook.com/groups/stationnorthbaltimore' },
+    { name: 'Hampden Baltimore Community', desc: 'Hampden neighborhood group. Rowhouses, local landlords, off-market leads.', url: 'https://www.facebook.com/groups/hampdenbaltimore' },
+    { name: 'Baltimore City Rentals', desc: 'City-wide rental group. Mix of landlords and property managers. Good for Craigslist-style browsing.', url: 'https://www.facebook.com/groups/baltimorecityrentals' },
+    { name: 'Remington Baltimore Neighbors', desc: 'Remington neighborhood. MICA-adjacent. Tight-knit group with off-market posts.', url: 'https://www.facebook.com/groups/remingtonbaltimore' },
+    { name: 'MICA Community Board (Facebook)', desc: 'MICA students and staff share housing leads. Good for finding rentals from people in your actual community.', url: 'https://www.facebook.com/groups/micahousing' },
+  ];
+
+  fbGroups.forEach(g => {
+    html += '<a href="' + g.url + '" target="_blank" style="display:flex;justify-content:space-between;align-items:flex-start;padding:8px 10px;border-radius:6px;background:var(--surface2);text-decoration:none;gap:1rem">';
+    html += '<div><div style="font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text)">' + g.name + '</div>';
+    html += '<div style="font-size:11px;color:var(--text2);margin-top:2px">' + g.desc + '</div></div>';
+    html += '<span style="font-family:var(--mono);font-size:10px;color:var(--accent);white-space:nowrap">↗ open</span>';
+    html += '</a>';
+  });
+
+  html += '</div></div></div>';
+
+  // ── NEIGHBORHOOD INTEL ───────────────────────────────────────────────
+  html += '<div style="margin-bottom:2rem">';
+  html += '<div class="prop-section-label" style="margin-bottom:0.75rem;font-size:10px;letter-spacing:0.08em;color:var(--text3)">NEIGHBORHOOD INTEL — RESEARCH SUMMARY</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem">';
+
+  const hoods = [
+    { name: 'Reservoir Hill', rank: '#1 Pick', rankColor: '#145228', rankBg: '#e6f4ec', avgRent: '$1,296/mo avg 2bd', micaDist: '0.5 mi from MICA', notes: 'Historically rich Victorian rowhouses. Adjacent to Druid Hill Park and the Zoo. Active community (RHIC, Whitelock Farm, Dovecote Cafe). Best price-to-proximity ratio. Also your eventual buy-later target.', watch: '14 townhouses listed now on Homes.com. Whitelock St and Eutaw Pl are the key streets.' },
+    { name: 'Bolton Hill', rank: '#2 Pick', rankColor: '#145228', rankBg: '#e6f4ec', avgRent: '$1,681/mo avg', micaDist: '~0.7 mi from MICA', notes: '76% of units fall $1,501–2,000. Light Rail steps away. Beautiful 19th century architecture, tree-lined streets. I-83 and US-40 on the east side. UMMC Midtown nearby.', watch: '525 W Lafayette Ave at $1,600 (3bd) — watch for 2bd equivalents. Bolton North is HUD-restricted; check eligibility.' },
+    { name: 'Station North', rank: 'Strong #3', rankColor: '#7A5C00', rankBg: '#fff8e1', avgRent: '$1,800–2,000/mo houses', micaDist: 'Walkable to MICA', notes: 'Arts district directly adjacent to MICA. Penn Station walkable. Very limited house inventory — moves fast. Great community alignment.', watch: 'Watch Craigslist and Zumper. Rowhouses list and rent within days here.' },
+    { name: 'Remington', rank: 'Consider', rankColor: '#7A5C00', rankBg: '#fff8e1', avgRent: '$1,700–2,000/mo', micaDist: '~1.5 mi from MICA', notes: 'Vibrant food scene (R. House food hall). JHU-adjacent. Very tight house inventory. Median rent $2,964 but individual rowhouses can be found lower.', watch: 'Mostly 3–4bd houses. HotPads and Facebook Remington group.' },
+    { name: 'Charles Village / Guilford', rank: 'Backup', rankColor: '#4A3800', rankBg: '#f5f5f5', avgRent: '$1,800–2,100/mo', micaDist: '~1.5 mi from MICA', notes: 'Victorian painted ladies on Guilford Ave. JHU-heavy tenant pool — rowhouses tend to be leased by student groups. Good food/culture on St. Paul St.', watch: 'Redfin and Craigslist for individual landlord listings outside student leases.' },
+    { name: 'Hampden', rank: 'Watch', rankColor: '#4A3800', rankBg: '#f5f5f5', avgRent: '$2,964/mo median', micaDist: '~2 mi from MICA', notes: 'The Avenue (36th St) is excellent — shops, breweries, MOMs Organic Market. 10 min walk to JHU. Light Rail at Woodberry. But median rent runs high and house inventory is only 4 units.', watch: 'Only worth pursuing if budget allows or a specific unit appears.' },
+  ];
+
+  hoods.forEach(h => {
+    html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem">';
+    html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem">';
+    html += '<div style="font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text)">' + h.name + '</div>';
+    html += '<span style="font-size:9px;padding:2px 7px;border-radius:20px;background:' + h.rankBg + ';color:' + h.rankColor + ';font-family:var(--mono)">' + h.rank + '</span>';
+    html += '</div>';
+    html += '<div style="display:flex;gap:6px;margin-bottom:0.6rem;flex-wrap:wrap">';
+    html += '<span class="fact-pill">' + h.avgRent + '</span>';
+    html += '<span class="fact-pill">' + h.micaDist + '</span>';
+    html += '</div>';
+    html += '<div style="font-size:11px;color:var(--text2);line-height:1.5;margin-bottom:0.5rem">' + h.notes + '</div>';
+    html += '<div style="font-size:10px;font-family:var(--mono);color:var(--accent);padding-top:0.5rem;border-top:1px solid var(--border)">→ ' + h.watch + '</div>';
+    html += '</div>';
+  });
+
+  html += '</div></div>';
+
+  el.innerHTML = html;
 }
 
 function switchTab(name) {
