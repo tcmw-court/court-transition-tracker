@@ -3,1474 +3,833 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Court — Logistics Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Court Williams — 2026 Transition</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap');
 :root {
-  --bg: #F7F5F0;
-  --surface: #FFFFFF;
-  --surface2: #F0EDE6;
-  --border: #E2DDD4;
+  --bg: #F5F0E8;
+  --surface: #FDFAF4;
+  --surface2: #F0EBE0;
+  --border: #E0D8C8;
   --text: #1A1714;
-  --text2: #6B6560;
-  --text3: #9E9890;
+  --text2: #4A4540;
+  --text3: #8A8480;
   --accent: #C17D3C;
-  --accent-light: #F5EBD8;
+  --accent2: #8B5E3C;
+  --green: #4A7C59;
+  --red: #8B3A3A;
   --mono: 'DM Mono', monospace;
   --sans: 'DM Sans', sans-serif;
   --radius: 10px;
-  --radius-sm: 6px;
 }
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 15px; }
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  padding: 0;
-}
-/* HEADER */
-.header {
-  background: var(--text);
-  padding: 1.25rem 1.5rem;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh; }
+
+/* ── HEADER ── */
+header {
+  background: #1A1714;
+  color: #F5F0E8;
+  padding: 0 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  height: 52px;
+  position: sticky; top: 0; z-index: 100;
 }
-.header-name {
-  font-family: var(--mono);
-  font-size: 13px;
-  color: var(--accent);
-  letter-spacing: 0.08em;
+.header-name { font-family: var(--mono); font-size: 13px; letter-spacing: 0.08em; font-weight: 500; }
+.header-badge {
+  background: var(--accent); color: #fff;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 4px 10px; border-radius: 20px;
 }
-.header-date {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: #666;
-  letter-spacing: 0.05em;
+.header-right { display: flex; align-items: center; gap: 1rem; }
+.header-live {
+  font-family: var(--mono); font-size: 10px; color: #8A8480;
+  border: 1px solid #3A3530; padding: 3px 8px; border-radius: 4px;
 }
-.surgery-pill {
-  background: #8B1A1A;
-  color: #FFD0D0;
-  font-family: var(--mono);
-  font-size: 11px;
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: 0.04em;
-}
-/* TABS */
-.tabs {
-  display: flex;
-  gap: 0;
-  border-bottom: 1px solid var(--border);
+.header-live span { color: var(--green); margin-right: 4px; }
+.header-date { font-family: var(--mono); font-size: 10px; color: #8A8480; }
+
+/* ── NAV ── */
+nav {
   background: var(--surface);
-  padding: 0 1.5rem;
-  position: sticky;
-  top: 54px;
-  z-index: 99;
+  border-bottom: 1px solid var(--border);
+  display: flex; gap: 0; padding: 0 2rem;
 }
-.tab {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  color: var(--text3);
-  padding: 12px 16px;
-  cursor: pointer;
-  border: none;
-  background: none;
+nav button {
+  background: none; border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
+  color: var(--text3); padding: 14px 16px;
   border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
-  transition: color 0.15s;
+  transition: all 0.15s;
 }
-.tab:hover { color: var(--text2); }
-.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-/* VIEWS */
-.view { display: none; padding: 1.5rem; }
-.view.active { display: block; }
-/* PROGRESS */
-.progress-bar {
-  height: 3px;
-  background: var(--border);
-  border-radius: 2px;
-  margin-bottom: 4px;
+nav button:hover { color: var(--text2); }
+nav button.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+/* ── MAIN ── */
+main { max-width: 1100px; margin: 0 auto; padding: 2rem; }
+
+/* ── BOARD TAB ── */
+.board-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+@media (max-width: 700px) { .board-grid { grid-template-columns: 1fr; } }
+.board-col-header {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em;
+  color: var(--text3); padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border); margin-bottom: 1rem;
 }
-.progress-fill {
-  height: 3px;
-  background: var(--accent);
-  border-radius: 2px;
-  transition: width 0.4s ease;
+.task-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 1rem;
+  margin-bottom: 0.75rem;
 }
-.progress-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text3);
-  margin-bottom: 1.5rem;
+.task-card h4 { font-size: 13px; font-weight: 500; margin-bottom: 0.4rem; }
+.task-card p { font-size: 12px; color: var(--text2); line-height: 1.5; }
+.task-tag {
+  display: inline-block; font-family: var(--mono); font-size: 9px;
+  letter-spacing: 0.06em; padding: 2px 7px; border-radius: 3px;
+  margin-top: 0.5rem; background: var(--surface2); color: var(--text3);
 }
-/* BOARD TOGGLE */
-.board-toggle {
-  display: flex;
-  gap: 0;
-  background: var(--surface2);
-  border-radius: var(--radius-sm);
-  padding: 3px;
-  width: fit-content;
-  margin-bottom: 1rem;
+.tag-urgent { background: #F5EDE0; color: var(--accent); }
+.tag-done { background: #EAF0EB; color: var(--green); }
+
+/* ── HOUSING TAB ── */
+.housing-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
 }
-.board-toggle-btn {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.05em;
-  padding: 5px 14px;
-  border: none;
-  background: none;
-  color: var(--text3);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-.board-toggle-btn.active {
-  background: var(--surface);
-  color: var(--accent);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-}
-/* PROJECT BOARD */
-.proj-section { margin-bottom: 1.5rem; }
-.proj-section-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-.proj-section-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  font-weight: 500;
-}
-.proj-section-count {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text3);
-}
-.proj-kanban {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 8px;
-}
-/* KANBAN */
-.kanban {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 10px;
-  margin-bottom: 1.5rem;
-}
-.k-col {
-  background: var(--surface2);
-  border-radius: var(--radius);
-  padding: 10px;
-  min-height: 80px;
-}
-.k-col-title {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 0.07em;
-  color: var(--text3);
-  margin-bottom: 8px;
-  padding: 0 2px;
-  display: flex;
-  justify-content: space-between;
-}
-.k-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 8px 10px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: border-color 0.1s, transform 0.1s;
-}
-.k-card:hover { border-color: var(--accent); transform: translateY(-1px); }
-.k-card.is-done { opacity: 0.45; }
-.k-card-title {
-  font-size: 12px;
-  color: var(--text);
-  line-height: 1.4;
-  margin-bottom: 5px;
-}
-.k-card.is-done .k-card-title { text-decoration: line-through; color: var(--text3); }
-.k-card-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 4px;
-  flex-wrap: wrap;
-}
-.k-card-note {
-  font-size: 10px;
-  color: var(--text3);
-  margin-top: 3px;
-  line-height: 1.3;
-}
-/* BADGES */
-.badge {
-  display: inline-block;
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.03em;
-  padding: 2px 6px;
-  border-radius: 20px;
-  white-space: nowrap;
-}
-.due-tag {
-  font-family: var(--mono);
-  font-size: 9px;
-  color: var(--text3);
-  white-space: nowrap;
-}
-/* ADD ROW */
-.add-row {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 4px;
-}
-.add-row input, .add-row select {
-  font-family: var(--sans);
-  font-size: 13px;
-  padding: 7px 10px;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  outline: none;
-}
-.add-row input:focus, .add-row select:focus { border-color: var(--accent); }
-.add-row input { flex: 1; min-width: 160px; }
-.add-row select { min-width: 110px; }
-.add-row .due-input { min-width: 80px; flex: none; }
-.add-btn {
-  font-family: var(--mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
-  padding: 7px 16px;
-  background: var(--accent);
-  color: white;
-  border: none;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
-.add-btn:hover { opacity: 0.85; }
-/* CALENDAR */
-.cal-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 1rem;
-}
-.cal-nav-title {
-  font-family: var(--mono);
-  font-size: 13px;
-  letter-spacing: 0.07em;
-  color: var(--text);
-}
-.cal-nav-btn {
-  font-family: var(--mono);
-  font-size: 12px;
-  padding: 5px 12px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  color: var(--text2);
-  transition: border-color 0.15s;
-}
-.cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
-.cal-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-}
-.cal-dow {
-  font-family: var(--mono);
-  font-size: 9px;
-  letter-spacing: 0.06em;
-  color: var(--text3);
-  text-align: center;
-  padding: 4px 0 6px;
-}
-.cal-day {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  min-height: 72px;
-  padding: 5px;
-  cursor: default;
-  position: relative;
-  transition: border-color 0.1s;
-}
-.cal-day.other-month { background: var(--bg); border-color: transparent; }
-.cal-day.other-month .cal-day-num { color: var(--text3); opacity: 0.35; }
-.cal-day.today { border-color: var(--accent); background: var(--accent-light); }
-.cal-day.has-tasks { cursor: pointer; }
-.cal-day.has-tasks:hover { border-color: var(--accent); }
-.cal-day-num {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text2);
-  margin-bottom: 3px;
-  line-height: 1;
-}
-.cal-day.today .cal-day-num {
-  color: var(--accent);
-  font-weight: 500;
-}
-.cal-dot-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  margin-top: 2px;
-}
-.cal-chip {
-  font-size: 8.5px;
-  padding: 1px 4px;
-  border-radius: 3px;
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
-.cal-chip.done { opacity: 0.4; text-decoration: line-through; }
-.cal-phase-band {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  border-radius: 0 0 4px 4px;
-}
-/* Day detail panel */
-.cal-detail {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  margin-top: 1rem;
-  min-height: 60px;
-}
-.cal-detail-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: var(--text3);
-  margin-bottom: 10px;
-}
-.tl-task {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
-  cursor: pointer;
-}
-.tl-task:hover { background: none; opacity: 0.8; }
-.tl-check {
-  width: 15px;
-  height: 15px;
-  min-width: 15px;
-  border-radius: 3px;
-  border: 1.5px solid var(--border);
-  margin-top: 2px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.1s, border-color 0.1s;
-}
-.tl-check.done { background: var(--accent); border-color: var(--accent); }
-.tl-check svg { display: none; }
-.tl-check.done svg { display: block; }
-.tl-body { flex: 1; }
-.tl-title { font-size: 13px; color: var(--text); line-height: 1.4; }
-.tl-title.struck { text-decoration: line-through; color: var(--text3); }
-.tl-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.tl-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
-.cal-day.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
-@media (max-width: 500px) {
-  .cal-grid { gap: 2px; }
-  .cal-day { min-height: 52px; padding: 3px; }
-  .cal-chip { display: none; }
-}
-/* FINANCE */
-.finance-block { margin-bottom: 1.5rem; }
-.finance-block-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.07em;
-  color: var(--text3);
-  margin-bottom: 8px;
-  padding-bottom: 6px;
-  border-bottom: 1px solid var(--border);
-}
-.f-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 9px 0;
-  border-bottom: 1px solid var(--bg);
-  gap: 12px;
-}
-.f-label { font-size: 13px; color: var(--text); }
-.f-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.f-right { text-align: right; flex-shrink: 0; }
-.f-amount { font-family: var(--mono); font-size: 13px; font-weight: 500; }
-.f-total {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 0 0;
-  border-top: 1px solid var(--border);
-  margin-top: 4px;
-  font-size: 13px;
-  font-weight: 500;
-}
-.gap-box {
-  background: #FFF8F0;
-  border: 1px solid #E8C89A;
-  border-radius: var(--radius);
-  padding: 14px 16px;
-  margin-top: 1rem;
-}
-.gap-box-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.05em;
-  color: var(--accent);
-  margin-bottom: 6px;
-}
-.gap-box-text { font-size: 13px; color: #8B5E1A; line-height: 1.5; }
-.gap-amount {
-  font-family: var(--mono);
-  font-size: 22px;
-  font-weight: 500;
-  color: var(--accent);
-  margin: 6px 0 2px;
-}
-/* METRIC CARDS */
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
-  gap: 8px;
-  margin-bottom: 1.5rem;
-}
-.metric {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 14px;
-}
-.metric-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
-.metric-value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
-.metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
-@media (max-width: 500px) {
-  .kanban { grid-template-columns: 1fr 1fr; }
-  .view { padding: 1rem; }
-  .header { padding: 1rem; }
+.housing-meta h2 { font-family: var(--mono); font-size: 13px; letter-spacing: 0.06em; margin-bottom: 0.3rem; }
+.housing-meta p { font-size: 12px; color: var(--text2); }
+.btn-loran-mode {
+  background: var(--accent); color: #fff; border: none; cursor: pointer;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 8px 14px; border-radius: 6px; white-space: nowrap;
 }
 
-/* HOUSING TAB */
-.housing-wrap { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
-.housing-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.06em; margin-bottom: 1.5rem; }
-.housing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
-.prop-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.prop-header { padding: 1rem 1.1rem 0.75rem; border-bottom: 1px solid var(--border); }
-.prop-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
-.prop-address { font-size: 11px; color: var(--text3); margin-top: 2px; }
-.prop-status { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
-.prop-body { padding: 1rem 1.1rem; }
-.prop-section { margin-bottom: 0.85rem; }
-.prop-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.4rem; }
-.prop-units { display: flex; flex-direction: column; gap: 0.35rem; }
-.unit-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: 5px; }
-.unit-name { color: var(--text2); }
-.unit-price { font-family: var(--mono); font-weight: 500; color: var(--text); }
-.unit-avail { font-size: 10px; color: var(--accent); font-family: var(--mono); }
-.prop-facts { display: flex; flex-wrap: wrap; gap: 5px; }
-.fact-pill { font-size: 10px; font-family: var(--mono); padding: 2px 8px; background: var(--surface2); border-radius: 20px; color: var(--text2); }
-.prop-notes { font-size: 11px; color: var(--text2); line-height: 1.55; }
-.prop-costs { display: flex; flex-direction: column; gap: 4px; }
-.cost-row { display: flex; justify-content: space-between; font-size: 11px; }
-.cost-label { color: var(--text2); }
-.cost-val { font-family: var(--mono); color: var(--text); }
-.verdict-box { margin: 0 1.1rem 1rem; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.5; border-left: 3px solid; }
+.housing-stats {
+  background: #1A1714; color: #F5F0E8;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  padding: 10px 16px; border-radius: 6px; margin-bottom: 1.5rem;
+  display: flex; gap: 2rem;
+}
+
+/* Property Card */
+.prop-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.prop-card.hidden { display: none; }
+.prop-card-header {
+  padding: 1rem 1.25rem;
+  display: flex; justify-content: space-between; align-items: flex-start;
+  border-bottom: 1px solid var(--border);
+}
+.prop-card-header-left h3 { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.prop-meta { font-size: 11px; color: var(--text3); display: flex; gap: 0.5rem; align-items: center; }
+.prop-meta a { color: var(--accent); text-decoration: none; font-family: var(--mono); font-size: 10px; }
+.prop-meta a:hover { text-decoration: underline; }
+.prop-card-header-right { text-align: right; }
+.prop-price { font-family: var(--mono); font-size: 14px; font-weight: 500; }
+.prop-actions { display: flex; gap: 0.5rem; margin-top: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+.btn-tour-status, .btn-loran-list, .btn-hide {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.04em;
+  padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border);
+  background: var(--surface2); color: var(--text2); cursor: pointer;
+  white-space: nowrap;
+}
+.btn-loran-list.on { background: #EAF0EB; color: var(--green); border-color: var(--green); }
+.btn-hide { color: var(--text3); }
+.btn-hide:hover { color: var(--red); border-color: var(--red); }
+
+.prop-body { padding: 1rem 1.25rem; }
+.prop-courts-notes {
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+  background: var(--surface2); border-radius: 6px; padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+.prop-courts-notes strong { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); display: block; margin-bottom: 0.35rem; }
+
+/* Tour pipeline */
+.prop-section-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: var(--text3); margin-bottom: 0.5rem;
+}
+.tour-pipeline { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.tour-step {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+  padding: 5px 10px; border-radius: 5px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text3); cursor: pointer; transition: all 0.12s;
+}
+.tour-step:hover { border-color: var(--accent); color: var(--accent); }
+.tour-step.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.tour-step.active-green { background: var(--green); color: #fff; border-color: var(--green); }
+
+.prop-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem; }
+@media (max-width: 600px) { .prop-fields { grid-template-columns: 1fr; } }
+.prop-field label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  color: var(--text3); display: block; margin-bottom: 0.3rem;
+}
+.prop-field input, .prop-field textarea {
+  width: 100%; background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 8px 10px;
+  font-family: var(--sans); font-size: 12px; color: var(--text);
+  outline: none; resize: vertical;
+}
+.prop-field input:focus, .prop-field textarea:focus { border-color: var(--accent); }
+.prop-field-full { grid-column: 1 / -1; }
+
+/* Loran feedback section */
+.loran-feedback {
+  border-top: 1px dashed var(--border); padding-top: 0.75rem; margin-top: 0.25rem;
+}
+.loran-feedback-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: var(--accent); margin-bottom: 0.4rem;
+}
+.loran-rating-display { font-size: 13px; }
+.loran-notes-display { font-size: 12px; color: var(--text2); font-style: italic; margin-top: 0.3rem; }
+
+/* ── LORAN MODE ── */
+#loran-mode-view { display: none; }
+.loran-mode-header {
+  text-align: center; margin-bottom: 2rem;
+  padding: 1.5rem; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+}
+.loran-mode-header .loran-label {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em;
+  color: var(--accent); margin-bottom: 0.5rem;
+}
+.loran-mode-header h2 { font-family: var(--mono); font-size: 16px; margin-bottom: 0.5rem; }
+.loran-mode-header p { font-size: 13px; color: var(--text2); }
+.loran-movein {
+  display: inline-block; margin-top: 0.75rem;
+  background: #F5EDE0; border: 1px solid var(--accent);
+  border-radius: 6px; padding: 6px 14px;
+  font-family: var(--mono); font-size: 11px; color: var(--accent2);
+}
+.btn-back-full {
+  background: none; border: 1px solid var(--border); cursor: pointer;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em;
+  padding: 6px 14px; border-radius: 6px; color: var(--text2);
+  margin-top: 0.75rem; display: inline-block;
+}
+.btn-back-full:hover { border-color: var(--text2); }
+
+/* Loran card */
+.loran-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); margin-bottom: 1.5rem; overflow: hidden;
+}
+.loran-card-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.loran-card-header h3 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+.loran-card-meta { font-size: 12px; color: var(--text3); }
+.loran-card-meta a { color: var(--accent); text-decoration: none; font-weight: 500; }
+.loran-card-meta a:hover { text-decoration: underline; }
+.loran-card-price { text-align: right; }
+.loran-card-price .price { font-family: var(--mono); font-size: 16px; font-weight: 500; }
+.loran-card-price .beds { font-size: 11px; color: var(--text3); }
+
+.loran-appt-info {
+  background: #F5EDE0; padding: 0.75rem 1.25rem;
+  font-size: 12px; color: var(--accent2);
+  border-bottom: 1px solid #E8D8C0;
+}
+.loran-appt-info strong { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; display: block; margin-bottom: 0.2rem; color: var(--accent); }
+
+.loran-courts-notes {
+  padding: 0.75rem 1.25rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+}
+.loran-courts-notes strong {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  color: var(--text3); display: block; margin-bottom: 0.3rem;
+}
+
+.loran-card-body { padding: 1rem 1.25rem; }
+.loran-status-pills { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.loran-status-pill {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+  padding: 7px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text3); cursor: pointer; transition: all 0.12s;
+}
+.loran-status-pill:hover { border-color: var(--accent); color: var(--accent); }
+.loran-status-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.loran-status-pill.active-green { background: var(--green); color: #fff; border-color: var(--green); }
+.loran-status-pill.active-red { background: var(--red); color: #fff; border-color: var(--red); }
+
+.loran-stars { display: flex; gap: 0.3rem; margin-bottom: 1rem; }
+.loran-star {
+  font-size: 22px; cursor: pointer; color: var(--border); transition: color 0.1s;
+}
+.loran-star.filled { color: var(--accent); }
+
+.loran-notes-area {
+  width: 100%; min-height: 100px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 6px; padding: 10px 12px;
+  font-family: var(--sans); font-size: 13px; color: var(--text);
+  outline: none; resize: vertical; line-height: 1.6;
+}
+.loran-notes-area:focus { border-color: var(--accent); }
+.loran-save-indicator {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em;
+  color: var(--green); margin-top: 0.3rem; min-height: 14px;
+  text-align: right;
+}
+
+/* ── TIMELINE & FINANCE ── */
+.section-placeholder { padding: 3rem 0; text-align: center; color: var(--text3); font-family: var(--mono); font-size: 12px; }
+
+/* ── HIDDEN TOGGLE ── */
+.show-hidden-row {
+  text-align: center; margin-bottom: 1rem;
+}
+.btn-show-hidden {
+  background: none; border: 1px dashed var(--border); cursor: pointer;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em;
+  padding: 5px 12px; border-radius: 4px; color: var(--text3);
+}
+.btn-show-hidden:hover { border-color: var(--text2); color: var(--text2); }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <span class="header-name">COURT WILLIAMS</span>
-  <span class="surgery-pill">2026 transition</span>
-  <div style="display:flex;align-items:center;gap:10px">
-    <a href="https://tcmw-court.github.io/court-transition-tracker" target="_blank" style="font-family:var(--mono);font-size:10px;color:#666;letter-spacing:0.04em;text-decoration:none;border:1px solid #444;padding:2px 8px;border-radius:20px;transition:color 0.15s" onmouseover="this.style.color='#C17D3C';this.style.borderColor='#C17D3C'" onmouseout="this.style.color='#666';this.style.borderColor='#444'">↗ live</a>
-    <span class="header-date" id="hdr-date"></span>
+<header>
+  <div class="header-name">COURT WILLIAMS</div>
+  <div class="header-badge">2026 transition</div>
+  <div class="header-right">
+    <div class="header-live"><span>▶</span> live</div>
+    <div class="header-date" id="header-date"></div>
   </div>
-</div>
+</header>
 
-<div class="tabs">
-  <button class="tab active" onclick="switchTab('board')">BOARD</button>
-  <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
-  <button class="tab" onclick="switchTab('finance')">FINANCE</button>
-  <button class="tab" onclick="switchTab('housing')">HOUSING</button>
-</div>
+<nav>
+  <button onclick="showTab('board')" id="tab-board">BOARD</button>
+  <button onclick="showTab('timeline')" id="tab-timeline">TIMELINE</button>
+  <button onclick="showTab('finance')" id="tab-finance">FINANCE</button>
+  <button onclick="showTab('housing')" id="tab-housing" class="active">HOUSING</button>
+</nav>
 
-<div id="view-board" class="view active"></div>
-<div id="view-timeline" class="view"></div>
-<div id="view-finance" class="view"></div>
-<div id="view-housing" class="view"></div>
-
-<script>
-const CAT_STYLES = {
-  Surgery:   {bg:'#FFF0F5',color:'#8B1A4A'},
-  Loans:     {bg:'#E8F2FC',color:'#0D3D6E'},
-  Howard:    {bg:'#FFF8E0',color:'#7A4800'},
-  MICA:      {bg:'#EDFAF0',color:'#145228'},
-  Financial: {bg:'#F5EDFF',color:'#4A1275'},
-  Personal:  {bg:'#E0F7FA',color:'#00494E'},
-  EcoDepot:  {bg:'#FFF0E8',color:'#7A2C00'},
-  Housing:   {bg:'#EEF0FF',color:'#1A2060'},
-};
-const STATUS_STYLES = {
-  'Done':        {bg:'#EDFAF0',color:'#145228'},
-  'In Progress': {bg:'#FFFBE0',color:'#6B5700'},
-  'Not Started': {bg:'#F0EDE6',color:'#6B6560'},
-  'Urgent':      {bg:'#FFF0E8',color:'#7A2C00'},
-  'Blocked':     {bg:'#FFECEC',color:'#7A1212'},
-  'Pending':     {bg:'#E8F2FC',color:'#0D3D6E'},
-};
-
-const DEFAULTS = [
-  {id:1,  title:'Complete Confirmed Consent paperwork',     cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'css.confirmedconsent.com — due noon CST'},
-  {id:2,  title:'Sign surgical confirmation packet',        cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'carelynks.cranects.com PIN: 648024'},
-  {id:3,  title:'Westlake patient registration',            cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'westlakemedical.com'},
-  {id:4,  title:'Call Howard registrar',                    cat:'Howard',   status:'Not Started', due:'Apr 29', note:'202-806-2700'},
-  {id:5,  title:'TISLA consult call',                       cat:'Loans',    status:'In Progress', due:'This wk',note:'Awaiting reply'},
-  {id:6,  title:'Call DMCS re: consolidation',              cat:'Loans',    status:'Not Started', due:'May 2',  note:'800-621-3115 — after TISLA'},
-  {id:7,  title:'Initiate consolidation or rehabilitation', cat:'Loans',    status:'Not Started', due:'May 7',  note:'Must start before May 9'},
-  {id:8,  title:'Confirm $2,500 liquid for surgery',        cat:'Financial',status:'Not Started', due:'May 9',  note:'Due day-of — must be ready'},
-  {id:9,  title:'Book Court Elliott flight',                cat:'Surgery',  status:'Not Started', due:'May 9',  note:'<$500'},
-  {id:10, title:'Share Amazon supply list',                 cat:'Surgery',  status:'Not Started', due:'Apr 29', note:'Sus, brothers, others'},
-  {id:11, title:'Call Sus + brothers',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:'Surgery prep calls'},
-  {id:12, title:'Call mom re: shipping',                    cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
-  {id:13, title:'Reach out to Selena',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
-  {id:14, title:'Call insurance',                           cat:'Surgery',  status:'Not Started', due:'May 2',  note:'Confirm coverage'},
-  {id:15, title:'Pay friend ~$950 (Airbnb loan)',           cat:'Financial',status:'Not Started', due:'May 9',  note:'Friend absorbing $600'},
-  {id:16, title:'Confirm Howard degree pathway',            cat:'Howard',   status:'Not Started', due:'May 7',  note:'Retake vs petition vs proficiency'},
-  {id:17, title:'Contact Carolyn Case',                     cat:'MICA',     status:'Not Started', due:'May 7',  note:'Re: grad internship'},
-  {id:18, title:'Follow up Howard every 5 business days',   cat:'Howard',   status:'Not Started', due:'Ongoing',note:'Do not let slip during recovery'},
-  {id:19, title:'Send servicer letter to MICA',             cat:'Loans',    status:'Blocked',     due:'TBD',    note:'Blocked on default resolution'},
-  {id:20, title:'Confirm Howard degree to MICA',            cat:'Howard',   status:'Blocked',     due:'Summer', note:'Blocked on registrar + coursework'},
-  {id:21, title:'MICA aid disbursement',                    cat:'MICA',     status:'Blocked',     due:'Fall',   note:'Blocked on default + degree'},
-  {id:22, title:'Baltimore apartment hunt',                 cat:'Housing',  status:'Not Started', due:'May–Jun',note:'App likely due end of June'},
-  {id:23, title:'Credit score improvement',                 cat:'Financial',status:'Not Started', due:'Jun',    note:'Tied to loan resolution — 40–80pt jump expected'},
-  {id:24, title:'EcoDepot fellowship — await decision',     cat:'EcoDepot', status:'Pending',     due:'TBD',    note:'Applied Apr 20 via MICA 12twenty'},
-  {id:25, title:'EcoDepot travel prep (if selected)',        cat:'EcoDepot', status:'Pending',     due:'Jul 27', note:'In-country Aug 1–16, Ileret Kenya'},
-  {id:26, title:'Pre-op appointment',                       cat:'Surgery',  status:'Not Started', due:'May 11', note:'Monday — Austin', event:true},
-  {id:27, title:'Surgery day',                              cat:'Surgery',  status:'Not Started', due:'May 14', note:'Ashley Deleon MD, Crane Center', event:true},
-  {id:28, title:'Post-op appointment',                      cat:'Surgery',  status:'Not Started', due:'May 21', note:'While Loran is there', event:true},
-  {id:29, title:'Howard registrar email sent',              cat:'Howard',   status:'Done',        due:'Done',   note:''},
-  {id:30, title:'MICA financial aid email sent',            cat:'MICA',     status:'Done',        due:'Done',   note:'Awaiting Christine reply'},
-  {id:31, title:'TISLA email sent',                         cat:'Loans',    status:'Done',        due:'Done',   note:''},
-  {id:32, title:'FAFSA 26-27 completed',                    cat:'MICA',     status:'Done',        due:'Done',   note:''},
-  {id:33, title:'MICA enrollment deposit paid',             cat:'MICA',     status:'Done',        due:'Done',   note:'$350'},
-  {id:34, title:'Comm Engaged Thesis grant won',            cat:'MICA',     status:'Done',        due:'Done',   note:'$4,000 + $750 to SolFood'},
-  {id:35, title:'Summer Fieldwork App submitted',           cat:'MICA',     status:'Done',        due:'Done',   note:''},
-  {id:36, title:'Austin Airbnb booked',                     cat:'Surgery',  status:'Done',        due:'Done',   note:'$3,200 via friend loan'},
-  {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot', status:'Done',        due:'Done',   note:'Apr 20 deadline'},
-  {id:38, title:'Ask Scott for support',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Also ask if anyone in his orbit would want to contribute'},
-  {id:39, title:'Thank Mr. Neal + ask for a connection',    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Reply to his message — gratitude + warm ask for intro'},
-  {id:40, title:'Follow up with Calvin',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'WhatsApp message — check in + ask for support'},
-  {id:41, title:'Maurice reaches out to Matt re: sister',   cat:'Surgery',  status:'Urgent',      due:'May 5',  note:'Matt\'s sister as potential donor — Maurice to make contact'},
-  {id:42, title:'Finish + notarize living will',            cat:'Surgery',  status:'Urgent',      due:'May 9',  note:'Must be done before leaving Oakland — blocks Westlake registration'},
-  {id:43, title:'Contact Westlake re: registration',        cat:'Surgery',  status:'Blocked',     due:'May 9',  note:'Blocked on living will being finalized'},
-  {id:44, title:'Complete Westlake patient registration',   cat:'Surgery',  status:'Blocked',     due:'May 11', note:'westlakemedical.com — blocked on living will'},
-  {id:45, title:'Johns Hopkins MBA application',            cat:'MICA',     status:'Not Started', due:'May 27', note:'Application due May 27'},
-];
-
-
-
-function loadTasks() {
-  try {
-    const s = localStorage.getItem('court_v2');
-    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS));
-  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
-}
-function saveTasks(tasks) {
-  try { localStorage.setItem('court_v2', JSON.stringify(tasks)); } catch(e){}
-}
-
-let tasks = loadTasks();
-
-function getNextId() { return Math.max(0, ...tasks.map(t=>t.id)) + 1; }
-
-function catBadge(cat) {
-  const s = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
-  return `<span class="badge" style="background:${s.bg};color:${s.color}">${cat}</span>`;
-}
-function statusBadge(status) {
-  const s = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
-  return `<span class="badge" style="background:${s.bg};color:${s.color}">${status}</span>`;
-}
-function statusOptions(current) {
-  const statuses = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
-  return statuses.map(s => '<option value="' + s + '"' + (s===current?' selected':'') + '>' + s + '</option>').join('');
-}
-
-function checkSVG() {
-  return `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-}
-
-function toggleTask(id) {
-  const t = tasks.find(t=>t.id===id);
-  if (!t) return;
-  t.status = t.status === 'Done' ? 'Not Started' : 'Done';
-  saveTasks(tasks);
-  renderAll();
-}
-
-function moveTask(id, newStatus) {
-  const t = tasks.find(t=>t.id===id);
-  if (!t) return;
-  t.status = newStatus;
-  saveTasks(tasks);
-  closeContextMenu();
-  renderAll();
-}
-
-function addTask() {
-  const title = document.getElementById('new-title').value.trim();
-  if (!title) return;
-  const cat = document.getElementById('new-cat').value;
-  const due = document.getElementById('new-due').value.trim();
-  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:''});
-  saveTasks(tasks);
-  document.getElementById('new-title').value = '';
-  document.getElementById('new-due').value = '';
-  renderAll();
-}
-
-let boardView = 'status'; // 'status' | 'project'
-
-function renderBoard() {
-  if (boardView === 'project') { renderProjectBoard(); return; }
-
-  const cols = [
-    {key:'Urgent',      label:'urgent'},
-    {key:'Not Started', label:'not started'},
-    {key:'In Progress', label:'in progress'},
-    {key:'Pending',     label:'pending'},
-    {key:'Blocked',     label:'blocked'},
-    {key:'Done',        label:'done'},
-  ];
-  const done = tasks.filter(t=>t.status==='Done').length;
-  const pct = Math.round(done/tasks.length*100);
-
-  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
-  <div class="board-toggle">
-    <button class="board-toggle-btn active" onclick="setBoardView('status')">BY STATUS</button>
-    <button class="board-toggle-btn" onclick="setBoardView('project')">BY PROJECT</button>
-  </div>
-  <div class="metrics">`;
-
-  const urgentCount = tasks.filter(t=>t.status==='Urgent').length;
-  const blockedCount = tasks.filter(t=>t.status==='Blocked').length;
-  const activeCount = tasks.filter(t=>t.status==='In Progress').length;
-
-  html += `<div class="metric"><div class="metric-label">IN PROGRESS</div><div class="metric-value">${activeCount}</div><div class="metric-sub">active</div></div>`;
-  html += `<div class="metric"><div class="metric-label">URGENT</div><div class="metric-value" style="color:#7A2C00">${urgentCount}</div><div class="metric-sub">items</div></div>`;
-  html += `<div class="metric"><div class="metric-label">BLOCKED</div><div class="metric-value" style="color:#7A1212">${blockedCount}</div><div class="metric-sub">items</div></div>`;
-  html += `<div class="metric"><div class="metric-label">SURGERY GOAL</div><div class="metric-value" style="color:#145228">$5k</div><div class="metric-sub">before May 14</div></div>`;
-  html += `</div><div class="kanban">`;
-
-  cols.forEach(({key, label}) => {
-    const colTasks = tasks.filter(t=>t.status===key && !t.event);
-    html += `<div class="k-col"><div class="k-col-title"><span>${label}</span><span>${colTasks.length}</span></div>`;
-    colTasks.forEach(t => {
-      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-      html += `<div class="k-card ${key==='Done'?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
-        <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
-        <div class="k-card-meta">
-          <span class="badge" style="background:rgba(255,255,255,0.55);color:${cs.color};font-size:9px">${t.cat}</span>
-          ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+<main>
+  <!-- BOARD -->
+  <div id="view-board" style="display:none">
+    <div class="board-grid">
+      <div>
+        <div class="board-col-header">IN PROGRESS</div>
+        <div class="task-card">
+          <h4>Surgery prep</h4>
+          <p>MPOA with Maurice designated. Payment submitted. Crane Center May 14.</p>
+          <span class="task-tag tag-urgent">MAY 14</span>
         </div>
-        ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
-        <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
-          ${statusOptions(t.status)}
-        </select>
-      </div>`;
-    });
-    html += `</div>`;
-  });
-
-  html += `</div>
-  <div class="add-row">
-    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
-    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
-    <input id="new-due" class="due-input" placeholder="Due date"/>
-    <button class="add-btn" onclick="addTask()">+ ADD</button>
-  </div>`;
-
-  document.getElementById('view-board').innerHTML = html;
-}
-
-function renderProjectBoard() {
-  const STATUS_ORDER = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
-  const done = tasks.filter(t=>t.status==='Done').length;
-  const pct = Math.round(done/tasks.length*100);
-
-  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
-  <div class="board-toggle">
-    <button class="board-toggle-btn" onclick="setBoardView('status')">BY STATUS</button>
-    <button class="board-toggle-btn active" onclick="setBoardView('project')">BY PROJECT</button>
-  </div>`;
-
-  Object.keys(CAT_STYLES).forEach(cat => {
-    const catTasks = tasks.filter(t => t.cat === cat && !t.event);
-    if (!catTasks.length) return;
-    const cs = CAT_STYLES[cat];
-    const catDone = catTasks.filter(t=>t.status==='Done').length;
-
-    html += `<div class="proj-section">
-      <div class="proj-section-header">
-        <span class="proj-section-label" style="color:${cs.color}">${cat.toUpperCase()}</span>
-        <span class="proj-section-count">${catDone}/${catTasks.length}</span>
+        <div class="task-card">
+          <h4>Anesthesia cost estimate</h4>
+          <p>Contact Westlake / Metropolitan Anesthesia Group. Phone preferred: 469-420-5840.</p>
+          <span class="task-tag tag-urgent">URGENT</span>
+        </div>
+        <div class="task-card">
+          <h4>Baltimore housing search</h4>
+          <p>Loran touring properties on your behalf. Move-in July 25 or Aug 20–30.</p>
+          <span class="task-tag">ACTIVE</span>
+        </div>
       </div>
-      <div class="proj-kanban">`;
-
-    STATUS_ORDER.forEach(status => {
-      const statusTasks = catTasks.filter(t => t.status === status);
-      if (!statusTasks.length) return;
-      const ss = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
-      html += `<div class="k-col"><div class="k-col-title"><span>${status.toLowerCase()}</span><span>${statusTasks.length}</span></div>`;
-      statusTasks.forEach(t => {
-        const isDone = status === 'Done';
-        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
-          <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
-          <div class="k-card-meta">
-            <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${status}</span>
-            ${t.due?`<span class="due-tag">${t.due}</span>`:''}
-          </div>
-          ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
-          <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
-            ${statusOptions(t.status)}
-          </select>
-        </div>`;
-      });
-      html += `</div>`;
-    });
-
-    html += `</div></div>`;
-  });
-
-  html += `<div class="add-row">
-    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
-    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
-    <input id="new-due" class="due-input" placeholder="Due date"/>
-    <button class="add-btn" onclick="addTask()">+ ADD</button>
-  </div>`;
-
-  document.getElementById('view-board').innerHTML = html;
-}
-
-function setBoardView(v) {
-  boardView = v;
-  renderBoard();
-}
-
-// ── Calendar state ──────────────────────────────────────────────
-let calYear = 2026;
-let calMonth = 4; // 0-indexed → April = 3... use 1-indexed: April=4
-// We'll use 1-indexed months throughout
-
-// Map due-date strings to {month,day} pairs (year assumed 2026)
-const DUE_MAP = {
-  'Apr 28':{m:4,d:28},'Apr 29':{m:4,d:29},'Apr 30':{m:4,d:30},
-  'May 1':{m:5,d:1},'May 2':{m:5,d:2},'May 3':{m:5,d:3},
-  'May 4':{m:5,d:4},'May 5':{m:5,d:5},'May 7':{m:5,d:7},
-  'May 9':{m:5,d:9},'May 10':{m:5,d:10},'May 11':{m:5,d:11},
-  'May 12':{m:5,d:12},'May 14':{m:5,d:14},'May 21':{m:5,d:21},
-  'May 27':{m:5,d:27},
-  'Jun':{m:6,d:1},'Jul 1':{m:7,d:1},'Jul 25':{m:7,d:25},'Jul 27':{m:7,d:27},
-};
-
-// Calendar-only events (not tasks)
-const CAL_EVENTS = [
-  {m:7, d:25, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
-  {m:7, d:26, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
-  {m:7, d:27, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
-];
-
-// Phase color bands: each entry has a date range and color
-const PHASE_BANDS = [
-  {start:{m:4,d:28},end:{m:5,d:9},  color:'#E8A25A',label:'Now–May 9'},
-  {start:{m:5,d:9}, end:{m:5,d:11}, color:'#7A6FC0',label:'Travel'},
-  {start:{m:5,d:14},end:{m:5,d:14}, color:'#8B1A1A',label:'Surgery'},
-  {start:{m:5,d:14},end:{m:6,d:8},  color:'#D4A5A5',label:'Recovery'},
-  {start:{m:6,d:9}, end:{m:7,d:1},  color:'#5A8B6A',label:'Post-recovery'},
-  {start:{m:7,d:27},end:{m:8,d:16}, color:'#C17D3C',label:'EcoDepot'},
-];
-
-function dateToNum(m,d) { return m*100+d; }
-function getPhaseColor(m,d) {
-  const n = dateToNum(m,d);
-  for (const ph of PHASE_BANDS) {
-    if (n >= dateToNum(ph.start.m,ph.start.d) && n <= dateToNum(ph.end.m,ph.end.d)) return ph.color;
-  }
-  return null;
-}
-
-function getTasksForDay(m, d) {
-  return tasks.filter(t => {
-    const due = DUE_MAP[t.due];
-    if (!due) return false;
-    return due.m === m && due.d === d;
-  });
-}
-
-function getCalEventsForDay(m, d) {
-  return CAL_EVENTS.filter(e => e.m === m && e.d === d);
-}
-
-let selectedDay = null;
-
-function renderCalendar() {
-  const MONTH_NAMES = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
-  const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-
-  const firstDow = new Date(calYear, calMonth-1, 1).getDay();
-  const daysInMonth = new Date(calYear, calMonth, 0).getDate();
-  const today = new Date();
-  const todayM = today.getMonth()+1;
-  const todayD = today.getDate();
-  const todayY = today.getFullYear();
-
-  const daysToSurgery = Math.ceil((new Date('2026-05-14') - today) / 86400000);
-  const daysToOakland = Math.max(0, Math.ceil((new Date('2026-05-09') - today) / 86400000));
-
-  let html = `<div class="metrics" style="margin-bottom:1rem">
-    <div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>
-    <div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${daysToOakland}</div><div class="metric-sub">days left</div></div>
-  </div>
-  <div class="cal-nav">
-    <button class="cal-nav-btn" onclick="calPrev()">← prev</button>
-    <span class="cal-nav-title">${MONTH_NAMES[calMonth].toUpperCase()} ${calYear}</span>
-    <button class="cal-nav-btn" onclick="calNext()">next →</button>
-  </div>
-  <div class="cal-grid">`;
-
-  DOW.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
-
-  // leading empty cells
-  const prevDays = new Date(calYear, calMonth-1, 0).getDate();
-  for (let i=0;i<firstDow;i++) {
-    const d = prevDays - firstDow + 1 + i;
-    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
-  }
-
-  for (let d=1; d<=daysInMonth; d++) {
-    const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
-    const dayTasks = getTasksForDay(calMonth, d);
-    const dayEvents = getCalEventsForDay(calMonth, d);
-    const phColor = getPhaseColor(calMonth, d);
-    const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
-
-    let cls = 'cal-day';
-    if (isToday) cls += ' today';
-    if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
-    if (sel) cls += ' selected';
-
-    html += `<div class="${cls}" onclick="selectDay(${calMonth},${d})">
-      <div class="cal-day-num">${d}</div>
-      <div class="cal-dot-row">`;
-
-    dayEvents.forEach(e => {
-      html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">📦 ${e.title}</span>`;
-    });
-    dayTasks.slice(0,3).forEach(t => {
-      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-      const doneClass = t.status==='Done' ? ' done' : '';
-      html += `<span class="cal-chip${doneClass}" style="background:${cs.bg};color:${cs.color}">${t.title.split(' ').slice(0,2).join(' ')}</span>`;
-    });
-    if (dayTasks.length > 3) html += `<span class="cal-chip" style="background:var(--surface2);color:var(--text3)">+${dayTasks.length-3}</span>`;
-
-    html += `</div>`;
-    if (phColor) html += `<div class="cal-phase-band" style="background:${phColor}"></div>`;
-    html += `</div>`;
-  }
-
-  // trailing cells
-  const totalCells = firstDow + daysInMonth;
-  const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
-  for (let i=1; i<=trailing; i++) {
-    html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
-  }
-
-  html += `</div>`;
-
-  // Phase legend
-  html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px">`;
-  PHASE_BANDS.forEach(ph => {
-    html += `<span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:0.04em;color:var(--text3)">
-      <span style="display:inline-block;width:10px;height:3px;border-radius:2px;background:${ph.color}"></span>${ph.label}</span>`;
-  });
-  html += `</div>`;
-
-  // Detail panel
-  html += `<div class="cal-detail" id="cal-detail">`;
-  if (selectedDay) {
-    const dayTasks = getTasksForDay(selectedDay.m, selectedDay.d);
-    const dayEvents = getCalEventsForDay(selectedDay.m, selectedDay.d);
-    const total = dayTasks.length + dayEvents.length;
-    const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    html += `<div class="cal-detail-title">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${total} item${total!==1?'s':''}</div>`;
-    if (total === 0) {
-      html += `<div style="font-size:12px;color:var(--text3)">No tasks due this day.</div>`;
-    } else {
-      dayEvents.forEach(e => {
-        html += `<div class="tl-task" style="cursor:default">
-          <div style="font-size:16px;line-height:1;margin-top:1px">📦</div>
-          <div class="tl-body"><div class="tl-title">${e.title} weekend</div></div>
-          <div class="tl-right"><span class="badge" style="background:${e.bg};color:${e.color};font-size:9px">Event</span></div>
-        </div>`;
-      });
-      dayTasks.forEach(t => {
-        const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-        const isDone = t.status==='Done';
-        html += `<div class="tl-task" onclick="toggleTask(${t.id});renderTimeline()">
-          <div class="tl-check ${isDone?'done':''}">${isDone?checkSVG():''}</div>
-          <div class="tl-body">
-            <div class="tl-title ${isDone?'struck':''}">${t.title}</div>
-            ${t.note?`<div class="tl-sub">${t.note}</div>`:''}
-          </div>
-          <div class="tl-right">
-            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
-          </div>
-        </div>`;
-      });
-    }
-  } else {
-    html += `<div style="font-size:12px;color:var(--text3)">Tap a day to see tasks due.</div>`;
-  }
-  html += `</div>`;
-
-  document.getElementById('view-timeline').innerHTML = html;
-}
-
-function selectDay(m, d) {
-  if (selectedDay && selectedDay.m===m && selectedDay.d===d) {
-    selectedDay = null;
-  } else {
-    selectedDay = {m,d};
-  }
-  renderTimeline();
-}
-
-function calPrev() {
-  calMonth--;
-  if (calMonth < 1) { calMonth = 12; calYear--; }
-  renderTimeline();
-}
-function calNext() {
-  calMonth++;
-  if (calMonth > 12) { calMonth = 1; calYear++; }
-  renderTimeline();
-}
-
-function renderTimeline() { renderCalendar(); }
-
-function renderFinance() {
-  const fmt = n => '$' + Math.round(n).toLocaleString();
-  const inbound = [
-    {label:'Family/friends ask (received)',   amount:1500, status:'Received', note:'First wave'},
-    {label:'Family/friends ask (outstanding)',amount:8500, status:'Pending',  note:'~$8,500 still outstanding'},
-    {label:'EcoDepot stipend (if selected)',  amount:2500, status:'Pending',  note:'$2,500–4,000/mo; travel+meals covered'},
-  ];
-  const outbound = [
-    {label:'Airbnb loan (remaining)',          amount:950,  status:'Pending',   note:'$3,200 total · $1,650 already repaid · friend absorbing $600'},
-    {label:'Surgery out-of-pocket',           amount:2500, status:'Due May 14',note:'Must be liquid before May 9 · includes $680.62 Crane Center (May 11) + Westlake amount TBD'},
-    {label:'Court Elliott flight',            amount:500,  status:'Pending',   note:'Book before May 9'},
-    {label:'Post-op car + care buffer',       amount:1250, status:'Pending',   note:'Car, food, supplies'},
-  ];
-  const restricted = [
-    {label:'Comm Engaged Thesis grant',       amount:4000, note:'Restricted to thesis work only'},
-    {label:'SolFood grant portion',           amount:750,  note:'Goes to SolFood directly — not to Court'},
-  ];
-
-  const confirmed = inbound.filter(r=>r.status==='Received').reduce((s,r)=>s+r.amount,0);
-  const immediateGoal = 5200;
-
-  let html = `<div class="finance-block">
-    <div class="finance-block-title">INBOUND</div>`;
-  inbound.forEach(r => {
-    const ss = STATUS_STYLES[r.status]||STATUS_STYLES['Not Started'];
-    html += `<div class="f-row">
-      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
-      <div class="f-right">
-        <div class="f-amount">${fmt(r.amount)}</div>
-        <span class="badge" style="background:${ss.bg};color:${ss.color};margin-top:3px">${r.status}</span>
+      <div>
+        <div class="board-col-header">UP NEXT</div>
+        <div class="task-card">
+          <h4>Advance Directive</h4>
+          <p>Discuss with Maurice first, then draft. Companion to MPOA.</p>
+          <span class="task-tag">POST-SURGERY</span>
+        </div>
+        <div class="task-card">
+          <h4>MICA enrollment finalization</h4>
+          <p>Confirm fall enrollment, housing resources, grad program contacts.</p>
+          <span class="task-tag">JUNE</span>
+        </div>
       </div>
-    </div>`;
-  });
-  html += `<div class="f-total"><span>Confirmed received</span><span style="color:#145228">${fmt(confirmed)}</span></div>
-  </div>`;
-
-  html += `<div class="finance-block">
-    <div class="finance-block-title">OUTBOUND — PENDING</div>`;
-  outbound.forEach(r => {
-    const isUrgent = r.status==='Due May 14' || r.status==='Due May 11';
-    const ss = isUrgent ? {bg:'#FFF0E8',color:'#7A2C00'} : {bg:'#F0EDE6',color:'#6B6560'};
-    html += `<div class="f-row">
-      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
-      <div class="f-right">
-        <div class="f-amount" style="${isUrgent?'color:#7A2C00':''}">${fmt(r.amount)}</div>
-        <span class="badge" style="background:${ss.bg};color:${ss.color};margin-top:3px">${r.status}</span>
-      </div>
-    </div>`;
-  });
-  const stillNeeded = outbound.reduce((s,r)=>s+r.amount,0);
-  html += `<div class="f-total"><span>Total pending</span><span style="color:#7A1212">${fmt(stillNeeded)}</span></div>
-  </div>`;
-
-  // Progress bar toward $5,200 goal
-  const pct = Math.min(100, Math.round(confirmed / immediateGoal * 100));
-  html += `<div class="gap-box">
-    <div class="gap-box-title">IMMEDIATE FUNDRAISING GOAL</div>
-    <div class="gap-amount" style="font-size:2rem">${fmt(immediateGoal)}</div>
-    <div style="margin:10px 0 4px">
-      <div style="height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden">
-        <div style="height:100%;width:${pct}%;background:#8B5E1A;border-radius:3px;transition:width 0.4s"></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--text3)">
-        <span>${fmt(confirmed)} raised</span><span>${fmt(immediateGoal - confirmed)} to go</span>
+      <div>
+        <div class="board-col-header">COMPLETED</div>
+        <div class="task-card">
+          <h4>MPOA drafted</h4>
+          <p>Maurice designated as agent. Protective language added for care continuity and identity affirmation.</p>
+          <span class="task-tag tag-done">DONE</span>
+        </div>
+        <div class="task-card">
+          <h4>Crane Center payment</h4>
+          <p>Payment agreement reviewed and submitted. 60-day window noted.</p>
+          <span class="task-tag tag-done">DONE</span>
+        </div>
       </div>
     </div>
-    <div class="gap-box-text" style="margin-top:8px">Covers Airbnb loan balance, surgery out-of-pocket, Court Elliott's flight, and post-op car + care. All still pending before May 14.</div>
   </div>
 
-  <div style="margin-top:12px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius)">
-    <div style="font-family:var(--mono);font-size:10px;letter-spacing:0.06em;color:var(--text3);margin-bottom:8px">RESTRICTED / NOT FOR SURGERY</div>
-    ${restricted.map(r=>`<div class="f-row" style="opacity:0.7">
-      <div><div class="f-label">${r.label}</div><div class="f-note">${r.note}</div></div>
-      <div class="f-right"><div class="f-amount" style="color:var(--text3)">${fmt(r.amount)}</div></div>
-    </div>`).join('')}
+  <!-- TIMELINE -->
+  <div id="view-timeline" style="display:none">
+    <div class="section-placeholder">TIMELINE — COMING SOON</div>
   </div>
-  <div style="margin-top:10px;padding:12px 14px;background:var(--surface2);border-radius:var(--radius);font-size:12px;color:var(--text3);line-height:1.6">
-    Carrot benefit: $10,000 lifetime · covers HRT, labs, binders — not surgery.
-  </div>`;
 
-  document.getElementById('view-finance').innerHTML = html;
+  <!-- FINANCE -->
+  <div id="view-finance" style="display:none">
+    <div class="section-placeholder">FINANCE — COMING SOON</div>
+  </div>
+
+  <!-- HOUSING -->
+  <div id="view-housing">
+
+    <!-- YOUR VIEW -->
+    <div id="court-view">
+      <div class="housing-header">
+        <div class="housing-meta">
+          <h2>BALTIMORE · HOUSING</h2>
+          <p>Move-in: July 25 or Aug 20–30 · Budget under $1,800 (hard ceiling $2,500)</p>
+        </div>
+        <button class="btn-loran-mode" onclick="enterLoranMode()">+ LORAN MODE</button>
+      </div>
+
+      <div class="housing-stats">
+        <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
+        <span>STRONG YES: <span id="stat-strongyes">0</span></span>
+      </div>
+
+      <div id="prop-cards-container"></div>
+
+      <div class="show-hidden-row" id="show-hidden-row" style="display:none">
+        <button class="btn-show-hidden" onclick="toggleHidden()">show hidden properties</button>
+      </div>
+    </div>
+
+    <!-- LORAN MODE -->
+    <div id="loran-mode-view">
+      <div class="loran-mode-header">
+        <div class="loran-label">LORAN MODE</div>
+        <h2>Field notes for Loran — tap a status to update</h2>
+        <p>Properties Court wants you to check out</p>
+        <div class="loran-movein">📅 Move-in: July 25 or Aug 20–30</div>
+        <br>
+        <button class="btn-back-full" onclick="exitLoranMode()">Back to full view</button>
+      </div>
+      <div id="loran-cards-container"></div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+// ── DATE ──
+const now = new Date();
+document.getElementById('header-date').textContent =
+  now.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+
+// ── PROPERTIES ──
+const PROPERTIES = [
+  {
+    id: 'rh1',
+    name: '750 Reservoir St, Unit A',
+    neighborhood: 'Reservoir Hill',
+    type: 'Townhouse',
+    price: '$1,650/mo',
+    beds: '2bd/1ba',
+    url: 'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',
+    notes: 'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA. Strong lead — right neighborhood, right price.',
+  },
+  {
+    id: 'rh2',
+    name: '750 Reservoir St, Unit B',
+    neighborhood: 'Reservoir Hill',
+    type: 'Townhouse',
+    price: '~$1,750/mo',
+    beds: '2bd/2ba',
+    url: 'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',
+    notes: 'Same building as Unit A. 2bd/2ba — extra bath is a plus. Also renovated 2025. Price TBD but expected ~$1,750.',
+  },
+  {
+    id: 'rh3',
+    name: 'Reservoir Hill Renovated Unit',
+    neighborhood: 'Reservoir Hill',
+    type: 'Apartment/Unit',
+    price: 'TBD',
+    beds: '2bd/1ba',
+    url: 'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',
+    notes: 'Main-level 2bd/1ba completely updated 2025. LVP floors, brand-new kitchen, contemporary finishes. Open layout, good for WFH. Via RE/MAX Distinctive / Mike Kane.',
+  },
+  {
+    id: 'rh4',
+    name: '1121 Whitelock St',
+    neighborhood: 'Reservoir Hill',
+    type: 'House',
+    price: '$1,300/mo',
+    beds: '2bd/1ba',
+    url: 'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',
+    notes: '~$352 below market. 1,180 sqft. Pets allowed. Whitelock is a key Reservoir Hill street. Needs verification — may be dated listing.',
+  },
+  {
+    id: 'bh1',
+    name: '525 W Lafayette Ave area',
+    neighborhood: 'Bolton Hill',
+    type: 'Townhouse',
+    price: '~$1,500–1,600/mo',
+    beds: '2bd',
+    url: 'https://www.zillow.com/bolton-hill-baltimore-md/apartments/',
+    notes: 'Bolton Hill block. 3bd at $1,600 on record — 2bd units in same area likely under $1,500. Good transit via Light Rail. Walkable to MICA. More competitive inventory than Reservoir Hill.',
+  },
+  {
+    id: 'bh2',
+    name: 'Bolton North Apartments',
+    neighborhood: 'Bolton Hill',
+    type: 'Apartment',
+    price: 'Income-restricted',
+    beds: '1–2bd',
+    url: 'https://boltonnorthapts.com/',
+    notes: 'HUD income-restricted. Pet-friendly. Near Druid Hill Park and Light Rail. Budget-friendly if income-eligible. Worth checking eligibility.',
+  },
+  {
+    id: 'bh3',
+    name: 'Bolton House',
+    neighborhood: 'Bolton Hill',
+    type: 'Apartment',
+    price: 'TBD',
+    beds: '2bd (710 sqft)',
+    url: 'https://boltonhouse.com/',
+    notes: 'High-rise with views of downtown Baltimore. Steps from MICA, U of Baltimore, Meyerhoff Symphony Hall, Walters Art Museum. 2bd floor plan is 710 sqft — small but central. Check pricing.',
+  },
+  {
+    id: 'sym1',
+    name: 'Symphony Center Apartments',
+    neighborhood: 'Bolton Hill area',
+    type: 'Apartment',
+    price: '$2,180–2,340/mo',
+    beds: '2bd/2ba',
+    url: '',
+    notes: 'Previously toured. Over budget at $2,180–2,340. Good building, nice amenities, but pricing pushes total costs above $2,500. Keeping for reference.',
+    defaultStatus: 'Toured',
+  },
+  {
+    id: 'fitz1',
+    name: 'The Fitzgerald',
+    neighborhood: 'Mount Royal',
+    type: 'Apartment',
+    price: '$2,218–2,503/mo',
+    beds: '1bd+den to 2bd',
+    url: '',
+    notes: 'Previously toured. Over budget. Modern building, good location near MICA. Pricing makes it a hard no unless something changes. Ruled out.',
+    defaultStatus: 'Decision',
+  },
+];
+
+// ── STATE ──
+function getState(id) {
+  try { return JSON.parse(localStorage.getItem('prop_'+id) || 'null') || {}; } catch { return {}; }
+}
+function saveState(id, updates) {
+  const s = getState(id);
+  Object.assign(s, updates);
+  localStorage.setItem('prop_'+id, JSON.stringify(s));
+}
+function getLoranState(id) {
+  try { return JSON.parse(localStorage.getItem('loran_'+id) || 'null') || {}; } catch { return {}; }
+}
+function saveLoranState(id, updates) {
+  const s = getLoranState(id);
+  Object.assign(s, updates);
+  localStorage.setItem('loran_'+id, JSON.stringify(s));
 }
 
-function renderAll() {
-  renderBoard();
-  renderTimeline();
-  renderFinance();
-  renderHousing();
+// ── TABS ──
+function showTab(name) {
+  ['board','timeline','finance','housing'].forEach(t => {
+    document.getElementById('view-'+t).style.display = t === name ? '' : 'none';
+    document.getElementById('tab-'+t).classList.toggle('active', t === name);
+  });
+  if (name === 'housing') updateStats();
 }
 
+// ── HOUSING VIEW ──
+function updateStats() {
+  const loranProps = PROPERTIES.filter(p => {
+    const s = getState(p.id);
+    return !s.hidden && (s.onLoranList || true); // count all visible
+  });
+  const total = PROPERTIES.filter(p => !getState(p.id).hidden).length;
+  const visited = PROPERTIES.filter(p => {
+    const ls = getLoranState(p.id);
+    return ls.status && ['Visited','Strong Yes','Maybe','Pass'].includes(ls.status);
+  }).length;
+  const strongYes = PROPERTIES.filter(p => getLoranState(p.id).status === 'Strong Yes').length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-visited').textContent = visited;
+  document.getElementById('stat-strongyes').textContent = strongYes;
+}
 
-async function renderHousing() {
-  const el = document.getElementById('view-housing');
-  if (!el) return;
+function renderCourtCards() {
+  const container = document.getElementById('prop-cards-container');
+  container.innerHTML = '';
+  let hasHidden = false;
 
-  await loadAllLoranNotes();
+  PROPERTIES.forEach(p => {
+    const s = getState(p.id);
+    const ls = getLoranState(p.id);
+    if (s.hidden) { hasHidden = true; return; }
 
-  const loranMode = localStorage.getItem('loranMode') === 'true';
-  if (loranMode) { renderLoranMode(el); return; }
+    const tourSteps = ['Not Started','Contacted','Appt Set','Toured','Decision'];
+    const currentStatus = s.tourStatus || p.defaultStatus || 'Not Started';
 
-  const PROPERTIES = [
-    { id:'lh1', name:'750 Reservoir St, Unit A',     neighborhood:'Reservoir Hill',        price:'$1,650/mo',       bd:'2bd/1ba',       type:'Townhouse', url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/' },
-    { id:'lh2', name:'750 Reservoir St, Unit B',     neighborhood:'Reservoir Hill',        price:'~$1,750/mo',      bd:'2bd/2ba',       type:'Townhouse', url:'https://www.redfin.com/MD/Baltimore/750-Reservoir-St-21217/unit-B/apartment/198836948' },
-    { id:'lh3', name:'1121 Whitelock St',             neighborhood:'Reservoir Hill',        price:'$1,300/mo',       bd:'2bd/1ba',       type:'House',     url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md' },
-    { id:'lh4', name:'1339 W Lafayette Ave, Unit 1', neighborhood:'Harlem Park',           price:'$1,650/mo',       bd:'2bd/2ba',       type:'Townhouse', url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/' },
-    { id:'lh5', name:'805 Washington Blvd, Unit A',  neighborhood:'Pigtown',               price:'$1,650/mo',       bd:'2bd/2ba',       type:'House',     url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/' },
-    { id:'lh6', name:'1926 E 28th St',               neighborhood:'Coldstream/Montebello', price:'$1,950/mo',       bd:'2bd/2.5ba',     type:'Townhouse', url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/' },
-    { id:'lh7', name:'Symphony Center Apartments',   neighborhood:'Bolton Hill area',      price:'$2,180-2,340/mo', bd:'2bd/2ba',       type:'Apartment', url:'' },
-    { id:'lh8', name:'The Fitzgerald',               neighborhood:'Mount Royal',           price:'$2,218-2,503/mo', bd:'1bd+den to 2bd',type:'Apartment', url:'' },
-    { id:'lh9', name:'The Vault',                    neighborhood:'Downtown',              price:'TBD',             bd:'TBD',           type:'Apartment', url:'' },
-  ];
+    const card = document.createElement('div');
+    card.className = 'prop-card';
+    card.id = 'card-'+p.id;
 
-  const TOUR_STATUSES = ['Not Started','Contacted','Appt Set','Toured','Decision'];
-  const TOUR_COLORS = {
-    'Not Started':{ bg:'#f0f0f0', color:'#888' },
-    'Contacted':  { bg:'#e8f0fe', color:'#1a56a0' },
-    'Appt Set':   { bg:'#fff8e1', color:'#7A5C00' },
-    'Toured':     { bg:'#e6f4ec', color:'#145228' },
-    'Decision':   { bg:'#fdf3e3', color:'#C17D3C' },
-  };
-  const LORAN_COLORS = {
-    'Not Visited':{ bg:'#f0f0f0', color:'#888' },
-    'Scheduled':  { bg:'#e8f0fe', color:'#1a56a0' },
-    'Visited':    { bg:'#fff8e1', color:'#7A5C00' },
-    'Strong Yes': { bg:'#e6f4ec', color:'#145228' },
-    'Maybe':      { bg:'#fdf3e3', color:'#C17D3C' },
-    'Pass':       { bg:'#fdeaea', color:'#7A1212' },
-  };
+    const loranListOn = s.onLoranList;
+    const listingLink = p.url ? `<a href="${p.url}" target="_blank">↗ listing</a>` : '';
 
-  let html = '<div style="padding:1.25rem;max-width:900px;margin:0 auto">';
-
-  // Header
-  html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem">';
-  html += '<div><div style="font-family:var(--mono);font-size:10px;letter-spacing:0.08em;color:var(--text3)">BALTIMORE HOUSING</div>';
-  html += '<div style="font-size:12px;color:var(--text2);margin-top:2px">Move-in: end of July or mid-August · Budget under $1,800 (hard ceiling $2,500)</div></div>';
-  html += '<button onclick="toggleLoranMode()" style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:0.06em;padding:7px 18px;border-radius:20px;border:none;background:#C17D3C;color:#fff;cursor:pointer;box-shadow:0 2px 8px rgba(193,125,60,0.35)">✦ LORAN MODE</button>';
-  html += '</div>';
-
-  // Property cards
-  PROPERTIES.forEach(function(p) {
-    const d = loranCache[p.id] || {};
-    const tourStatus  = d.tour_status || 'Not Started';
-    const contactPerson = d.contact_person || '';
-    const apptDt      = d.appt_datetime || '';
-    const courtNotes  = d.court_notes || '';
-    const loranStatus = d.status || 'Not Visited';
-    const loranRating = parseInt(d.rating || 0);
-    const loranNote   = d.note || '';
-    const onLoranList = d.on_loran_list === true || d.on_loran_list === 'true';
-
-    const tc = TOUR_COLORS[tourStatus] || TOUR_COLORS['Not Started'];
-    const lc = LORAN_COLORS[loranStatus] || LORAN_COLORS['Not Visited'];
-
-    html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:0.85rem;overflow:hidden">';
-
-    // ── Card header ──
-    html += '<div style="padding:0.9rem 1rem;display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap">';
-    html += '<div style="flex:1;min-width:200px">';
-    html += '<div style="font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text)">' + p.name + '</div>';
-    html += '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + p.neighborhood + ' · ' + p.type + ' · ' + p.bd + '</div>';
-    if (p.url) html += '<a href="' + p.url + '" target="_blank" style="font-family:var(--mono);font-size:9px;color:var(--accent);text-decoration:none;display:inline-block;margin-top:4px">↗ listing</a>';
-    html += '</div>';
-    html += '<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">';
-    html += '<div style="font-family:var(--mono);font-size:14px;font-weight:500;color:var(--text)">' + p.price + '</div>';
-    // Tour status pill
-    html += '<span style="font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:20px;background:' + tc.bg + ';color:' + tc.color + '">' + tourStatus + '</span>';
-    // Loran list toggle
-    const loranListVal = onLoranList ? 'false' : 'true';
-    html += '<button data-pid="' + p.id + '" data-val="' + loranListVal + '" data-field="on_loran_list" onclick="saveField(this.dataset.pid,this.dataset.field,this.dataset.val)" style="font-family:var(--mono);font-size:9px;padding:3px 10px;border-radius:20px;cursor:pointer;border:1px solid ' + (onLoranList ? '#145228' : 'var(--border)') + ';background:' + (onLoranList ? '#e6f4ec' : 'var(--surface2)') + ';color:' + (onLoranList ? '#145228' : 'var(--text3)') + '">' + (onLoranList ? '✓ Lorans List' : '+ Lorans List') + '</button>';
-    html += '</div>';
-    html += '</div>';
-
-    // ── Tour pipeline ──
-    html += '<div style="padding:0 1rem 0.75rem;border-bottom:1px solid var(--border)">';
-    html += '<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px">TOUR STATUS</div>';
-    html += '<div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:0.65rem">';
-    TOUR_STATUSES.forEach(function(s) {
-      const stc = TOUR_COLORS[s];
-      const active = s === tourStatus;
-      html += '<button data-pid="' + p.id + '" data-val="' + s + '" data-field="tour_status" onclick="saveField(this.dataset.pid,this.dataset.field,this.dataset.val)" style="font-family:var(--mono);font-size:9px;padding:4px 10px;border-radius:20px;cursor:pointer;border:1px solid ' + (active ? stc.color : '#ddd') + ';background:' + (active ? stc.bg : 'var(--surface)') + ';color:' + (active ? stc.color : '#999') + '">' + s + '</button>';
-    });
-    html += '</div>';
-
-    // Appointment details row
-    html += '<div style="display:flex;gap:0.75rem;flex-wrap:wrap">';
-    html += '<div style="flex:1;min-width:140px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.07em;color:var(--text3);margin-bottom:3px">CONTACT / AGENT</div>';
-    html += '<input data-pid="' + p.id + '" data-field="contact_person" onblur="saveField(this.dataset.pid,this.dataset.field,this.value)" value="' + contactPerson + '" placeholder="Name, phone..." style="width:100%;font-family:var(--mono);font-size:10px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);outline:none">';
-    html += '</div>';
-    html += '<div style="flex:1;min-width:140px">';
-    html += '<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.07em;color:var(--text3);margin-bottom:3px">APPT DATE & TIME</div>';
-    html += '<input data-pid="' + p.id + '" data-field="appt_datetime" onblur="saveField(this.dataset.pid,this.dataset.field,this.value)" value="' + apptDt + '" placeholder="e.g. Sat May 10, 2pm" style="width:100%;font-family:var(--mono);font-size:10px;padding:5px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface2);color:var(--text);outline:none">';
-    html += '</div>';
-    html += '</div>';
-    html += '</div>';
-
-    // ── Your notes ──
-    html += '<div style="padding:0.65rem 1rem;border-bottom:1px solid var(--border)">';
-    html += '<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text3);margin-bottom:4px">YOUR NOTES FOR LORAN</div>';
-    html += '<textarea data-pid="' + p.id + '" data-field="court_notes" onblur="saveField(this.dataset.pid,this.dataset.field,this.value)" placeholder="What should Loran know before she visits? Layout preferences, things to check, questions to ask..." style="width:100%;min-height:60px;font-size:11px;font-family:var(--sans);color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;resize:vertical;outline:none;box-sizing:border-box">' + courtNotes + '</textarea>';
-    html += '</div>';
-
-    // ── Loran feedback (read-only on your side) ──
-    if (loranStatus !== 'Not Visited' || loranRating > 0 || loranNote) {
-      html += '<div style="padding:0.65rem 1rem;background:var(--surface2)">';
-      html += '<div style="font-family:var(--mono);font-size:8px;letter-spacing:0.08em;color:var(--text3);margin-bottom:6px">LORANS FEEDBACK</div>';
-      html += '<div style="display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap;margin-bottom:' + (loranNote ? '6px' : '0') + '">';
-      html += '<span style="font-family:var(--mono);font-size:9px;padding:2px 8px;border-radius:20px;background:' + lc.bg + ';color:' + lc.color + '">' + loranStatus + '</span>';
-      if (loranRating > 0) {
-        let stars = '';
-        for (let i = 1; i <= 5; i++) stars += '<span style="color:' + (i <= loranRating ? '#C17D3C' : '#ddd') + ';font-size:13px">★</span>';
-        html += '<span>' + stars + '</span>';
-      }
-      html += '</div>';
-      if (loranNote) html += '<div style="font-size:11px;color:var(--text2);line-height:1.5;font-style:italic">"' + loranNote + '"</div>';
-      html += '</div>';
+    // Loran feedback display
+    let loranFeedback = '';
+    if (ls.status && ls.status !== 'Not Visited') {
+      const stars = ls.rating ? '★'.repeat(ls.rating) + '☆'.repeat(5-ls.rating) : '—';
+      const notes = ls.notes ? `<div class="loran-notes-display">"${ls.notes}"</div>` : '';
+      loranFeedback = `
+        <div class="loran-feedback">
+          <div class="loran-feedback-label">LORAN'S FEEDBACK</div>
+          <div><strong>${ls.status}</strong> ${stars}</div>
+          ${notes}
+        </div>`;
     }
 
-    html += '</div>';
+    card.innerHTML = `
+      <div class="prop-card-header">
+        <div class="prop-card-header-left">
+          <h3>${p.name}</h3>
+          <div class="prop-meta">
+            ${p.neighborhood} · ${p.type} · ${p.beds}
+            ${listingLink ? '·' : ''} ${listingLink}
+          </div>
+        </div>
+        <div class="prop-card-header-right">
+          <div class="prop-price">${p.price}</div>
+          <div class="prop-actions">
+            <button class="btn-tour-status" style="font-size:9px;padding:2px 6px;">${currentStatus}</button>
+            <button class="btn-loran-list ${loranListOn ? 'on' : ''}" onclick="toggleLoranList('${p.id}',this)">
+              ${loranListOn ? '✓ Loran\'s List' : '+ Loran\'s List'}
+            </button>
+            <button class="btn-hide" onclick="hideCard('${p.id}')">hide</button>
+          </div>
+        </div>
+      </div>
+      <div class="prop-body">
+        <div class="prop-courts-notes">
+          <strong>COURT'S NOTES</strong>
+          ${p.notes}
+        </div>
+
+        <div class="prop-section-label">TOUR STATUS</div>
+        <div class="tour-pipeline">
+          ${tourSteps.map(step => `
+            <button class="tour-step ${currentStatus === step ? (step === 'Decision' ? 'active-green' : 'active') : ''}"
+              onclick="setTourStatus('${p.id}', '${step}', this)">
+              ${step}
+            </button>`).join('')}
+        </div>
+
+        <div class="prop-fields">
+          <div class="prop-field">
+            <label>CONTACT / AGENT</label>
+            <input type="text" placeholder="Name, phone..." value="${s.contact || ''}"
+              onchange="saveState('${p.id}', {contact: this.value})">
+          </div>
+          <div class="prop-field">
+            <label>APPT DATE &amp; TIME</label>
+            <input type="text" placeholder="e.g. Sat July 26, 2pm" value="${s.apptDate || ''}"
+              onchange="saveState('${p.id}', {apptDate: this.value})">
+          </div>
+          <div class="prop-field prop-field-full">
+            <label>YOUR NOTES FOR LORAN</label>
+            <textarea placeholder="What should Loran know before she visits? Layout preferences, things to check, questions to ask…" rows="3"
+              onchange="saveState('${p.id}', {courtNotes: this.value})">${s.courtNotes || ''}</textarea>
+          </div>
+        </div>
+        ${loranFeedback}
+      </div>`;
+
+    container.appendChild(card);
   });
 
-  // Research accordion
-  html += '<div style="margin-top:1.5rem">';
-  html += '<button onclick="toggleResearch()" id="research-btn" style="width:100%;font-family:var(--mono);font-size:9px;letter-spacing:0.07em;padding:8px 12px;border:1px solid var(--border);border-radius:8px;background:var(--surface);color:var(--text3);cursor:pointer;text-align:left">▸ RESEARCH & SEARCH LINKS</button>';
-  html += '<div id="research-panel" style="display:none;margin-top:0.75rem">';
+  const hiddenRow = document.getElementById('show-hidden-row');
+  hiddenRow.style.display = hasHidden ? '' : 'none';
+  updateStats();
+}
 
-  const platforms = [
-    { name:'Homes.com — Reservoir Hill Townhouses', url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/', desc:'14 townhouses currently listed.' },
-    { name:'Zillow — Reservoir Hill Rentals',        url:'https://www.zillow.com/reservoir-hill-baltimore-md/rentals/',                         desc:'87 rentals. Set price filter to $1,800 max.' },
-    { name:'Apartments.com — Reservoir Hill 2bd',   url:'https://www.apartments.com/reservoir-hill-baltimore-md/2-bedrooms/',                  desc:'27 units. Avg rent $1,296/mo.' },
-    { name:'Apartments.com — Bolton Hill 2bd',       url:'https://www.apartments.com/bolton-hill-baltimore-md/2-bedrooms/',                     desc:'Avg $1,681/mo, 76% under $2,000.' },
-    { name:'ApartmentAdvisor — Reservoir Hill',      url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',             desc:'Shows below-market listings.' },
-    { name:'Zumper — Remington / Station North',     url:'https://www.zumper.com/houses-for-rent/baltimore-md/remington',                       desc:'Best for rowhouses near MICA.' },
-    { name:'Craigslist Baltimore — Houses',          url:'https://baltimore.craigslist.org/search/hhh',                                          desc:'Individual landlords. Freshest inventory.' },
-    { name:'Live Baltimore',                          url:'https://www.livebaltimore.com/',                                                       desc:'City-sponsored housing resource.' },
-  ];
-
-  const fbGroups = [
-    { name:'Baltimore Housing & Rentals',   url:'https://www.facebook.com/groups/baltimorehousingandrentals' },
-    { name:'Reservoir Hill Community',      url:'https://www.facebook.com/groups/reservoirhillcommunity' },
-    { name:'Bolton Hill Baltimore',         url:'https://www.facebook.com/groups/boltonhillbaltimore' },
-    { name:'Station North Baltimore',       url:'https://www.facebook.com/groups/stationnorthbaltimore' },
-    { name:'Baltimore City Rentals',        url:'https://www.facebook.com/groups/baltimorecityrentals' },
-    { name:'MICA Housing',                  url:'https://www.facebook.com/groups/micahousing' },
-  ];
-
-  html += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:0.5rem">SEARCH PLATFORMS</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0.5rem;margin-bottom:1rem">';
-  platforms.forEach(function(p) {
-    html += '<a href="' + p.url + '" target="_blank" style="display:block;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.65rem 0.85rem;text-decoration:none">';
-    html += '<div style="font-family:var(--mono);font-size:10px;color:var(--accent)">' + p.name + ' ↗</div>';
-    html += '<div style="font-size:10px;color:var(--text3);margin-top:2px">' + p.desc + '</div></a>';
+function setTourStatus(id, status, btn) {
+  saveState(id, { tourStatus: status });
+  const card = document.getElementById('card-'+id);
+  card.querySelectorAll('.tour-step').forEach(b => {
+    b.className = 'tour-step' + (b.textContent.trim() === status ? (status === 'Decision' ? ' active-green' : ' active') : '');
   });
-  html += '</div>';
-
-  html += '<div style="font-family:var(--mono);font-size:9px;letter-spacing:0.07em;color:var(--text3);margin-bottom:0.5rem">FACEBOOK GROUPS</div>';
-  html += '<div style="display:flex;flex-wrap:wrap;gap:0.5rem">';
-  fbGroups.forEach(function(g) {
-    html += '<a href="' + g.url + '" target="_blank" style="font-family:var(--mono);font-size:10px;padding:4px 12px;border-radius:20px;background:var(--surface);border:1px solid var(--border);color:var(--accent);text-decoration:none">' + g.name + ' ↗</a>';
-  });
-  html += '</div></div></div>';
-
-  html += '</div>';
-  el.innerHTML = html;
+  card.querySelector('.btn-tour-status').textContent = status;
+  updateStats();
 }
 
-
-function toggleResearch() {
-  const p = document.getElementById('research-panel');
-  if (p) p.style.display = p.style.display === 'none' ? 'block' : 'none';
+function toggleLoranList(id, btn) {
+  const s = getState(id);
+  const newVal = !s.onLoranList;
+  saveState(id, { onLoranList: newVal });
+  btn.className = 'btn-loran-list' + (newVal ? ' on' : '');
+  btn.textContent = newVal ? '✓ Loran\'s List' : '+ Loran\'s List';
 }
 
-function toggleLoranMode() {
-  const current = localStorage.getItem('loranMode') === 'true';
-  localStorage.setItem('loranMode', String(!current));
-  // Re-render housing view
-  const el = document.getElementById('view-housing');
-  if (!el) return;
-  if (!current) {
-    // switching TO loran mode
-    renderLoranMode(el);
-  } else {
-    // switching BACK to full view — reload full housing render
-    renderHousing();
+function hideCard(id) {
+  if (confirm('Hide this property? You can show it again with the button below.')) {
+    saveState(id, { hidden: true });
+    renderCourtCards();
   }
 }
 
-const SUPABASE_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6ZmJkYm15bGV4ZG15aG55cWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyMzQsImV4cCI6MjA5MzQzNTIzNH0.slEa6mE0cZYnQYQXn1lAbyWvw4AOx6K2xzU_mGZ_BL8';
-const loranCache = {};
-
-async function loadAllLoranNotes() {
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/housing_notes?select=*', {
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-      }
-    });
-    const rows = await res.json();
-    rows.forEach(r => { loranCache[r.property_id] = r; });
-  } catch(e) {
-    console.warn('Supabase load failed:', e);
-  }
-}
-
-function toggleLoranVisit(id) {
-  const key = 'loran_visit_' + id;
-  const current = localStorage.getItem(key) === 'true';
-  localStorage.setItem(key, String(!current));
-  renderHousing();
-}
-
-function isLoranVisit(id) {
-  return localStorage.getItem('loran_visit_' + id) === 'true';
-}
-
-async function saveLoranNote(id, field, value) {
-  if (!loranCache[id]) loranCache[id] = { property_id: id, status: 'Not Visited', rating: 0, note: '' };
-  loranCache[id][field] = field === 'rating' ? parseInt(value) : value;
-  loranCache[id].updated_at = new Date().toISOString();
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/housing_notes', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates',
-      },
-      body: JSON.stringify(loranCache[id])
-    });
-  } catch(e) {
-    console.warn('Supabase save failed:', e);
-  }
-  renderHousing();
-}
-
-async function saveField(id, field, value) {
-  if (!loranCache[id]) loranCache[id] = { property_id: id, status: 'Not Visited', rating: 0, note: '', tour_status: 'Not Started', contact_person: '', appt_datetime: '', court_notes: '', on_loran_list: false };
-  loranCache[id][field] = value;
-  loranCache[id].updated_at = new Date().toISOString();
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/housing_notes', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates',
-      },
-      body: JSON.stringify(loranCache[id])
-    });
-  } catch(e) {
-    console.warn('Supabase save failed:', e);
-  }
-  renderHousing();
-}
-
-function getLoranData(id, field, def) {
-  if (loranCache[id] && loranCache[id][field] !== undefined && loranCache[id][field] !== null && loranCache[id][field] !== '') {
-    return loranCache[id][field];
-  }
-  return def;
-}
-
-function renderLoranMode(el) {
-  const allProps = [
-    { id:'lh1', name:'750 Reservoir St, Unit A',    neighborhood:'Reservoir Hill',      price:'$1,650/mo',      bd:'2bd/1ba',      type:'Townhouse', url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',  notes:'Fully renovated 2025. LVP floors, new appliances. Minutes from Druid Hill Park and MICA.' },
-    { id:'lh2', name:'750 Reservoir St, Unit B',    neighborhood:'Reservoir Hill',      price:'~$1,750/mo',     bd:'2bd/2ba',      type:'Townhouse', url:'https://www.redfin.com/MD/Baltimore/750-Reservoir-St-21217/unit-B/apartment/198836948', notes:'Same building as Unit A, fully renovated 2025. 2bd/2ba version.' },
-    { id:'lh3', name:'1121 Whitelock St',            neighborhood:'Reservoir Hill',      price:'$1,300/mo',      bd:'2bd/1ba',      type:'House',     url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',              notes:'Flagged below market. Pets allowed. 1,180 sqft. Core Reservoir Hill street.' },
-    { id:'lh4', name:'1339 W Lafayette Ave, Unit 1', neighborhood:'Harlem Park',         price:'$1,650/mo',      bd:'2bd/2ba',      type:'Townhouse', url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/', notes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.' },
-    { id:'lh5', name:'805 Washington Blvd, Unit A', neighborhood:'Pigtown',             price:'$1,650/mo',      bd:'2bd/2ba',      type:'House',     url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/', notes:'1,050 sqft. Hardwood floors, gas heat, W/D in unit. Contact: Victoria Lin (301) 738-7777.' },
-    { id:'lh6', name:'1926 E 28th St',              neighborhood:'Coldstream/Montebello',price:'$1,950/mo',      bd:'2bd/2.5ba',    type:'Townhouse', url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',           notes:'1,500 sqft. Kitchen island, patio, porch, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.' },
-    { id:'lh7', name:'Symphony Center Apartments',  neighborhood:'Bolton Hill area',     price:'$2,180-2,340/mo',bd:'2bd/2ba',      type:'Apartment', url:'',                                                                                       notes:'Toured. Contact Nadine. MICA bus + JH shuttle. 3% MICA discount. Parking included.' },
-    { id:'lh8', name:'The Fitzgerald',              neighborhood:'Mount Royal',          price:'$2,218-2,503/mo',bd:'1bd+den to 2bd',type:'Apartment', url:'',                                                                                       notes:'Toured. 24hr concierge, pool, gym. Water is $150/mo extra. Multiple unit options.' },
-    { id:'lh9', name:'The Vault',                   neighborhood:'Downtown',             price:'TBD',            bd:'TBD',          type:'Apartment', url:'',                                                                                       notes:'Saturday 10a tour. 115 N Charles St. Leasing mgr: 443-851-9960.' },
-  ];
-
-  const statusList = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
-  const statusStyle = {
-    'Not Visited':{ bg:'#f0f0f0', color:'#888' },
-    'Scheduled':  { bg:'#e8f0fe', color:'#1a56a0' },
-    'Visited':    { bg:'#fff8e1', color:'#7A5C00' },
-    'Strong Yes': { bg:'#e6f4ec', color:'#145228' },
-    'Maybe':      { bg:'#fdf3e3', color:'#C17D3C' },
-    'Pass':       { bg:'#fdeaea', color:'#7A1212' },
-  };
-
-  const visited   = allProps.filter(p => getLoranData(p.id,'status','Not Visited') !== 'Not Visited').length;
-  const strongYes = allProps.filter(p => getLoranData(p.id,'status','') === 'Strong Yes').length;
-
-  let html = '<div style="background:var(--text);color:#fff;padding:10px 1rem;display:flex;gap:1.5rem;font-family:var(--mono);font-size:10px;letter-spacing:0.05em;flex-wrap:wrap">'
-           + '<span>VISITED: ' + visited + '/' + allProps.length + '</span>'
-           + '<span style="color:' + (strongYes > 0 ? '#7dba8e' : '#888') + '">STRONG YES: ' + strongYes + '</span>'
-           + '</div>';
-
-  html += '<div style="max-width:480px;margin:0 auto;padding:1rem">';
-  html += '<div style="text-align:center;margin-bottom:1.5rem">'
-        + '<div style="font-family:var(--mono);font-size:11px;color:var(--accent);letter-spacing:0.08em;margin-bottom:4px">LORAN MODE</div>'
-        + '<div style="font-size:13px;color:var(--text2)">Field notes for Loran — tap a status to update</div>'
-        + '<button onclick="toggleLoranMode()" style="margin-top:12px;font-family:var(--mono);font-size:9px;letter-spacing:0.06em;padding:5px 12px;border-radius:20px;border:1px solid var(--border);background:var(--surface);color:var(--text2);cursor:pointer">Back to full view</button>'
-        + '</div>';
-
-  allProps.forEach(function(p) {
-    const status = getLoranData(p.id, 'status', 'Not Visited');
-    const note   = getLoranData(p.id, 'note', '');
-    const rating = parseInt(getLoranData(p.id, 'rating', '0'));
-    const sc = statusStyle[status] || statusStyle['Not Visited'];
-
-    html += '<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:1rem;overflow:hidden">';
-
-    // Header
-    html += '<div style="padding:1rem 1rem 0.75rem;border-bottom:1px solid var(--border)">'
-          + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem">'
-          + '<div><div style="font-family:var(--mono);font-size:12px;font-weight:500;color:var(--text)">' + p.name + '</div>'
-          + '<div style="font-size:11px;color:var(--text3);margin-top:2px">' + p.neighborhood + ' · ' + p.type + '</div></div>'
-          + '<div style="text-align:right"><div style="font-family:var(--mono);font-size:13px;font-weight:500;color:var(--text)">' + p.price + '</div>'
-          + '<div style="font-size:10px;color:var(--text3)">' + p.bd + '</div></div>'
-          + '</div>';
-    if (p.url) html += '<a href="' + p.url + '" target="_blank" style="display:inline-block;margin-top:8px;font-family:var(--mono);font-size:9px;color:var(--accent);text-decoration:none">View listing</a>';
-    html += '</div>';
-
-    // Court notes
-    html += '<div style="padding:0.75rem 1rem;background:var(--surface2);font-size:11px;color:var(--text2);line-height:1.5;border-bottom:1px solid var(--border)">'
-          + '<span style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.06em">COURTS NOTES  </span>' + p.notes
-          + '</div>';
-
-    // Status buttons
-    html += '<div style="padding:0.75rem 1rem;border-bottom:1px solid var(--border)">'
-          + '<div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.5rem">STATUS</div>'
-          + '<div style="display:flex;flex-wrap:wrap;gap:6px">';
-    statusList.forEach(function(s) {
-      const sc2 = statusStyle[s];
-      const active = s === status;
-      html += '<button data-pid="' + p.id + '" data-status="' + s + '" onclick="saveLoranNote(this.dataset.pid,\'status\',this.dataset.status);renderHousing()" '
-            + 'style="font-family:var(--mono);font-size:9px;letter-spacing:0.04em;padding:4px 10px;border-radius:20px;cursor:pointer;'
-            + 'border:1px solid ' + (active ? sc2.color : '#ddd') + ';'
-            + 'background:' + (active ? sc2.bg : 'var(--surface)') + ';'
-            + 'color:' + (active ? sc2.color : '#999') + '">' + s + '</button>';
-    });
-    html += '</div></div>';
-
-    // Star rating
-    html += '<div style="padding:0.75rem 1rem;border-bottom:1px solid var(--border)">'
-          + '<div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.5rem">RATING</div>'
-          + '<div style="display:flex;gap:8px">';
-    for (let i = 1; i <= 5; i++) {
-      html += '<button data-pid="' + p.id + '" data-val="' + i + '" onclick="saveLoranNote(this.dataset.pid,\'rating\',this.dataset.val);renderHousing()" '
-            + 'style="font-size:22px;background:none;border:none;cursor:pointer;padding:0;color:' + (i <= rating ? '#C17D3C' : '#ddd') + '">&#9733;</button>';
+let showingHidden = false;
+function toggleHidden() {
+  showingHidden = !showingHidden;
+  PROPERTIES.forEach(p => {
+    const s = getState(p.id);
+    if (s.hidden) {
+      const card = document.getElementById('card-'+p.id);
+      if (card) card.style.display = showingHidden ? '' : 'none';
     }
-    html += '</div></div>';
-
-    // Notes field
-    html += '<div style="padding:0.75rem 1rem">'
-          + '<div style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.06em;margin-bottom:0.5rem">LORANS NOTES</div>'
-          + '<textarea data-pid="' + p.id + '" onblur="saveLoranNote(this.dataset.pid,\'note\',this.value)" '
-          + 'placeholder="Layout, condition, neighborhood feel, red flags, vibes..." '
-          + 'style="width:100%;min-height:80px;font-family:var(--sans);font-size:12px;color:var(--text);background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;resize:vertical;box-sizing:border-box;outline:none">' + note + '</textarea>'
-          + '</div>';
-
-    html += '</div>';
   });
-
-  html += '</div>';
-  el.innerHTML = html;
+  document.querySelector('.btn-show-hidden').textContent =
+    showingHidden ? 'hide hidden properties' : 'show hidden properties';
 }
 
-
-function switchTab(name) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
-  document.getElementById('view-'+name).classList.add('active');
+// ── LORAN MODE ──
+function enterLoranMode() {
+  document.getElementById('court-view').style.display = 'none';
+  document.getElementById('loran-mode-view').style.display = '';
+  renderLoranCards();
+}
+function exitLoranMode() {
+  document.getElementById('loran-mode-view').style.display = 'none';
+  document.getElementById('court-view').style.display = '';
 }
 
-document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+function renderLoranCards() {
+  const container = document.getElementById('loran-cards-container');
+  container.innerHTML = '';
 
-renderAll();
+  const loranStatuses = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
+
+  PROPERTIES.forEach(p => {
+    const s = getState(p.id);
+    if (s.hidden) return;
+    const ls = getLoranState(p.id);
+
+    const currentStatus = ls.status || 'Not Visited';
+    const rating = ls.rating || 0;
+
+    const courtNotes = s.courtNotes || '';
+    const apptDate = s.apptDate || '';
+    const contact = s.contact || '';
+
+    const apptBlock = (apptDate || contact) ? `
+      <div class="loran-appt-info">
+        <strong>APPOINTMENT INFO</strong>
+        ${apptDate ? `📅 ${apptDate}` : ''}${apptDate && contact ? ' · ' : ''}${contact ? `📞 ${contact}` : ''}
+      </div>` : '';
+
+    const courtNotesBlock = courtNotes ? `
+      <div class="loran-courts-notes">
+        <strong>NOTES FROM COURT</strong>
+        ${courtNotes}
+      </div>` : '';
+
+    const listingLink = p.url
+      ? `<a href="${p.url}" target="_blank">View listing ↗</a>`
+      : '';
+
+    const card = document.createElement('div');
+    card.className = 'loran-card';
+    card.id = 'loran-card-'+p.id;
+
+    card.innerHTML = `
+      <div class="loran-card-header">
+        <div>
+          <h3>${p.name}</h3>
+          <div class="loran-card-meta">
+            ${p.neighborhood} · ${p.type} · ${p.beds}
+            ${listingLink ? ' · ' + listingLink : ''}
+          </div>
+        </div>
+        <div class="loran-card-price">
+          <div class="price">${p.price}</div>
+          <div class="beds">${p.beds}</div>
+        </div>
+      </div>
+      ${apptBlock}
+      ${courtNotesBlock}
+      <div class="loran-card-body">
+        <div class="prop-section-label" style="margin-bottom:0.5rem">STATUS</div>
+        <div class="loran-status-pills">
+          ${loranStatuses.map(st => `
+            <button class="loran-status-pill ${currentStatus === st ? (st === 'Strong Yes' ? 'active-green' : st === 'Pass' ? 'active-red' : 'active') : ''}"
+              onclick="setLoranStatus('${p.id}', '${st}', this)">
+              ${st}
+            </button>`).join('')}
+        </div>
+
+        <div class="prop-section-label" style="margin-bottom:0.4rem">RATING</div>
+        <div class="loran-stars" id="stars-${p.id}">
+          ${[1,2,3,4,5].map(i => `
+            <span class="loran-star ${i <= rating ? 'filled' : ''}"
+              onclick="setLoranRating('${p.id}', ${i})">★</span>`).join('')}
+        </div>
+
+        <div class="prop-section-label" style="margin-bottom:0.4rem">YOUR NOTES</div>
+        <textarea class="loran-notes-area" id="notes-${p.id}"
+          placeholder="Layout, condition, neighborhood feel, red flags, vibes…"
+          oninput="autoSaveLoranNotes('${p.id}', this)">${ls.notes || ''}</textarea>
+        <div class="loran-save-indicator" id="save-${p.id}"></div>
+      </div>`;
+
+    container.appendChild(card);
+  });
+}
+
+function setLoranStatus(id, status, btn) {
+  saveLoranState(id, { status });
+  const card = document.getElementById('loran-card-'+id);
+  card.querySelectorAll('.loran-status-pill').forEach(b => {
+    const st = b.textContent.trim();
+    b.className = 'loran-status-pill' + (st === status
+      ? (status === 'Strong Yes' ? ' active-green' : status === 'Pass' ? ' active-red' : ' active')
+      : '');
+  });
+  updateStats();
+}
+
+function setLoranRating(id, rating) {
+  saveLoranState(id, { rating });
+  const stars = document.getElementById('stars-'+id);
+  stars.querySelectorAll('.loran-star').forEach((s, i) => {
+    s.classList.toggle('filled', i < rating);
+  });
+}
+
+let saveTimers = {};
+function autoSaveLoranNotes(id, textarea) {
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => {
+    saveLoranState(id, { notes: textarea.value });
+    const ind = document.getElementById('save-'+id);
+    ind.textContent = 'SAVED';
+    setTimeout(() => { ind.textContent = ''; }, 2000);
+  }, 800);
+}
+
+// ── INIT ──
+showTab('housing');
+renderCourtCards();
 </script>
 </body>
 </html>

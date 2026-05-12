@@ -5,380 +5,312 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Housing Field Notes — Loran</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+:root {
+  --bg: #F5F0E8; --surface: #FDFAF4; --surface2: #F0EBE0;
+  --border: #E0D8C8; --text: #1A1714; --text2: #4A4540; --text3: #8A8480;
+  --accent: #C17D3C; --accent2: #8B5E3C; --green: #4A7C59; --red: #8B3A3A;
+  --mono: 'DM Mono', monospace; --sans: 'DM Sans', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); font-family: var(--sans); color: var(--text); min-height: 100vh; }
 
-  :root {
-    --bg: #F5F0E8;
-    --surface: #FDFAF4;
-    --surface2: #F0EBE0;
-    --border: #E0D8C8;
-    --text: #1A1714;
-    --text2: #4A4540;
-    --text3: #8A8480;
-    --accent: #C17D3C;
-    --mono: 'DM Mono', monospace;
-    --sans: 'DM Sans', sans-serif;
-    --radius: 10px;
-  }
+/* GATE */
+#gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem; }
+.gate-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 16px;
+  padding: 2.5rem 2rem; width: 100%; max-width: 360px; text-align: center;
+}
+.gate-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 0.5rem; }
+.gate-title { font-family: var(--mono); font-size: 18px; font-weight: 500; margin-bottom: 0.25rem; }
+.gate-sub { font-size: 13px; color: var(--text2); margin-bottom: 2rem; }
+.gate-input {
+  width: 100%; padding: 12px 16px; font-family: var(--mono); font-size: 14px;
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 8px;
+  color: var(--text); outline: none; text-align: center; letter-spacing: 0.1em; margin-bottom: 0.75rem;
+}
+.gate-input:focus { border-color: var(--accent); }
+.gate-btn {
+  width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none;
+  border-radius: 8px; font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em;
+  cursor: pointer;
+}
+.gate-btn:hover { background: var(--accent2); }
+.gate-error { color: var(--red); font-family: var(--mono); font-size: 11px; margin-top: 0.5rem; min-height: 1rem; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* APP */
+#app { display: none; }
 
-  body {
-    background: var(--bg);
-    font-family: var(--sans);
-    color: var(--text);
-    min-height: 100vh;
-  }
+header {
+  background: #1A1714; color: #F5F0E8;
+  padding: 0 1.5rem; height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.h-name { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; }
+.h-badge {
+  background: var(--accent); color: #fff;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em;
+  padding: 3px 9px; border-radius: 20px;
+}
 
-  /* ── PASSWORD GATE ── */
-  #gate {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-  }
+main { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem; }
 
-  .gate-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2.5rem 2rem;
-    width: 100%;
-    max-width: 360px;
-    text-align: center;
-  }
+.page-intro {
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; text-align: center;
+}
+.intro-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.12em; color: var(--accent); margin-bottom: 0.4rem; }
+.intro-title { font-family: var(--mono); font-size: 16px; margin-bottom: 0.5rem; }
+.intro-sub { font-size: 13px; color: var(--text2); line-height: 1.5; }
+.intro-movein {
+  display: inline-block; margin-top: 0.75rem;
+  background: #F5EDE0; border: 1px solid var(--accent);
+  border-radius: 6px; padding: 6px 14px;
+  font-family: var(--mono); font-size: 11px; color: var(--accent2);
+}
 
-  .gate-label {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.1em;
-    color: var(--text3);
-    margin-bottom: 0.5rem;
-  }
+.stats-bar {
+  background: #1A1714; color: #F5F0E8;
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em;
+  padding: 9px 16px; border-radius: 6px; margin-bottom: 1.25rem;
+  display: flex; gap: 2rem;
+}
 
-  .gate-title {
-    font-family: var(--mono);
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.25rem;
-  }
+/* Cards */
+.loran-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden;
+}
+.card-header {
+  padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.card-header h3 { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.card-meta { font-size: 11px; color: var(--text3); line-height: 1.6; }
+.card-meta a { color: var(--accent); text-decoration: none; font-weight: 500; font-family: var(--mono); font-size: 10px; }
+.card-meta a:hover { text-decoration: underline; }
+.card-price-col { text-align: right; }
+.card-price { font-family: var(--mono); font-size: 15px; font-weight: 500; white-space: nowrap; }
+.card-beds { font-size: 11px; color: var(--text3); }
 
-  .gate-sub {
-    font-size: 13px;
-    color: var(--text2);
-    margin-bottom: 2rem;
-  }
+.appt-strip {
+  background: #F5EDE0; padding: 0.7rem 1.25rem;
+  border-bottom: 1px solid #E8D8C0;
+  font-size: 12px; color: var(--accent2);
+}
+.appt-strip strong {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  color: var(--accent); display: block; margin-bottom: 0.2rem;
+}
 
-  .gate-input {
-    width: 100%;
-    padding: 12px 16px;
-    font-family: var(--mono);
-    font-size: 14px;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    outline: none;
-    text-align: center;
-    letter-spacing: 0.1em;
-    margin-bottom: 0.75rem;
-  }
+.courts-notes-strip {
+  padding: 0.75rem 1.25rem;
+  background: var(--surface2); border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text2); line-height: 1.6;
+}
+.courts-notes-strip strong {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em;
+  color: var(--text3); display: block; margin-bottom: 0.3rem;
+}
 
-  .gate-input:focus { border-color: var(--accent); }
+.card-body { padding: 1rem 1.25rem; }
 
-  .gate-btn {
-    width: 100%;
-    padding: 12px;
-    font-family: var(--mono);
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    background: var(--accent);
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-  }
+.section-label {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: var(--text3); margin-bottom: 0.5rem;
+}
 
-  .gate-error {
-    font-size: 11px;
-    color: #c0392b;
-    margin-top: 0.5rem;
-    min-height: 16px;
-  }
+.status-pills { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.25rem; }
+.status-pill {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+  padding: 8px 14px; border-radius: 20px;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text3); cursor: pointer; transition: all 0.12s;
+}
+.status-pill:hover { border-color: var(--accent); color: var(--accent); }
+.status-pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+.status-pill.active-green { background: var(--green); color: #fff; border-color: var(--green); }
+.status-pill.active-red { background: var(--red); color: #fff; border-color: var(--red); }
 
-  /* ── MAIN APP ── */
-  #app { display: none; }
+.stars-row { display: flex; gap: 0.4rem; margin-bottom: 1.25rem; }
+.star { font-size: 26px; cursor: pointer; color: var(--border); transition: color 0.1s; }
+.star.filled { color: var(--accent); }
 
-  .top-bar {
-    background: var(--text);
-    color: #fff;
-    padding: 10px 1rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-family: var(--mono);
-    font-size: 10px;
-    letter-spacing: 0.05em;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+.checklist { margin-bottom: 1rem; }
+.check-row {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 9px 12px; border-radius: 8px; cursor: pointer;
+  border: 1px solid var(--border); background: var(--surface2);
+  margin-bottom: 0.4rem; transition: all 0.12s;
+}
+.check-row:hover { border-color: var(--accent); }
+.check-row.checked { background: #EAF0EB; border-color: var(--green); }
+.check-box {
+  width: 20px; height: 20px; border: 1.5px solid var(--border);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600; color: var(--green); flex-shrink: 0;
+  background: var(--surface);
+}
+.check-row.checked .check-box { background: var(--green); color: #fff; border-color: var(--green); }
+.check-label { font-size: 13px; color: var(--text2); line-height: 1.4; }
+.check-row.checked .check-label { color: var(--text3); }
 
-  .top-bar-stats { display: flex; gap: 1.5rem; flex-wrap: wrap; }
-  .stat-yes { color: #7dba8e; }
-  .top-bar-right { display: flex; gap: 1rem; align-items: center; }
-  .logout-btn {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.06em;
-    padding: 3px 10px;
-    border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.2);
-    background: transparent;
-    color: rgba(255,255,255,0.6);
-    cursor: pointer;
-  }
-
-  .content { max-width: 520px; margin: 0 auto; padding: 1.25rem 1rem 3rem; }
-
-  .page-header { text-align: center; margin-bottom: 1.75rem; padding-top: 0.5rem; }
-  .page-title {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    margin-bottom: 4px;
-  }
-  .page-sub { font-size: 13px; color: var(--text2); }
-
-  /* ── PROPERTY CARDS ── */
-  .prop-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 1rem;
-    overflow: hidden;
-  }
-
-  .prop-header {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .prop-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .prop-name {
-    font-family: var(--mono);
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .prop-hood {
-    font-size: 11px;
-    color: var(--text3);
-    margin-top: 2px;
-  }
-
-  .prop-price {
-    font-family: var(--mono);
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text);
-    white-space: nowrap;
-  }
-
-  .prop-bd {
-    font-size: 10px;
-    color: var(--text3);
-    text-align: right;
-  }
-
-  .prop-link {
-    display: inline-block;
-    margin-top: 8px;
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--accent);
-    text-decoration: none;
-    letter-spacing: 0.04em;
-  }
-
-  .court-notes {
-    padding: 0.75rem 1rem;
-    background: var(--surface2);
-    font-size: 11px;
-    color: var(--text2);
-    line-height: 1.55;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .court-notes-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    display: block;
-    margin-bottom: 4px;
-  }
-
-  .section { padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); }
-  .section:last-child { border-bottom: none; }
-  .section-label {
-    font-family: var(--mono);
-    font-size: 8px;
-    letter-spacing: 0.08em;
-    color: var(--text3);
-    margin-bottom: 0.5rem;
-  }
-
-  /* Status buttons */
-  .status-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-  .status-btn {
-    font-family: var(--mono);
-    font-size: 9px;
-    letter-spacing: 0.04em;
-    padding: 5px 12px;
-    border-radius: 20px;
-    cursor: pointer;
-    border: 1px solid #ddd;
-    background: var(--surface);
-    color: #999;
-    transition: all 0.1s;
-  }
-
-  /* Stars */
-  .stars { display: flex; gap: 6px; }
-  .star-btn {
-    font-size: 24px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    color: #ddd;
-    transition: color 0.1s;
-    line-height: 1;
-  }
-  .star-btn.filled { color: var(--accent); }
-
-  /* Notes textarea */
-  .notes-field {
-    width: 100%;
-    min-height: 90px;
-    font-family: var(--sans);
-    font-size: 13px;
-    color: var(--text);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
-    resize: vertical;
-    outline: none;
-    line-height: 1.5;
-  }
-
-  .notes-field:focus { border-color: var(--accent); }
-
-  .save-indicator {
-    font-family: var(--mono);
-    font-size: 9px;
-    color: var(--text3);
-    margin-top: 4px;
-    height: 12px;
-    transition: opacity 0.3s;
-  }
-
-  .loading {
-    text-align: center;
-    padding: 3rem;
-    font-family: var(--mono);
-    font-size: 11px;
-    color: var(--text3);
-    letter-spacing: 0.06em;
-  }
+.notes-area {
+  width: 100%; min-height: 110px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px; resize: vertical;
+  font-family: var(--sans); font-size: 13px; color: var(--text);
+  outline: none; line-height: 1.6;
+}
+.notes-area:focus { border-color: var(--accent); }
+.save-indicator {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em;
+  color: var(--green); text-align: right; min-height: 14px; margin-top: 0.3rem;
+}
 </style>
 </head>
 <body>
 
-<!-- PASSWORD GATE -->
+<!-- GATE -->
 <div id="gate">
   <div class="gate-card">
-    <div class="gate-label">COURT WILLIAMS · 2026 TRANSITION</div>
+    <div class="gate-label">COURT WILLIAMS · 2026</div>
     <div class="gate-title">Housing Field Notes</div>
-    <div class="gate-sub">For Loran — enter password to access</div>
-    <input type="password" id="pw-input" class="gate-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPassword()">
-    <button class="gate-btn" onclick="checkPassword()">ENTER</button>
+    <div class="gate-sub">Enter your access code to continue</div>
+    <input type="password" class="gate-input" id="pw-input" placeholder="••••••••••"
+      onkeydown="if(event.key==='Enter') checkPw()">
+    <button class="gate-btn" onclick="checkPw()">ENTER</button>
     <div class="gate-error" id="pw-error"></div>
   </div>
 </div>
 
-<!-- MAIN APP -->
+<!-- APP -->
 <div id="app">
-  <div class="top-bar">
-    <div class="top-bar-stats">
-      <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
-      <span class="stat-yes">STRONG YES: <span id="stat-yes">0</span></span>
+  <header>
+    <div class="h-name">LORAN · FIELD NOTES</div>
+    <div class="h-badge">COURT 2026</div>
+  </header>
+  <main>
+    <div class="page-intro">
+      <div class="intro-label">LORAN MODE</div>
+      <div class="intro-title">Housing Field Notes</div>
+      <div class="intro-sub">These are the places Court wants you to check out. Tap a status, rate it, leave notes — everything saves automatically.</div>
+      <div class="intro-movein">📅 Move-in: July 25 or Aug 20–30</div>
     </div>
-    <div class="top-bar-right">
-      <span style="color:rgba(255,255,255,0.4)">loran mode</span>
-      <button class="logout-btn" onclick="logout()">lock</button>
-    </div>
-  </div>
 
-  <div class="content">
-    <div class="page-header">
-      <div class="page-title">FIELD NOTES</div>
-      <div class="page-sub">Tap a status after each visit · notes save automatically</div>
+    <div class="stats-bar">
+      <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
+      <span>STRONG YES: <span id="stat-sy">0</span></span>
     </div>
-    <div id="cards-container"><div class="loading">Loading properties...</div></div>
-  </div>
+
+    <div id="cards-container"></div>
+  </main>
 </div>
 
 <script>
-const SUPABASE_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind6ZmJkYm15bGV4ZG15aG55cWJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NTkyMzQsImV4cCI6MjA5MzQzNTIzNH0.slEa6mE0cZYnQYQXn1lAbyWvw4AOx6K2xzU_mGZ_BL8';
 const PASSWORD = 'L00817K@i^';
 
 const PROPERTIES = [
-  { id:'lh1', name:'750 Reservoir St, Unit A',     neighborhood:'Reservoir Hill',        price:'$1,650/mo',       bd:'2bd/1ba',       type:'Townhouse', url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',   courtNotes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA. HIGH priority.' },
-  { id:'lh2', name:'750 Reservoir St, Unit B',     neighborhood:'Reservoir Hill',        price:'~$1,750/mo',      bd:'2bd/2ba',       type:'Townhouse', url:'https://www.redfin.com/MD/Baltimore/750-Reservoir-St-21217/unit-B/apartment/198836948', courtNotes:'Same building as Unit A, fully renovated 2025. 2bd/2ba — this is the one if budget allows.' },
-  { id:'lh3', name:'1121 Whitelock St',             neighborhood:'Reservoir Hill',        price:'$1,300/mo',       bd:'2bd/1ba',       type:'House',     url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',               courtNotes:'Listed below market. Pets allowed. 1,180 sqft. Check condition carefully at this price point.' },
-  { id:'lh4', name:'1339 W Lafayette Ave, Unit 1', neighborhood:'Harlem Park',           price:'$1,650/mo',       bd:'2bd/2ba',       type:'Townhouse', url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/', courtNotes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.' },
-  { id:'lh5', name:'805 Washington Blvd, Unit A',  neighborhood:'Pigtown',               price:'$1,650/mo',       bd:'2bd/2ba',       type:'House',     url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/', courtNotes:'1,050 sqft. Hardwood floors, W/D in unit. Above retail. Contact: Victoria Lin (301) 738-7777.' },
-  { id:'lh6', name:'1926 E 28th St',               neighborhood:'Coldstream/Montebello', price:'$1,950/mo',       bd:'2bd/2.5ba',     type:'Townhouse', url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',            courtNotes:'1,500 sqft — most space of all options. Kitchen island, patio, porch, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.' },
-  { id:'lh7', name:'Symphony Center Apartments',   neighborhood:'Bolton Hill area',      price:'$2,180–2,340/mo', bd:'2bd/2ba',       type:'Apartment', url:'',                                                                                        courtNotes:'Court already toured. Contact Nadine. MICA bus + JH shuttle. 3% MICA discount. Parking included. Ask about unit 10+.' },
-  { id:'lh8', name:'The Fitzgerald',               neighborhood:'Mount Royal',           price:'$2,218–2,503/mo', bd:'1bd+den to 2bd',type:'Apartment', url:'',                                                                                        courtNotes:'Court already toured. 24hr concierge, pool, gym. Note: water is $150/mo extra. Ask about Lanier and Carraway units.' },
-  { id:'lh9', name:'The Vault',                    neighborhood:'Downtown',              price:'TBD',             bd:'TBD',           type:'Apartment', url:'',                                                                                        courtNotes:'115 N Charles St. Leasing mgr: 443-851-9960. Saturday 10a tour — confirm before going.' },
+  {
+    id: 'rh1',
+    name: '750 Reservoir St, Unit A',
+    neighborhood: 'Reservoir Hill',
+    type: 'Townhouse',
+    price: '$1,650/mo',
+    beds: '2bd/1ba',
+    url: 'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',
+    defaultNotes: 'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA.',
+  },
+  {
+    id: 'rh2',
+    name: '750 Reservoir St, Unit B',
+    neighborhood: 'Reservoir Hill',
+    type: 'Townhouse',
+    price: '~$1,750/mo',
+    beds: '2bd/2ba',
+    url: 'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',
+    defaultNotes: 'Same building as Unit A. 2bd/2ba — extra bath is a plus. Also renovated 2025.',
+  },
+  {
+    id: 'rh3',
+    name: 'Reservoir Hill Renovated Unit',
+    neighborhood: 'Reservoir Hill',
+    type: 'Apartment/Unit',
+    price: 'TBD',
+    beds: '2bd/1ba',
+    url: 'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',
+    defaultNotes: 'Main-level unit, completely updated 2025. LVP floors, new kitchen, open layout. Good for WFH. Via RE/MAX Distinctive.',
+  },
+  {
+    id: 'rh4',
+    name: '1121 Whitelock St',
+    neighborhood: 'Reservoir Hill',
+    type: 'House',
+    price: '$1,300/mo',
+    beds: '2bd/1ba',
+    url: 'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',
+    defaultNotes: 'Below market pricing — may need closer look. 1,180 sqft. Pets OK.',
+  },
+  {
+    id: 'bh1',
+    name: '525 W Lafayette Ave area',
+    neighborhood: 'Bolton Hill',
+    type: 'Townhouse',
+    price: '~$1,500–1,600/mo',
+    beds: '2bd',
+    url: 'https://www.zillow.com/bolton-hill-baltimore-md/apartments/',
+    defaultNotes: 'Good transit, walkable to MICA. Light Rail nearby.',
+  },
+  {
+    id: 'bh2',
+    name: 'Bolton North Apartments',
+    neighborhood: 'Bolton Hill',
+    type: 'Apartment',
+    price: 'Income-restricted',
+    beds: '1–2bd',
+    url: 'https://boltonnorthapts.com/',
+    defaultNotes: 'HUD income-restricted. Pet-friendly. Near Druid Hill Park and Light Rail.',
+  },
+  {
+    id: 'bh3',
+    name: 'Bolton House',
+    neighborhood: 'Bolton Hill',
+    type: 'Apartment',
+    price: 'TBD',
+    beds: '2bd (710 sqft)',
+    url: 'https://boltonhouse.com/',
+    defaultNotes: 'High-rise with downtown views. Steps from MICA. 2bd is 710 sqft — compact but central.',
+  },
+  {
+    id: 'sym1',
+    name: 'Symphony Center Apartments',
+    neighborhood: 'Bolton Hill area',
+    type: 'Apartment',
+    price: '$2,180–2,340/mo',
+    beds: '2bd/2ba',
+    url: '',
+    defaultNotes: 'Court has already toured this one. Over budget. Keeping for reference.',
+  },
+  {
+    id: 'fitz1',
+    name: 'The Fitzgerald',
+    neighborhood: 'Mount Royal',
+    type: 'Apartment',
+    price: '$2,218–2,503/mo',
+    beds: '1bd+den to 2bd',
+    url: '',
+    defaultNotes: 'Court has already toured this one. Over budget. Likely ruled out.',
+  },
 ];
 
-const STATUS_OPTIONS = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
-const STATUS_STYLES = {
-  'Not Visited':{ bg:'#f0f0f0',  color:'#888' },
-  'Scheduled':  { bg:'#e8f0fe',  color:'#1a56a0' },
-  'Visited':    { bg:'#fff8e1',  color:'#7A5C00' },
-  'Strong Yes': { bg:'#e6f4ec',  color:'#145228' },
-  'Maybe':      { bg:'#fdf3e3',  color:'#C17D3C' },
-  'Pass':       { bg:'#fdeaea',  color:'#7A1212' },
-};
-
-let db = {};
-
-// ── AUTH ─────────────────────────────────────────────────────────────────
-function checkPassword() {
-  const val = document.getElementById('pw-input').value.trim();
+function checkPw() {
+  const val = document.getElementById('pw-input').value;
   if (val === PASSWORD) {
-    sessionStorage.setItem('loran_auth', 'true');
     document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    init();
+    document.getElementById('app').style.display = '';
+    renderCards();
+    updateStats();
   } else {
     document.getElementById('pw-error').textContent = 'Incorrect password — try again';
     document.getElementById('pw-input').value = '';
@@ -386,189 +318,169 @@ function checkPassword() {
   }
 }
 
-function logout() {
-  sessionStorage.removeItem('loran_auth');
-  location.reload();
+function getLS(id) {
+  try { return JSON.parse(localStorage.getItem('loran_'+id) || 'null') || {}; } catch { return {}; }
+}
+function saveLS(id, updates) {
+  const s = getLS(id);
+  Object.assign(s, updates);
+  localStorage.setItem('loran_'+id, JSON.stringify(s));
+}
+function getCourtState(id) {
+  try { return JSON.parse(localStorage.getItem('prop_'+id) || 'null') || {}; } catch { return {}; }
 }
 
-// ── SUPABASE ──────────────────────────────────────────────────────────────
-async function loadNotes() {
-  try {
-    const res = await fetch(SUPABASE_URL + '/rest/v1/housing_notes?select=*', {
-      headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-    });
-    const rows = await res.json();
-    rows.forEach(r => { db[r.property_id] = r; });
-  } catch(e) { console.warn('Load failed:', e); }
+function updateStats() {
+  const total = PROPERTIES.length;
+  const visited = PROPERTIES.filter(p => {
+    const s = getLS(p.id);
+    return s.status && ['Visited','Strong Yes','Maybe','Pass'].includes(s.status);
+  }).length;
+  const sy = PROPERTIES.filter(p => getLS(p.id).status === 'Strong Yes').length;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-visited').textContent = visited;
+  document.getElementById('stat-sy').textContent = sy;
 }
 
-async function saveField(id, field, value) {
-  if (!db[id]) db[id] = { property_id: id, status: 'Not Visited', rating: 0, note: '', tour_status: 'Not Started', contact_person: '', appt_datetime: '', court_notes: '', on_loran_list: false };
-  db[id][field] = field === 'rating' ? parseInt(value) : value;
-  db[id].updated_at = new Date().toISOString();
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/housing_notes', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates',
-      },
-      body: JSON.stringify(db[id])
-    });
-    showSaved(id);
-  } catch(e) { console.warn('Save failed:', e); }
-  updateStats();
-}
+const CHECKLIST = [
+  '🍳 Roomy kitchen with storage space',
+  '🐾 Pet friendly (ask explicitly)',
+  '⚡ Practical electricity bill — ask about avg monthly cost',
+  '🎓 Walkable to MICA',
+  '🛒 Close to grocery store or market',
+  '🚿 2 bathrooms (or at least 1.5)',
+  '👶 Kairo-friendly — safe space, no major hazards',
+];
 
-async function saveNote(id, field, value) {
-  if (!db[id]) db[id] = { property_id: id, status: 'Not Visited', rating: 0, note: '' };
-  db[id][field] = field === 'rating' ? parseInt(value) : value;
-  db[id].updated_at = new Date().toISOString();
-  try {
-    await fetch(SUPABASE_URL + '/rest/v1/housing_notes', {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': 'Bearer ' + SUPABASE_KEY,
-        'Content-Type': 'application/json',
-        'Prefer': 'resolution=merge-duplicates',
-      },
-      body: JSON.stringify(db[id])
-    });
-    showSaved(id);
-  } catch(e) { console.warn('Save failed:', e); }
-  updateStats();
-}
-
-function get(id, field, def) {
-  return (db[id] && db[id][field] !== undefined && db[id][field] !== null && db[id][field] !== '')
-    ? db[id][field] : def;
-}
-
-// ── RENDER ────────────────────────────────────────────────────────────────
-async function init() {
-  await loadNotes();
-  renderCards();
-  updateStats();
-}
+const STATUSES = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
 
 function renderCards() {
   const container = document.getElementById('cards-container');
   container.innerHTML = '';
 
   PROPERTIES.forEach(p => {
-    const status = get(p.id, 'status', 'Not Visited');
-    const rating = parseInt(get(p.id, 'rating', 0));
-    const note = get(p.id, 'note', '');
-    const sc = STATUS_STYLES[status] || STATUS_STYLES['Not Visited'];
+    const ls = getLS(p.id);
+    const cs = getCourtState(p.id);
+    const currentStatus = ls.status || 'Not Visited';
+    const rating = ls.rating || 0;
+    const notes = ls.notes || '';
+    const apptDate = cs.apptDate || '';
+    const contact = cs.contact || '';
+    const courtNotes = cs.courtNotes || p.defaultNotes || '';
+
+    const apptBlock = (apptDate || contact) ? `
+      <div class="appt-strip">
+        <strong>APPOINTMENT INFO</strong>
+        ${apptDate ? `📅 ${apptDate}` : ''}${apptDate && contact ? ' · ' : ''}${contact ? `📞 ${contact}` : ''}
+      </div>` : '';
+
+    const notesBlock = courtNotes ? `
+      <div class="courts-notes-strip">
+        <strong>NOTES FROM COURT</strong>
+        ${courtNotes}
+      </div>` : '';
+
+    const listingLink = p.url
+      ? `<a href="${p.url}" target="_blank">View listing ↗</a>`
+      : '<span style="color:var(--text3);font-size:10px;">no listing link</span>';
 
     const card = document.createElement('div');
-    card.className = 'prop-card';
-    card.id = 'card-' + p.id;
+    card.className = 'loran-card';
+    card.id = 'card-'+p.id;
 
-    // Header
-    let headerHTML = '<div class="prop-header">'
-      + '<div class="prop-row">'
-      + '<div><div class="prop-name">' + p.name + '</div>'
-      + '<div class="prop-hood">' + p.neighborhood + ' · ' + p.type + '</div></div>'
-      + '<div><div class="prop-price">' + p.price + '</div>'
-      + '<div class="prop-bd">' + p.bd + '</div></div>'
-      + '</div>';
-    if (p.url) headerHTML += '<a href="' + p.url + '" target="_blank" class="prop-link">↗ view listing</a>';
-    headerHTML += '</div>';
+    card.innerHTML = `
+      <div class="card-header">
+        <div>
+          <h3>${p.name}</h3>
+          <div class="card-meta">
+            ${p.neighborhood} · ${p.type}<br>
+            ${listingLink}
+          </div>
+        </div>
+        <div class="card-price-col">
+          <div class="card-price">${p.price}</div>
+          <div class="card-beds">${p.beds}</div>
+        </div>
+      </div>
+      ${apptBlock}
+      ${notesBlock}
+      <div class="card-body">
+        <div class="section-label">STATUS</div>
+        <div class="status-pills">
+          ${STATUSES.map(st => `
+            <button class="status-pill ${currentStatus === st
+              ? (st === 'Strong Yes' ? 'active-green' : st === 'Pass' ? 'active-red' : 'active')
+              : ''}"
+              onclick="setStatus('${p.id}', '${st}', this)">
+              ${st}
+            </button>`).join('')}
+        </div>
 
-    // Court notes
-    const courtHTML = '<div class="court-notes">'
-      + '<span class="court-notes-label">COURTS NOTES</span>'
-      + p.courtNotes
-      + '</div>';
+        <div class="section-label">RATING</div>
+        <div class="stars-row" id="stars-${p.id}">
+          ${[1,2,3,4,5].map(i => `
+            <span class="star ${i <= rating ? 'filled' : ''}"
+              onclick="setRating('${p.id}', ${i})">★</span>`).join('')}
+        </div>
 
-    // Status
-    let statusHTML = '<div class="section"><div class="section-label">STATUS</div><div class="status-grid">';
-    STATUS_OPTIONS.forEach(s => {
-      const ssc = STATUS_STYLES[s];
-      const active = s === status;
-      statusHTML += '<button class="status-btn" '
-        + 'style="' + (active ? 'border-color:' + ssc.color + ';background:' + ssc.bg + ';color:' + ssc.color : '') + '" '
-        + 'onclick="setStatus(\'' + p.id + '\', \'' + s + '\')">' + s + '</button>';
-    });
-    statusHTML += '</div></div>';
+        <div class="section-label">COURT'S CHECKLIST</div>
+        <div class="checklist" id="checklist-${p.id}">
+          ${CHECKLIST.map((item, i) => {
+            const checked = ls.checklist && ls.checklist[i];
+            return `<div class="check-row ${checked ? 'checked' : ''}" onclick="toggleCheck('${p.id}', ${i}, this)">
+              <span class="check-box">${checked ? '✓' : ''}</span>
+              <span class="check-label">${item}</span>
+            </div>`;
+          }).join('')}
+        </div>
 
-    // Stars
-    let starsHTML = '<div class="section"><div class="section-label">RATING</div><div class="stars">';
-    for (let i = 1; i <= 5; i++) {
-      starsHTML += '<button class="star-btn ' + (i <= rating ? 'filled' : '') + '" '
-        + 'onclick="setRating(\'' + p.id + '\',' + i + ')">'
-        + '★</button>';
-    }
-    starsHTML += '</div></div>';
+        <div class="section-label" style="margin-top:1rem">YOUR NOTES</div>
+        <textarea class="notes-area" id="notes-${p.id}"
+          placeholder="Layout, condition, neighborhood feel, red flags, vibes…"
+          oninput="autoSave('${p.id}', this)">${notes}</textarea>
+        <div class="save-indicator" id="save-${p.id}"></div>
+      </div>`;
 
-    // Notes
-    const notesHTML = '<div class="section">'
-      + '<div class="section-label">YOUR NOTES</div>'
-      + '<textarea class="notes-field" id="note-' + p.id + '" '
-      + 'placeholder="Layout, condition, neighborhood feel, natural light, street vibe, red flags..." '
-      + 'onblur="setNote(\'' + p.id + '\')">' + note + '</textarea>'
-      + '<div class="save-indicator" id="saved-' + p.id + '"></div>'
-      + '</div>';
-
-    card.innerHTML = headerHTML + courtHTML + statusHTML + starsHTML + notesHTML;
     container.appendChild(card);
   });
 }
 
-function setStatus(id, status) {
-  saveNote(id, 'status', status);
-  // Update buttons immediately
-  const card = document.getElementById('card-' + id);
-  if (!card) return;
-  card.querySelectorAll('.status-btn').forEach(btn => {
-    const s = btn.textContent;
-    const ssc = STATUS_STYLES[s];
-    const active = s === status;
-    btn.style.borderColor = active ? ssc.color : '#ddd';
-    btn.style.background = active ? ssc.bg : 'var(--surface)';
-    btn.style.color = active ? ssc.color : '#999';
+function toggleCheck(id, index, row) {
+  const s = getLS(id);
+  const checklist = s.checklist || {};
+  checklist[index] = !checklist[index];
+  saveLS(id, { checklist });
+  row.classList.toggle('checked', checklist[index]);
+  row.querySelector('.check-box').textContent = checklist[index] ? '✓' : '';
+}
+
+function setStatus(id, status, btn) {
+  saveLS(id, { status });
+  const card = document.getElementById('card-'+id);
+  card.querySelectorAll('.status-pill').forEach(b => {
+    const st = b.textContent.trim();
+    b.className = 'status-pill' + (st === status
+      ? (status === 'Strong Yes' ? ' active-green' : status === 'Pass' ? ' active-red' : ' active')
+      : '');
   });
+  updateStats();
 }
 
-function setRating(id, val) {
-  saveNote(id, 'rating', val);
-  const card = document.getElementById('card-' + id);
-  if (!card) return;
-  card.querySelectorAll('.star-btn').forEach((btn, i) => {
-    btn.classList.toggle('filled', i < val);
-  });
+function setRating(id, rating) {
+  saveLS(id, { rating });
+  const row = document.getElementById('stars-'+id);
+  row.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('filled', i < rating));
 }
 
-function setNote(id) {
-  const val = document.getElementById('note-' + id).value;
-  saveNote(id, 'note', val);
-}
-
-function showSaved(id) {
-  const el = document.getElementById('saved-' + id);
-  if (!el) return;
-  el.textContent = 'saved ✓';
-  el.style.opacity = '1';
-  setTimeout(() => { el.style.opacity = '0'; }, 2000);
-}
-
-function updateStats() {
-  const visited = PROPERTIES.filter(p => get(p.id, 'status', 'Not Visited') !== 'Not Visited').length;
-  const yes = PROPERTIES.filter(p => get(p.id, 'status', '') === 'Strong Yes').length;
-  document.getElementById('stat-visited').textContent = visited;
-  document.getElementById('stat-total').textContent = PROPERTIES.length;
-  document.getElementById('stat-yes').textContent = yes;
-}
-
-// ── BOOT ──────────────────────────────────────────────────────────────────
-if (sessionStorage.getItem('loran_auth') === 'true') {
-  document.getElementById('gate').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
-  init();
+const saveTimers = {};
+function autoSave(id, textarea) {
+  clearTimeout(saveTimers[id]);
+  saveTimers[id] = setTimeout(() => {
+    saveLS(id, { notes: textarea.value });
+    const ind = document.getElementById('save-'+id);
+    ind.textContent = 'SAVED';
+    setTimeout(() => { ind.textContent = ''; }, 2000);
+  }, 800);
 }
 </script>
 </body>
