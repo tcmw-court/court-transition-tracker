@@ -3,484 +3,1261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Court Williams — 2026 Transition</title>
+<title>Court — Logistics Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500;600&display=swap');
 :root {
-  --bg:#F5F0E8;--surface:#FDFAF4;--surface2:#F0EBE0;--border:#E0D8C8;
-  --text:#1A1714;--text2:#4A4540;--text3:#8A8480;
-  --accent:#C17D3C;--accent2:#8B5E3C;--green:#4A7C59;--red:#8B3A3A;
-  --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;--radius:10px;
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E2DDD4;
+  --text: #1A1714;
+  --text2: #6B6560;
+  --text3: #9E9890;
+  --accent: #C17D3C;
+  --accent-light: #F5EBD8;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-sm: 6px;
 }
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);font-family:var(--sans);color:var(--text);min-height:100vh;}
-header{background:#1A1714;color:#F5F0E8;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;}
-.h-name{font-family:var(--mono);font-size:13px;letter-spacing:.08em;font-weight:500;}
-.h-badge{background:var(--accent);color:#fff;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:4px 10px;border-radius:20px;}
-.h-right{display:flex;align-items:center;gap:1rem;}
-.h-live{font-family:var(--mono);font-size:10px;color:#8A8480;border:1px solid #3A3530;padding:3px 8px;border-radius:4px;}
-.h-live span{color:var(--green);margin-right:4px;}
-.h-date{font-family:var(--mono);font-size:10px;color:#8A8480;}
-nav{background:var(--surface);border-bottom:1px solid var(--border);display:flex;padding:0 2rem;}
-nav button{background:none;border:none;cursor:pointer;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--text3);padding:14px 16px;border-bottom:2px solid transparent;transition:all .15s;}
-nav button:hover{color:var(--text2);}
-nav button.active{color:var(--accent);border-bottom-color:var(--accent);}
-main{max-width:1100px;margin:0 auto;padding:2rem;}
-
-/* BOARD */
-.board-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;}
-@media(max-width:700px){.board-grid{grid-template-columns:1fr;}}
-.col-head{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--text3);padding-bottom:.75rem;border-bottom:1px solid var(--border);margin-bottom:1rem;}
-.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:.75rem;}
-.task-card h4{font-size:13px;font-weight:500;margin-bottom:.4rem;}
-.task-card p{font-size:12px;color:var(--text2);line-height:1.5;}
-.tag{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.06em;padding:2px 7px;border-radius:3px;margin-top:.5rem;background:var(--surface2);color:var(--text3);}
-.tag-urgent{background:#F5EDE0;color:var(--accent);}
-.tag-done{background:#EAF0EB;color:var(--green);}
-
-/* TIMELINE */
-.timeline-wrap{max-width:640px;}
-.tl-month{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--accent);margin:1.5rem 0 .75rem;}
-.tl-item{display:flex;gap:1rem;margin-bottom:.75rem;align-items:flex-start;}
-.tl-dot{width:10px;height:10px;border-radius:50%;background:var(--border);flex-shrink:0;margin-top:4px;}
-.tl-dot.done{background:var(--green);}
-.tl-dot.urgent{background:var(--accent);}
-.tl-dot.future{background:var(--border);}
-.tl-content h4{font-size:13px;font-weight:500;margin-bottom:2px;}
-.tl-content p{font-size:12px;color:var(--text2);}
-
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0;
+}
+/* HEADER */
+.header {
+  background: var(--text);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.header-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.05em;
+}
+.surgery-pill {
+  background: #8B1A1A;
+  color: #FFD0D0;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 54px;
+  z-index: 99;
+}
+.tab {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  padding: 12px 16px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* VIEWS */
+.view { display: none; padding: 1.5rem; }
+.view.active { display: block; }
+/* PROGRESS */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+.progress-fill {
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+}
+/* BOARD TOGGLE */
+.board-toggle {
+  display: flex;
+  gap: 0;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+.board-toggle-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  border: none;
+  background: none;
+  color: var(--text3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.board-toggle-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+/* PROJECT BOARD */
+.proj-section { margin-bottom: 1.5rem; }
+.proj-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.proj-section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.proj-section-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+.proj-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+/* KANBAN */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.k-col {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 10px;
+  min-height: 80px;
+}
+.k-col-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding: 0 2px;
+  display: flex;
+  justify-content: space-between;
+}
+.k-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.1s, transform 0.1s;
+}
+.k-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.k-card.is-done { opacity: 0.45; }
+.k-card-title {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+.k-card.is-done .k-card-title { text-decoration: line-through; color: var(--text3); }
+.k-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.k-card-note {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+/* BADGES */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.due-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+/* ADD ROW */
+.add-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.add-row input, .add-row select {
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+.add-row input:focus, .add-row select:focus { border-color: var(--accent); }
+.add-row input { flex: 1; min-width: 160px; }
+.add-row select { min-width: 110px; }
+.add-row .due-input { min-width: 80px; flex: none; }
+.add-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 7px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-btn:hover { opacity: 0.85; }
+/* CALENDAR */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.cal-nav-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: var(--text);
+}
+.cal-nav-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text2);
+  transition: border-color 0.15s;
+}
+.cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-dow {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  text-align: center;
+  padding: 4px 0 6px;
+}
+.cal-day {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  min-height: 72px;
+  padding: 5px;
+  cursor: default;
+  position: relative;
+  transition: border-color 0.1s;
+}
+.cal-day.other-month { background: var(--bg); border-color: transparent; }
+.cal-day.other-month .cal-day-num { color: var(--text3); opacity: 0.35; }
+.cal-day.today { border-color: var(--accent); background: var(--accent-light); }
+.cal-day.has-tasks { cursor: pointer; }
+.cal-day.has-tasks:hover { border-color: var(--accent); }
+.cal-day-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  margin-bottom: 3px;
+  line-height: 1;
+}
+.cal-day.today .cal-day-num {
+  color: var(--accent);
+  font-weight: 500;
+}
+.cal-dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 2px;
+}
+.cal-chip {
+  font-size: 8.5px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.cal-chip.done { opacity: 0.4; text-decoration: line-through; }
+.cal-phase-band {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+}
+/* Day detail panel */
+.cal-detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 1rem;
+  min-height: 60px;
+}
+.cal-detail-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+.tl-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.tl-task:hover { background: none; opacity: 0.8; }
+.tl-check {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  border-radius: 3px;
+  border: 1.5px solid var(--border);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, border-color 0.1s;
+}
+.tl-check.done { background: var(--accent); border-color: var(--accent); }
+.tl-check svg { display: none; }
+.tl-check.done svg { display: block; }
+.tl-body { flex: 1; }
+.tl-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+.tl-title.struck { text-decoration: line-through; color: var(--text3); }
+.tl-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tl-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.cal-day.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+@media (max-width: 500px) {
+  .cal-grid { gap: 2px; }
+  .cal-day { min-height: 52px; padding: 3px; }
+  .cal-chip { display: none; }
+}
 /* FINANCE */
-.finance-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
-@media(max-width:600px){.finance-grid{grid-template-columns:1fr;}}
-.finance-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;}
-.finance-card h3{font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--text3);margin-bottom:.75rem;}
-.finance-row{display:flex;justify-content:space-between;align-items:baseline;padding:.4rem 0;border-bottom:1px solid var(--border);font-size:13px;}
-.finance-row:last-child{border-bottom:none;}
-.finance-row .label{color:var(--text2);}
-.finance-row .amount{font-family:var(--mono);font-weight:500;}
-.finance-row.total .label{font-weight:600;color:var(--text);}
-.finance-row.total .amount{color:var(--accent);}
-.finance-row.urgent-row .amount{color:var(--red);}
-.finance-note{font-size:11px;color:var(--text3);margin-top:.4rem;font-style:italic;}
+.finance-block { margin-bottom: 1.5rem; }
+.finance-block-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.f-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg);
+  gap: 12px;
+}
+.f-label { font-size: 13px; color: var(--text); }
+.f-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.f-right { text-align: right; flex-shrink: 0; }
+.f-amount { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.f-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.gap-box {
+  background: #FFF8F0;
+  border: 1px solid #E8C89A;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 1rem;
+}
+.gap-box-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.gap-box-text { font-size: 13px; color: #8B5E1A; line-height: 1.5; }
+.gap-amount {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+  margin: 6px 0 2px;
+}
+/* METRIC CARDS */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.metric-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
+.metric-value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
+.metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+@media (max-width: 500px) {
+  .kanban { grid-template-columns: 1fr 1fr; }
+  .view { padding: 1rem; }
+  .header { padding: 1rem; }
+}
 
-/* HOUSING */
-.housing-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;}
-.housing-meta h2{font-family:var(--mono);font-size:13px;letter-spacing:.06em;margin-bottom:.3rem;}
-.housing-meta p{font-size:12px;color:var(--text2);}
-.btn-loran{background:var(--accent);color:#fff;border:none;cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:8px 14px;border-radius:6px;}
-.stats-bar{background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.5rem;display:flex;gap:2rem;}
-.prop-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.25rem;overflow:hidden;}
-.prop-card.hidden{display:none;}
-.prop-hdr{padding:1rem 1.25rem;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border);}
-.prop-hdr-l h3{font-size:14px;font-weight:600;margin-bottom:2px;}
-.prop-meta{font-size:11px;color:var(--text3);display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
-.prop-meta a{color:var(--accent);text-decoration:none;font-family:var(--mono);font-size:10px;}
-.prop-hdr-r{text-align:right;}
-.prop-price{font-family:var(--mono);font-size:14px;font-weight:500;}
-.prop-actions{display:flex;gap:.5rem;margin-top:.4rem;flex-wrap:wrap;justify-content:flex-end;}
-.btn-sm{font-family:var(--mono);font-size:9px;letter-spacing:.04em;padding:3px 8px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text2);cursor:pointer;white-space:nowrap;}
-.btn-sm.on{background:#EAF0EB;color:var(--green);border-color:var(--green);}
-.btn-sm.hide:hover{color:var(--red);border-color:var(--red);}
-.prop-body{padding:1rem 1.25rem;}
-.court-notes{font-size:12px;color:var(--text2);line-height:1.6;background:var(--surface2);border-radius:6px;padding:.75rem 1rem;margin-bottom:1rem;}
-.court-notes strong{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.35rem;}
-.sec-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem;}
-.pipeline{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:1rem;}
-.pipe-step{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:5px 10px;border-radius:5px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;transition:all .12s;}
-.pipe-step:hover{border-color:var(--accent);color:var(--accent);}
-.pipe-step.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.pipe-step.active-g{background:var(--green);color:#fff;border-color:var(--green);}
-.prop-fields{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1rem;}
-@media(max-width:600px){.prop-fields{grid-template-columns:1fr;}}
-.prop-field label{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.3rem;}
-.prop-field input,.prop-field textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-family:var(--sans);font-size:12px;color:var(--text);outline:none;resize:vertical;}
-.prop-field input:focus,.prop-field textarea:focus{border-color:var(--accent);}
-.prop-field-full{grid-column:1/-1;}
-.loran-feedback{border-top:1px dashed var(--border);padding-top:.75rem;margin-top:.25rem;}
-.loran-fb-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--accent);margin-bottom:.4rem;}
-
-/* LORAN MODE */
-#loran-mode{display:none;}
-.loran-intro{text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;}
-.loran-intro .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--accent);margin-bottom:.5rem;}
-.loran-intro h2{font-family:var(--mono);font-size:16px;margin-bottom:.5rem;}
-.loran-intro p{font-size:13px;color:var(--text2);}
-.movein-badge{display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid var(--accent);border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--accent2);}
-.btn-back{background:none;border:1px solid var(--border);cursor:pointer;font-family:var(--mono);font-size:10px;letter-spacing:.06em;padding:6px 14px;border-radius:6px;color:var(--text2);margin-top:.75rem;}
-.loran-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:1.5rem;overflow:hidden;}
-.lc-hdr{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
-.lc-hdr h3{font-size:15px;font-weight:600;margin-bottom:4px;}
-.lc-meta{font-size:11px;color:var(--text3);line-height:1.6;}
-.lc-meta a{color:var(--accent);text-decoration:none;font-weight:500;font-family:var(--mono);font-size:10px;}
-.lc-price{text-align:right;}
-.lc-price .price{font-family:var(--mono);font-size:15px;font-weight:500;}
-.lc-price .beds{font-size:11px;color:var(--text3);}
-.visited-banner{background:#1A1714;padding:.75rem 1.25rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;}
-.visited-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--accent);white-space:nowrap;}
-.visited-verdict{font-size:12px;color:#C8C0B0;line-height:1.5;}
-.appt-strip{background:#F5EDE0;padding:.7rem 1.25rem;border-bottom:1px solid #E8D8C0;font-size:12px;color:var(--accent2);}
-.appt-strip strong{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--accent);display:block;margin-bottom:.2rem;}
-.cn-strip{padding:.75rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.6;}
-.cn-strip strong{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.3rem;}
-.lc-body{padding:1rem 1.25rem;}
-.status-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;}
-.s-pill{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;transition:all .12s;}
-.s-pill:hover{border-color:var(--accent);color:var(--accent);}
-.s-pill.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.s-pill.active-g{background:var(--green);color:#fff;border-color:var(--green);}
-.s-pill.active-r{background:var(--red);color:#fff;border-color:var(--red);}
-.checklist{margin-bottom:1rem;}
-.chk-row{display:flex;align-items:center;gap:.75rem;padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:.4rem;transition:all .12s;}
-.chk-row:hover{border-color:var(--accent);}
-.chk-row.checked{background:#EAF0EB;border-color:var(--green);}
-.chk-box{width:20px;height:20px;border:1.5px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;color:var(--green);flex-shrink:0;background:var(--surface);}
-.chk-row.checked .chk-box{background:var(--green);color:#fff;border-color:var(--green);}
-.chk-label{font-size:13px;color:var(--text2);line-height:1.4;}
-.chk-row.checked .chk-label{color:var(--text3);}
-.stars-row{display:flex;gap:.4rem;margin-bottom:1.25rem;}
-.star{font-size:24px;cursor:pointer;color:var(--border);transition:color .1s;}
-.star.filled{color:var(--accent);}
-.notes-area{width:100%;min-height:100px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;resize:vertical;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;line-height:1.6;}
-.notes-area:focus{border-color:var(--accent);}
-.save-ind{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--green);text-align:right;min-height:14px;margin-top:.3rem;}
-.show-hidden{text-align:center;margin-bottom:1rem;}
-.btn-show-hidden{background:none;border:1px dashed var(--border);cursor:pointer;font-family:var(--mono);font-size:9px;letter-spacing:.06em;padding:5px 12px;border-radius:4px;color:var(--text3);}
+/* HOUSING TAB */
+.housing-wrap { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+.housing-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.06em; margin-bottom: 1.5rem; }
+.housing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.prop-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.prop-header { padding: 1rem 1.1rem 0.75rem; border-bottom: 1px solid var(--border); }
+.prop-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
+.prop-address { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.prop-status { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+.prop-body { padding: 1rem 1.1rem; }
+.prop-section { margin-bottom: 0.85rem; }
+.prop-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.4rem; }
+.prop-units { display: flex; flex-direction: column; gap: 0.35rem; }
+.unit-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: 5px; }
+.unit-name { color: var(--text2); }
+.unit-price { font-family: var(--mono); font-weight: 500; color: var(--text); }
+.unit-avail { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+.prop-facts { display: flex; flex-wrap: wrap; gap: 5px; }
+.fact-pill { font-size: 10px; font-family: var(--mono); padding: 2px 8px; background: var(--surface2); border-radius: 20px; color: var(--text2); }
+.prop-notes { font-size: 11px; color: var(--text2); line-height: 1.55; }
+.prop-costs { display: flex; flex-direction: column; gap: 4px; }
+.cost-row { display: flex; justify-content: space-between; font-size: 11px; }
+.cost-label { color: var(--text2); }
+.cost-val { font-family: var(--mono); color: var(--text); }
+.verdict-box { margin: 0 1.1rem 1rem; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.5; border-left: 3px solid; }
 </style>
 </head>
 <body>
-<header>
-  <div class="h-name">COURT WILLIAMS</div>
-  <div class="h-badge">2026 transition</div>
-  <div class="h-right">
-    <div class="h-live"><span>▶</span> live</div>
-    <div class="h-date" id="hdate"></div>
-  </div>
-</header>
-<nav>
-  <button onclick="showTab('board')" id="tab-board">BOARD</button>
-  <button onclick="showTab('timeline')" id="tab-timeline">TIMELINE</button>
-  <button onclick="showTab('finance')" id="tab-finance">FINANCE</button>
-  <button onclick="showTab('housing')" id="tab-housing" class="active">HOUSING</button>
-</nav>
-<main>
 
-<!-- BOARD -->
-<div id="view-board" style="display:none">
-  <div class="board-grid">
-    <div>
-      <div class="col-head">IN PROGRESS</div>
-      <div class="task-card"><h4>Surgery prep</h4><p>MPOA with Maurice designated. Payment submitted. Crane Center May 14.</p><span class="tag tag-urgent">MAY 14</span></div>
-      <div class="task-card"><h4>Anesthesia cost estimate</h4><p>Contact Westlake / Metropolitan Anesthesia Group. Phone preferred: 469-420-5840.</p><span class="tag tag-urgent">URGENT</span></div>
-      <div class="task-card"><h4>Baltimore housing search</h4><p>Loran touring properties. Move-in July 25 or Aug 20–30.</p><span class="tag">ACTIVE</span></div>
-    </div>
-    <div>
-      <div class="col-head">UP NEXT</div>
-      <div class="task-card"><h4>Advance Directive</h4><p>Discuss with Maurice first, then draft. Companion to MPOA.</p><span class="tag">POST-SURGERY</span></div>
-      <div class="task-card"><h4>MICA enrollment finalization</h4><p>Confirm fall enrollment, housing resources, grad program contacts.</p><span class="tag">JUNE</span></div>
-      <div class="task-card"><h4>Johns Hopkins MBA application</h4><p>Application due May 27.</p><span class="tag tag-urgent">MAY 27</span></div>
-    </div>
-    <div>
-      <div class="col-head">COMPLETED</div>
-      <div class="task-card"><h4>MPOA drafted</h4><p>Maurice designated as agent. Protective language added for care continuity and identity affirmation.</p><span class="tag tag-done">DONE</span></div>
-      <div class="task-card"><h4>Crane Center payment</h4><p>Payment agreement reviewed and submitted. 60-day window noted.</p><span class="tag tag-done">DONE</span></div>
-    </div>
+<div class="header">
+  <span class="header-name">COURT WILLIAMS</span>
+  <span class="surgery-pill">2026 transition</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a href="https://tcmw-court.github.io/court-transition-tracker" target="_blank" style="font-family:var(--mono);font-size:10px;color:#666;letter-spacing:0.04em;text-decoration:none;border:1px solid #444;padding:2px 8px;border-radius:20px;transition:color 0.15s" onmouseover="this.style.color='#C17D3C';this.style.borderColor='#C17D3C'" onmouseout="this.style.color='#666';this.style.borderColor='#444'">↗ live</a>
+    <span class="header-date" id="hdr-date"></span>
   </div>
 </div>
 
-<!-- TIMELINE -->
-<div id="view-timeline" style="display:none">
-  <div class="timeline-wrap">
-    <div class="tl-month">MAY 2026</div>
-    <div class="tl-item"><div class="tl-dot urgent"></div><div class="tl-content"><h4>May 14 — Surgery at Crane Center</h4><p>Top surgery scheduled. Maurice designated MPOA agent. Pre-op costs submitted.</p></div></div>
-    <div class="tl-item"><div class="tl-dot urgent"></div><div class="tl-content"><h4>May 27 — Hopkins MBA application due</h4><p>Application deadline.</p></div></div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>May — Westlake anesthesia cost</h4><p>Awaiting estimate. Contact: 469-420-5840.</p></div></div>
-
-    <div class="tl-month">JUNE 2026</div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>MICA enrollment finalization</h4><p>Confirm fall semester, housing resources, grad contacts.</p></div></div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>Advance Directive</h4><p>Draft and finalize after consulting Maurice. Companion document to MPOA.</p></div></div>
-
-    <div class="tl-month">JULY 2026</div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>July 25 — Target move-in (Baltimore)</h4><p>Preferred move-in date. Loran scouting properties now.</p></div></div>
-
-    <div class="tl-month">AUGUST 2026</div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>Aug 20–30 — Alternate move-in window</h4><p>Backup window if July 25 doesn't work out.</p></div></div>
-    <div class="tl-item"><div class="tl-dot future"></div><div class="tl-content"><h4>MICA fall semester begins</h4><p>MFA program start. Baltimore.</p></div></div>
-  </div>
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('board')">BOARD</button>
+  <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
+  <button class="tab" onclick="switchTab('finance')">FINANCE</button>
+  <button class="tab" onclick="switchTab('housing')">HOUSING</button>
 </div>
 
-<!-- FINANCE -->
-<div id="view-finance" style="display:none">
-  <div class="finance-grid">
-    <div class="finance-card">
-      <h3>SURGERY — OUTBOUND</h3>
-      <div class="finance-row urgent-row"><span class="label">Crane Center (surgical fee)</span><span class="amount">$680.62</span></div>
-      <div class="finance-row"><span class="label">Remaining out-of-pocket (est.)</span><span class="amount">~$1,819</span></div>
-      <div class="finance-row"><span class="label">Westlake anesthesia</span><span class="amount">TBD</span></div>
-      <div class="finance-row total"><span class="label">Surgery total (est.)</span><span class="amount">~$2,500</span></div>
-      <p class="finance-note">$680.62 paid to Crane Center May 11. Westlake cost pending — will update once confirmed.</p>
-    </div>
-    <div class="finance-card">
-      <h3>BALTIMORE HOUSING — PROJECTED</h3>
-      <div class="finance-row"><span class="label">Target monthly rent</span><span class="amount">&lt;$1,800</span></div>
-      <div class="finance-row"><span class="label">Hard ceiling</span><span class="amount">$2,500</span></div>
-      <div class="finance-row"><span class="label">Est. utilities</span><span class="amount">~$150–200</span></div>
-      <div class="finance-row total"><span class="label">All-in target</span><span class="amount">&lt;$2,000/mo</span></div>
-      <p class="finance-note">Rent first, buy later. Budget under $200K for eventual purchase in Reservoir Hill.</p>
-    </div>
-    <div class="finance-card">
-      <h3>INCOME — MICA</h3>
-      <div class="finance-row"><span class="label">Grad Teaching Internship</span><span class="amount">TBD</span></div>
-      <div class="finance-row"><span class="label">PBL @ BHS Year 2</span><span class="amount">TBD</span></div>
-      <div class="finance-row total"><span class="label">Total projected</span><span class="amount">TBD</span></div>
-      <p class="finance-note">Update once MICA compensation details confirmed.</p>
-    </div>
-    <div class="finance-card">
-      <h3>NOTES</h3>
-      <div class="finance-row"><span class="label">Symphony Center 3% discount</span><span class="amount">if MICA job confirmed</span></div>
-      <div class="finance-row"><span class="label">Security deposit (typical)</span><span class="amount">$500–1 mo rent</span></div>
-      <div class="finance-row"><span class="label">Pet fee (typical)</span><span class="amount">$45–50/mo</span></div>
-    </div>
-  </div>
-</div>
+<div id="view-board" class="view active"></div>
+<div id="view-timeline" class="view"></div>
+<div id="view-finance" class="view"></div>
+<div id="view-housing" class="view"></div>
 
-<!-- HOUSING -->
-<div id="view-housing">
-  <div id="court-view">
-    <div class="housing-hdr">
-      <div class="housing-meta">
-        <h2>BALTIMORE · HOUSING</h2>
-        <p>Move-in: July 25 or Aug 20–30 · Budget under $1,800 (hard ceiling $2,500)</p>
-      </div>
-      <button class="btn-loran" onclick="enterLoran()">+ LORAN MODE</button>
-    </div>
-    <div class="stats-bar">
-      <span>VISITED: <span id="sv">0</span>/<span id="st">0</span></span>
-      <span>STRONG YES: <span id="ssy">0</span></span>
-    </div>
-    <div id="prop-container"></div>
-    <div class="show-hidden" id="show-hidden-row" style="display:none">
-      <button class="btn-show-hidden" onclick="toggleHidden()">show hidden properties</button>
-    </div>
-  </div>
-  <div id="loran-mode">
-    <div class="loran-intro">
-      <div class="lbl">LORAN MODE</div>
-      <h2>Field notes for Loran</h2>
-      <p>Tap a status, rate it, leave notes — everything saves automatically.</p>
-      <div class="movein-badge">📅 Move-in: July 25 or Aug 20–30</div><br>
-      <button class="btn-back" onclick="exitLoran()">Back to full view</button>
-    </div>
-    <div class="stats-bar">
-      <span>VISITED: <span id="lsv">0</span>/<span id="lst">0</span></span>
-      <span>STRONG YES: <span id="lssy">0</span></span>
-    </div>
-    <div id="loran-container"></div>
-  </div>
-</div>
-
-</main>
 <script>
-// date
-document.getElementById('hdate').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+const CAT_STYLES = {
+  Surgery:   {bg:'#FFF0F5',color:'#8B1A4A'},
+  Loans:     {bg:'#E8F2FC',color:'#0D3D6E'},
+  Howard:    {bg:'#FFF8E0',color:'#7A4800'},
+  MICA:      {bg:'#EDFAF0',color:'#145228'},
+  Financial: {bg:'#F5EDFF',color:'#4A1275'},
+  Personal:  {bg:'#E0F7FA',color:'#00494E'},
+  EcoDepot:  {bg:'#FFF0E8',color:'#7A2C00'},
+  Housing:   {bg:'#EEF0FF',color:'#1A2060'},
+};
+const STATUS_STYLES = {
+  'Done':        {bg:'#EDFAF0',color:'#145228'},
+  'In Progress': {bg:'#FFFBE0',color:'#6B5700'},
+  'Not Started': {bg:'#F0EDE6',color:'#6B6560'},
+  'Urgent':      {bg:'#FFF0E8',color:'#7A2C00'},
+  'Blocked':     {bg:'#FFECEC',color:'#7A1212'},
+  'Pending':     {bg:'#E8F2FC',color:'#0D3D6E'},
+};
 
-// tabs
-function showTab(n){
-  ['board','timeline','finance','housing'].forEach(function(t){
-    document.getElementById('view-'+t).style.display = t===n?'':'none';
-    document.getElementById('tab-'+t).classList.toggle('active',t===n);
-  });
-  if(n==='housing') updateStats();
+const DEFAULTS = [
+  {id:1,  title:'Complete Confirmed Consent paperwork',     cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'css.confirmedconsent.com — due noon CST'},
+  {id:2,  title:'Sign surgical confirmation packet',        cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'carelynks.cranects.com PIN: 648024'},
+  {id:3,  title:'Westlake patient registration',            cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'westlakemedical.com'},
+  {id:4,  title:'Call Howard registrar',                    cat:'Howard',   status:'Not Started', due:'Apr 29', note:'202-806-2700'},
+  {id:5,  title:'TISLA consult call',                       cat:'Loans',    status:'In Progress', due:'This wk',note:'Awaiting reply'},
+  {id:6,  title:'Call DMCS re: consolidation',              cat:'Loans',    status:'Not Started', due:'May 2',  note:'800-621-3115 — after TISLA'},
+  {id:7,  title:'Initiate consolidation or rehabilitation', cat:'Loans',    status:'Not Started', due:'May 7',  note:'Must start before May 9'},
+  {id:8,  title:'Confirm $2,500 liquid for surgery',        cat:'Financial',status:'Not Started', due:'May 9',  note:'Due day-of — must be ready'},
+  {id:9,  title:'Book Court Elliott flight',                cat:'Surgery',  status:'Not Started', due:'May 9',  note:'<$500'},
+  {id:10, title:'Share Amazon supply list',                 cat:'Surgery',  status:'Not Started', due:'Apr 29', note:'Sus, brothers, others'},
+  {id:11, title:'Call Sus + brothers',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:'Surgery prep calls'},
+  {id:12, title:'Call mom re: shipping',                    cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:13, title:'Reach out to Selena',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:14, title:'Call insurance',                           cat:'Surgery',  status:'Not Started', due:'May 2',  note:'Confirm coverage'},
+  {id:15, title:'Pay friend ~$950 (Airbnb loan)',           cat:'Financial',status:'Not Started', due:'May 9',  note:'Friend absorbing $600'},
+  {id:16, title:'Confirm Howard degree pathway',            cat:'Howard',   status:'Not Started', due:'May 7',  note:'Retake vs petition vs proficiency'},
+  {id:17, title:'Contact Carolyn Case',                     cat:'MICA',     status:'Not Started', due:'May 7',  note:'Re: grad internship'},
+  {id:18, title:'Follow up Howard every 5 business days',   cat:'Howard',   status:'Not Started', due:'Ongoing',note:'Do not let slip during recovery'},
+  {id:19, title:'Send servicer letter to MICA',             cat:'Loans',    status:'Blocked',     due:'TBD',    note:'Blocked on default resolution'},
+  {id:20, title:'Confirm Howard degree to MICA',            cat:'Howard',   status:'Blocked',     due:'Summer', note:'Blocked on registrar + coursework'},
+  {id:21, title:'MICA aid disbursement',                    cat:'MICA',     status:'Blocked',     due:'Fall',   note:'Blocked on default + degree'},
+  {id:22, title:'Baltimore apartment hunt',                 cat:'Housing',  status:'Not Started', due:'May–Jun',note:'App likely due end of June'},
+  {id:23, title:'Credit score improvement',                 cat:'Financial',status:'Not Started', due:'Jun',    note:'Tied to loan resolution — 40–80pt jump expected'},
+  {id:24, title:'EcoDepot fellowship — await decision',     cat:'EcoDepot', status:'Pending',     due:'TBD',    note:'Applied Apr 20 via MICA 12twenty'},
+  {id:25, title:'EcoDepot travel prep (if selected)',        cat:'EcoDepot', status:'Pending',     due:'Jul 27', note:'In-country Aug 1–16, Ileret Kenya'},
+  {id:26, title:'Pre-op appointment',                       cat:'Surgery',  status:'Not Started', due:'May 11', note:'Monday — Austin', event:true},
+  {id:27, title:'Surgery day',                              cat:'Surgery',  status:'Not Started', due:'May 14', note:'Ashley Deleon MD, Crane Center', event:true},
+  {id:28, title:'Post-op appointment',                      cat:'Surgery',  status:'Not Started', due:'May 21', note:'While Loran is there', event:true},
+  {id:29, title:'Howard registrar email sent',              cat:'Howard',   status:'Done',        due:'Done',   note:''},
+  {id:30, title:'MICA financial aid email sent',            cat:'MICA',     status:'Done',        due:'Done',   note:'Awaiting Christine reply'},
+  {id:31, title:'TISLA email sent',                         cat:'Loans',    status:'Done',        due:'Done',   note:''},
+  {id:32, title:'FAFSA 26-27 completed',                    cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:33, title:'MICA enrollment deposit paid',             cat:'MICA',     status:'Done',        due:'Done',   note:'$350'},
+  {id:34, title:'Comm Engaged Thesis grant won',            cat:'MICA',     status:'Done',        due:'Done',   note:'$4,000 + $750 to SolFood'},
+  {id:35, title:'Summer Fieldwork App submitted',           cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:36, title:'Austin Airbnb booked',                     cat:'Surgery',  status:'Done',        due:'Done',   note:'$3,200 via friend loan'},
+  {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot', status:'Done',        due:'Done',   note:'Apr 20 deadline'},
+  {id:38, title:'Ask Scott for support',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Also ask if anyone in his orbit would want to contribute'},
+  {id:39, title:'Thank Mr. Neal + ask for a connection',    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Reply to his message — gratitude + warm ask for intro'},
+  {id:40, title:'Follow up with Calvin',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'WhatsApp message — check in + ask for support'},
+  {id:41, title:'Maurice reaches out to Matt re: sister',   cat:'Surgery',  status:'Urgent',      due:'May 5',  note:'Matt\'s sister as potential donor — Maurice to make contact'},
+  {id:42, title:'Finish + notarize living will',            cat:'Surgery',  status:'Urgent',      due:'May 9',  note:'Must be done before leaving Oakland — blocks Westlake registration'},
+  {id:43, title:'Contact Westlake re: registration',        cat:'Surgery',  status:'Blocked',     due:'May 9',  note:'Blocked on living will being finalized'},
+  {id:44, title:'Complete Westlake patient registration',   cat:'Surgery',  status:'Blocked',     due:'May 11', note:'westlakemedical.com — blocked on living will'},
+  {id:45, title:'Johns Hopkins MBA application',            cat:'MICA',     status:'Not Started', due:'May 27', note:'Application due May 27'},
+];
+
+
+
+function loadTasks() {
+  try {
+    const s = localStorage.getItem('court_v2');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+function saveTasks(tasks) {
+  try { localStorage.setItem('court_v2', JSON.stringify(tasks)); } catch(e){}
 }
 
-// properties
-var PROPS = [
-  {id:'rh1',name:'750 Reservoir St, Unit A',hood:'Reservoir Hill',type:'Townhouse',price:'$1,650/mo',beds:'2bd/1ba',url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',notes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA. Strong lead.'},
-  {id:'rh2',name:'750 Reservoir St, Unit B',hood:'Reservoir Hill',type:'Townhouse',price:'~$1,750/mo',beds:'2bd/2ba',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',notes:'Same building as Unit A. 2bd/2ba — extra bath is a plus. Also renovated 2025.'},
-  {id:'rh3',name:'Reservoir Hill Renovated Unit',hood:'Reservoir Hill',type:'Apartment/Unit',price:'TBD',beds:'2bd/1ba',url:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',notes:'Main-level unit, completely updated 2025. LVP floors, new kitchen, open layout. Good for WFH. Via RE/MAX Distinctive / Mike Kane.'},
-  {id:'rh4',name:'1121 Whitelock St',hood:'Reservoir Hill',type:'House',price:'$1,300/mo',beds:'2bd/1ba',url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',notes:'Below market pricing — verify listing is current. 1,180 sqft. Pets allowed. Whitelock is a key Reservoir Hill street.'},
-  {id:'bh1',name:'525 W Lafayette Ave area',hood:'Bolton Hill',type:'Townhouse',price:'~$1,500–1,600/mo',beds:'2bd',url:'https://www.zillow.com/bolton-hill-baltimore-md/apartments/',notes:'Bolton Hill block. Good Light Rail transit, walkable to MICA. More competitive inventory than Reservoir Hill.'},
-  {id:'bh2',name:'Bolton North Apartments',hood:'Bolton Hill',type:'Apartment',price:'Income-restricted',beds:'1–2bd',url:'https://boltonnorthapts.com/',notes:'HUD income-restricted. Pet-friendly. Near Druid Hill Park and Light Rail. Check income eligibility.'},
-  {id:'bh3',name:'Bolton House',hood:'Bolton Hill',type:'Apartment',price:'TBD',beds:'2bd (710 sqft)',url:'https://boltonhouse.com/',notes:'High-rise with downtown views. Steps from MICA. 2bd floor plan is 710 sqft — compact but very central.'},
-  {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180–2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option — MICA shuttle is a big plus. $2,180 no-balcony is the value play. Over base budget but worth revisiting.',notes:'COURT TOURED. Contact: Nadine. Units: $2,340/mo (floor 10+, foyer, side window) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. Electric BGE metered. Pet $45/mo 75lb no deposit. Deposit from $500. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.',defaultStatus:'Toured'},
-  {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218–2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly. Best entry is Lanier at $2,218 but all-in cost is high.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Units: Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet deposit $350 + $50/mo. All electric. No wood floors.',defaultStatus:'Decision'},
-  {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out — location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.',defaultStatus:'Decision'}
+let tasks = loadTasks();
+
+function getNextId() { return Math.max(0, ...tasks.map(t=>t.id)) + 1; }
+
+function catBadge(cat) {
+  const s = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${cat}</span>`;
+}
+function statusBadge(status) {
+  const s = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${status}</span>`;
+}
+function statusOptions(current) {
+  const statuses = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  return statuses.map(s => '<option value="' + s + '"' + (s===current?' selected':'') + '>' + s + '</option>').join('');
+}
+
+function checkSVG() {
+  return `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = t.status === 'Done' ? 'Not Started' : 'Done';
+  saveTasks(tasks);
+  renderAll();
+}
+
+function moveTask(id, newStatus) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = newStatus;
+  saveTasks(tasks);
+  closeContextMenu();
+  renderAll();
+}
+
+function addTask() {
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) return;
+  const cat = document.getElementById('new-cat').value;
+  const due = document.getElementById('new-due').value.trim();
+  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:''});
+  saveTasks(tasks);
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-due').value = '';
+  renderAll();
+}
+
+let boardView = 'status'; // 'status' | 'project'
+
+function renderBoard() {
+  if (boardView === 'project') { renderProjectBoard(); return; }
+
+  const cols = [
+    {key:'Urgent',      label:'urgent'},
+    {key:'Not Started', label:'not started'},
+    {key:'In Progress', label:'in progress'},
+    {key:'Pending',     label:'pending'},
+    {key:'Blocked',     label:'blocked'},
+    {key:'Done',        label:'done'},
+  ];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn active" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>
+  <div class="metrics">`;
+
+  const urgentCount = tasks.filter(t=>t.status==='Urgent').length;
+  const blockedCount = tasks.filter(t=>t.status==='Blocked').length;
+  const activeCount = tasks.filter(t=>t.status==='In Progress').length;
+
+  html += `<div class="metric"><div class="metric-label">IN PROGRESS</div><div class="metric-value">${activeCount}</div><div class="metric-sub">active</div></div>`;
+  html += `<div class="metric"><div class="metric-label">URGENT</div><div class="metric-value" style="color:#7A2C00">${urgentCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">BLOCKED</div><div class="metric-value" style="color:#7A1212">${blockedCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">SURGERY GOAL</div><div class="metric-value" style="color:#145228">$5k</div><div class="metric-sub">before May 14</div></div>`;
+  html += `</div><div class="kanban">`;
+
+  cols.forEach(({key, label}) => {
+    const colTasks = tasks.filter(t=>t.status===key && !t.event);
+    html += `<div class="k-col"><div class="k-col-title"><span>${label}</span><span>${colTasks.length}</span></div>`;
+    colTasks.forEach(t => {
+      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+      html += `<div class="k-card ${key==='Done'?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+        <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
+        <div class="k-card-meta">
+          <span class="badge" style="background:rgba(255,255,255,0.55);color:${cs.color};font-size:9px">${t.cat}</span>
+          ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+        </div>
+        ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+        <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+          ${statusOptions(t.status)}
+        </select>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `</div>
+  <div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function renderProjectBoard() {
+  const STATUS_ORDER = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn active" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>`;
+
+  Object.keys(CAT_STYLES).forEach(cat => {
+    const catTasks = tasks.filter(t => t.cat === cat && !t.event);
+    if (!catTasks.length) return;
+    const cs = CAT_STYLES[cat];
+    const catDone = catTasks.filter(t=>t.status==='Done').length;
+
+    html += `<div class="proj-section">
+      <div class="proj-section-header">
+        <span class="proj-section-label" style="color:${cs.color}">${cat.toUpperCase()}</span>
+        <span class="proj-section-count">${catDone}/${catTasks.length}</span>
+      </div>
+      <div class="proj-kanban">`;
+
+    STATUS_ORDER.forEach(status => {
+      const statusTasks = catTasks.filter(t => t.status === status);
+      if (!statusTasks.length) return;
+      const ss = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+      html += `<div class="k-col"><div class="k-col-title"><span>${status.toLowerCase()}</span><span>${statusTasks.length}</span></div>`;
+      statusTasks.forEach(t => {
+        const isDone = status === 'Done';
+        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+          <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
+          <div class="k-card-meta">
+            <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${status}</span>
+            ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+          </div>
+          ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+          <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+            ${statusOptions(t.status)}
+          </select>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `<div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function setBoardView(v) {
+  boardView = v;
+  renderBoard();
+}
+
+// ── Calendar state ──────────────────────────────────────────────
+let calYear = 2026;
+let calMonth = 4; // 0-indexed → April = 3... use 1-indexed: April=4
+// We'll use 1-indexed months throughout
+
+// Map due-date strings to {month,day} pairs (year assumed 2026)
+const DUE_MAP = {
+  'Apr 28':{m:4,d:28},'Apr 29':{m:4,d:29},'Apr 30':{m:4,d:30},
+  'May 1':{m:5,d:1},'May 2':{m:5,d:2},'May 3':{m:5,d:3},
+  'May 4':{m:5,d:4},'May 5':{m:5,d:5},'May 7':{m:5,d:7},
+  'May 9':{m:5,d:9},'May 10':{m:5,d:10},'May 11':{m:5,d:11},
+  'May 12':{m:5,d:12},'May 14':{m:5,d:14},'May 21':{m:5,d:21},
+  'May 27':{m:5,d:27},
+  'Jun':{m:6,d:1},'Jul 1':{m:7,d:1},'Jul 25':{m:7,d:25},'Jul 27':{m:7,d:27},
+};
+
+// Calendar-only events (not tasks)
+const CAL_EVENTS = [
+  {m:7, d:25, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:26, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:27, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
 ];
 
-var CHECKLIST = [
-  '🍳 Roomy kitchen with storage space',
-  '🐾 Pet friendly (ask explicitly)',
-  '⚡ Practical electricity bill — ask about avg monthly cost',
-  '🎓 Walkable to MICA',
-  '🛒 Close to grocery store or market',
-  '🚿 2 bathrooms (or at least 1.5)',
-  '👶 Kairo-friendly — safe space, no major hazards'
+// Phase color bands: each entry has a date range and color
+const PHASE_BANDS = [
+  {start:{m:4,d:28},end:{m:5,d:9},  color:'#E8A25A',label:'Now–May 9'},
+  {start:{m:5,d:9}, end:{m:5,d:11}, color:'#7A6FC0',label:'Travel'},
+  {start:{m:5,d:14},end:{m:5,d:14}, color:'#8B1A1A',label:'Surgery'},
+  {start:{m:5,d:14},end:{m:6,d:8},  color:'#D4A5A5',label:'Recovery'},
+  {start:{m:6,d:9}, end:{m:7,d:1},  color:'#5A8B6A',label:'Post-recovery'},
+  {start:{m:7,d:27},end:{m:8,d:16}, color:'#C17D3C',label:'EcoDepot'},
 ];
 
-var STATUSES = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
-var TOUR_STEPS = ['Not Started','Contacted','Appt Set','Toured','Decision'];
+function dateToNum(m,d) { return m*100+d; }
+function getPhaseColor(m,d) {
+  const n = dateToNum(m,d);
+  for (const ph of PHASE_BANDS) {
+    if (n >= dateToNum(ph.start.m,ph.start.d) && n <= dateToNum(ph.end.m,ph.end.d)) return ph.color;
+  }
+  return null;
+}
 
+function getTasksForDay(m, d) {
+  return tasks.filter(t => {
+    const due = DUE_MAP[t.due];
+    if (!due) return false;
+    return due.m === m && due.d === d;
+  });
+}
+
+function getCalEventsForDay(m, d) {
+  return CAL_EVENTS.filter(e => e.m === m && e.d === d);
+}
+
+let selectedDay = null;
+
+function renderCalendar() {
+  const MONTH_NAMES = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+  const firstDow = new Date(calYear, calMonth-1, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  const todayM = today.getMonth()+1;
+  const todayD = today.getDate();
+  const todayY = today.getFullYear();
+
+  const daysToSurgery = Math.ceil((new Date('2026-05-14') - today) / 86400000);
+  const daysToOakland = Math.max(0, Math.ceil((new Date('2026-05-09') - today) / 86400000));
+
+  let html = `<div class="metrics" style="margin-bottom:1rem">
+    <div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>
+    <div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${daysToOakland}</div><div class="metric-sub">days left</div></div>
+  </div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="calPrev()">← prev</button>
+    <span class="cal-nav-title">${MONTH_NAMES[calMonth].toUpperCase()} ${calYear}</span>
+    <button class="cal-nav-btn" onclick="calNext()">next →</button>
+  </div>
+  <div class="cal-grid">`;
+
+  DOW.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
+
+  // leading empty cells
+  const prevDays = new Date(calYear, calMonth-1, 0).getDate();
+  for (let i=0;i<firstDow;i++) {
+    const d = prevDays - firstDow + 1 + i;
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
+    const dayTasks = getTasksForDay(calMonth, d);
+    const dayEvents = getCalEventsForDay(calMonth, d);
+    const phColor = getPhaseColor(calMonth, d);
+    const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
+    if (sel) cls += ' selected';
+
+    html += `<div class="${cls}" onclick="selectDay(${calMonth},${d})">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-dot-row">`;
+
+    dayEvents.forEach(e => {
+      html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">📦 ${e.title}</span>`;
+    });
+    dayTasks.slice(0,3).forEach(t => {
+      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+      const doneClass = t.status==='Done' ? ' done' : '';
+      html += `<span class="cal-chip${doneClass}" style="background:${cs.bg};color:${cs.color}">${t.title.split(' ').slice(0,2).join(' ')}</span>`;
+    });
+    if (dayTasks.length > 3) html += `<span class="cal-chip" style="background:var(--surface2);color:var(--text3)">+${dayTasks.length-3}</span>`;
+
+    html += `</div>`;
+    if (phColor) html += `<div class="cal-phase-band" style="background:${phColor}"></div>`;
+    html += `</div>`;
+  }
+
+  // trailing cells
+  const totalCells = firstDow + daysInMonth;
+  const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i=1; i<=trailing; i++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+  }
+
+  html += `</div>`;
+
+  // Phase legend
+  html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px">`;
+  PHASE_BANDS.forEach(ph => {
+    html += `<span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:0.04em;color:var(--text3)">
+      <span style="display:inline-block;width:10px;height:3px;border-radius:2px;background:${ph.color}"></span>${ph.label}</span>`;
+  });
+  html += `</div>`;
+
+  // Detail panel
+  html += `<div class="cal-detail" id="cal-detail">`;
+  if (selectedDay) {
+    const dayTasks = getTasksForDay(selectedDay.m, selectedDay.d);
+    const dayEvents = getCalEventsForDay(selectedDay.m, selectedDay.d);
+    const total = dayTasks.length + dayEvents.length;
+    const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    html += `<div class="cal-detail-title">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${total} item${total!==1?'s':''}</div>`;
+    if (total === 0) {
+      html += `<div style="font-size:12px;color:var(--text3)">No tasks due this day.</div>`;
+    } else {
+      dayEvents.forEach(e => {
+        html += `<div class="tl-task" style="cursor:default">
+          <div style="font-size:16px;line-height:1;margin-top:1px">📦</div>
+          <div class="tl-body"><div class="tl-title">${e.title} weekend</div></div>
+          <div class="tl-right"><span class="badge" style="background:${e.bg};color:${e.color};font-size:9px">Event</span></div>
+        </div>`;
+      });
+      dayTasks.forEach(t => {
+        const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+        const isDone = t.status==='Done';
+        html += `<div class="tl-task" onclick="toggleTask(${t.id});renderTimeline()">
+          <div class="tl-check ${isDone?'done':''}">${isDone?checkSVG():''}</div>
+          <div class="tl-body">
+            <div class="tl-title ${isDone?'struck':''}">${t.title}</div>
+            ${t.note?`<div class="tl-sub">${t.note}</div>`:''}
+          </div>
+          <div class="tl-right">
+            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
+          </div>
+        </div>`;
+      });
+    }
+  } else {
+    html += `<div style="font-size:12px;color:var(--text3)">Tap a day to see tasks due.</div>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('view-timeline').innerHTML = html;
+}
+
+function selectDay(m, d) {
+  if (selectedDay && selectedDay.m===m && selectedDay.d===d) {
+    selectedDay = null;
+  } else {
+    selectedDay = {m,d};
+  }
+  renderTimeline();
+}
+
+function calPrev() {
+  calMonth--;
+  if (calMonth < 1) { calMonth = 12; calYear--; }
+  renderTimeline();
+}
+function calNext() {
+  calMonth++;
+  if (calMonth > 12) { calMonth = 1; calYear++; }
+  renderTimeline();
+}
+
+function renderTimeline() { renderCalendar(); }
+
+function renderFinance() {
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;max-width:900px">';
+  // card helper
+  function card(title, rows, note) {
+    var c = '<div style="background:#FDFAF4;border:1px solid #E0D8C8;border-radius:10px;padding:1.25rem">';
+    c += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8A8480;margin-bottom:.75rem">'+title+'</div>';
+    rows.forEach(function(r) {
+      var amtColor = r.urgent ? '#8B3A3A' : (r.total ? 'var(--accent)' : 'var(--text)');
+      var weight = r.total ? '600' : '500';
+      var borderTop = r.total ? '1px solid #E0D8C8' : '1px solid #F5F0E8';
+      c += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:.4rem 0;border-bottom:'+borderTop+';font-size:13px">';
+      c += '<span style="color:'+(r.total?'var(--text)':'#4A4540')+';font-weight:'+(r.total?'600':'400')+'">'+r.label+'</span>';
+      c += '<span style="font-family:var(--mono);font-weight:'+weight+';color:'+amtColor+'">'+r.amount+'</span></div>';
+    });
+    if (note) c += '<div style="font-size:11px;color:#8A8480;margin-top:.4rem;font-style:italic">'+note+'</div>';
+    c += '</div>';
+    return c;
+  }
+
+  html += card('SURGERY — OUTBOUND', [
+    {label:'Crane Center surgical fee', amount:'$680.62', urgent:true},
+    {label:'Remaining out-of-pocket (est.)', amount:'~$1,819'},
+    {label:'Westlake anesthesia', amount:'TBD'},
+    {label:'Surgery total (est.)', amount:'~$2,500', total:true},
+  ], '$680.62 paid to Crane Center May 11. Westlake cost pending.');
+
+  html += card('BALTIMORE HOUSING — PROJECTED', [
+    {label:'Target monthly rent', amount:'<$1,800'},
+    {label:'Hard ceiling', amount:'$2,500'},
+    {label:'Est. utilities', amount:'~$150–200'},
+    {label:'All-in target', amount:'<$2,000/mo', total:true},
+  ], 'Rent first, buy later. Budget under $200K for eventual purchase in Reservoir Hill.');
+
+  html += card('INCOME — MICA', [
+    {label:'Grad Teaching Internship', amount:'TBD'},
+    {label:'PBL @ BHS Year 2', amount:'TBD'},
+    {label:'Total projected', amount:'TBD', total:true},
+  ], 'Update once MICA compensation details confirmed.');
+
+  html += card('NOTES & FEES', [
+    {label:'Symphony 3% discount', amount:'if MICA job confirmed'},
+    {label:'Security deposit (typical)', amount:'$500–1 mo rent'},
+    {label:'Pet fee (typical)', amount:'$45–50/mo'},
+  ], null);
+
+  html += '</div>';
+
+  // fundraising progress block
+  var confirmed = 1500;
+  var goal = 5200;
+  var pct = Math.min(100, Math.round(confirmed/goal*100));
+  html += '<div style="max-width:900px;background:#FFF8F0;border:1px solid #E8C89A;border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.25rem">';
+  html += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--accent);margin-bottom:.4rem">IMMEDIATE FUNDRAISING GOAL</div>';
+  html += '<div style="font-family:var(--mono);font-size:28px;font-weight:500;color:var(--accent)">$5,200</div>';
+  html += '<div style="margin:10px 0 4px"><div style="height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:#8B5E1A;border-radius:3px"></div></div>';
+  html += '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--text3)"><span>$1,500 raised</span><span>$3,700 to go</span></div></div>';
+  html += '<div style="font-size:13px;color:#8B5E1A;margin-top:8px">Covers Airbnb balance, surgery costs, flight, and post-op care.</div>';
+  html += '</div>';
+
+  html += '<div style="max-width:900px;padding:12px 14px;background:var(--surface2);border-radius:10px;font-size:12px;color:var(--text3);line-height:1.6">';
+  html += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">RESTRICTED / NOT FOR SURGERY</div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:.35rem 0;border-bottom:1px solid var(--bg)"><span>Comm Engaged Thesis grant</span><span style="font-family:var(--mono)">$4,000</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:.35rem 0;margin-bottom:8px"><span>SolFood grant portion</span><span style="font-family:var(--mono)">$750</span></div>';
+  html += 'Carrot benefit: $10,000 lifetime · covers HRT, labs, binders — not surgery.</div>';
+
+  document.getElementById('view-finance').innerHTML = html;
+}
+
+function renderAll() {
+  renderBoard();
+  renderTimeline();
+  renderFinance();
+  renderHousing();
+}
+
+
+// ── Housing localStorage helpers ──
 function gs(id){ try{ return JSON.parse(localStorage.getItem('prop_'+id)||'null')||{}; }catch(e){ return{}; } }
 function ss(id,u){ var s=gs(id); Object.assign(s,u); localStorage.setItem('prop_'+id,JSON.stringify(s)); }
 function gl(id){ try{ return JSON.parse(localStorage.getItem('loran_'+id)||'null')||{}; }catch(e){ return{}; } }
 function sl(id,u){ var s=gl(id); Object.assign(s,u); localStorage.setItem('loran_'+id,JSON.stringify(s)); }
 
-function updateStats(){
-  var total=0,visited=0,sy=0;
-  PROPS.forEach(function(p){
-    var s=gs(p.id);
-    if(s.hidden) return;
-    total++;
-    var ls=gl(p.id);
-    if(ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0) visited++;
-    if(ls.status==='Strong Yes') sy++;
-  });
-  ['sv','st','ssy','lsv','lst','lssy'].forEach(function(id,i){
-    var el=document.getElementById(id);
-    if(el) el.textContent = i===0||i===3?visited : i===1||i===4?total : sy;
-  });
-}
+var HOUSING_CHECKLIST=['🍳 Roomy kitchen with storage space','🐾 Pet friendly (ask explicitly)','⚡ Practical electricity bill — ask about avg monthly cost','🎓 Walkable to MICA','🛒 Close to grocery store or market','🚿 2 bathrooms (or at least 1.5)','👶 Kairo-friendly — safe space, no major hazards'];
+var TOUR_STEPS=['Not Started','Contacted','Appt Set','Toured','Decision'];
+var LORAN_STATUSES=['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
+var HOUSING_PROPS=[
+  {id:'rh1',name:'750 Reservoir St, Unit A',hood:'Reservoir Hill',type:'Townhouse',price:'$1,650/mo',beds:'2bd/1ba',url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',notes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA.'},
+  {id:'rh2',name:'750 Reservoir St, Unit B',hood:'Reservoir Hill',type:'Townhouse',price:'~$1,750/mo',beds:'2bd/2ba',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',notes:'Same building as Unit A. 2bd/2ba. Also renovated 2025.'},
+  {id:'rh3',name:'Reservoir Hill Renovated Unit',hood:'Reservoir Hill',type:'Apartment/Unit',price:'TBD',beds:'2bd/1ba',url:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',notes:'Main-level unit, updated 2025. LVP floors, new kitchen, open layout. Good for WFH. Via RE/MAX Distinctive / Mike Kane.'},
+  {id:'rh4',name:'1121 Whitelock St',hood:'Reservoir Hill',type:'House',price:'$1,300/mo',beds:'2bd/1ba',url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',notes:'Below market — verify listing is current. 1,180 sqft. Pets allowed.'},
+  {id:'lh4',name:'1339 W Lafayette Ave, Unit 1',hood:'Harlem Park',type:'Townhouse',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/',notes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.'},
+  {id:'lh5',name:'805 Washington Blvd, Unit A',hood:'Pigtown',type:'House',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',notes:'1,050 sqft. Hardwood floors, W/D in unit. Contact: Victoria Lin (301) 738-7777.'},
+  {id:'lh6',name:'1926 E 28th St',hood:'Coldstream/Montebello',type:'Townhouse',price:'$1,950/mo',beds:'2bd/2.5ba',url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',notes:'1,500 sqft. Kitchen island, patio, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.'},
+  {id:'bh1',name:'Bolton House',hood:'Bolton Hill',type:'Apartment',price:'TBD',beds:'2bd (710 sqft)',url:'https://boltonhouse.com/',notes:'High-rise with downtown views. Steps from MICA. 2bd is 710 sqft — compact but very central.'},
+  {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180-2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option — MICA shuttle is a big plus. $2,180 no-balcony is the value play.',notes:'COURT TOURED. Contact: Nadine. Units: $2,340/mo (floor 10+, foyer) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb no deposit. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.',defaultStatus:'Toured'},
+  {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218-2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet $350 dep + $50/mo. All electric.',defaultStatus:'Decision'},
+  {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out — location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.',defaultStatus:'Decision'}
+];
 
-function renderCourtCards(){
-  var c=document.getElementById('prop-container');
-  c.innerHTML='';
-  var hasHidden=false;
-  PROPS.forEach(function(p){
-    var s=gs(p.id);
-    if(s.hidden){ hasHidden=true; return; }
-    var ls=gl(p.id);
+var loranModeActive=false;
+function toggleLoranMode(){ loranModeActive=!loranModeActive; renderHousing(); }
+
+function renderHousing(){
+  var el=document.getElementById('view-housing');
+  if(!el) return;
+  if(loranModeActive){ renderLoranCards(el); return; }
+  var hidden=JSON.parse(localStorage.getItem('housing_hidden')||'[]');
+  var props=HOUSING_PROPS.filter(function(p){ return hidden.indexOf(p.id)===-1; });
+  var visited=props.filter(function(p){ var ls=gl(p.id); return ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0; }).length;
+  var sy=props.filter(function(p){ return gl(p.id).status==='Strong Yes'; }).length;
+
+  var html='<div style="padding:1.25rem;max-width:900px;margin:0 auto">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">';
+  html+='<div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text3)">BALTIMORE HOUSING</div>';
+  html+='<div style="font-size:12px;color:var(--text2);margin-top:2px">Move-in: July 25 or Aug 20\u201330 \u00b7 Budget under $1,800 (hard ceiling $2,500)</div></div>';
+  html+='<button onclick="toggleLoranMode()" style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;padding:7px 18px;border-radius:20px;border:none;background:#C17D3C;color:#fff;cursor:pointer">+ LORAN MODE</button></div>';
+  html+='<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem">';
+  html+='<span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
+
+  props.forEach(function(p){
+    var s=gs(p.id); var ls=gl(p.id);
     var status=s.tourStatus||p.defaultStatus||'Not Started';
-    var div=document.createElement('div');
-    div.className='prop-card';
-    div.id='card-'+p.id;
-    var link=p.url?'<a href="'+p.url+'" target="_blank">↗ listing</a>':'';
+    var link=p.url?'<a href="'+p.url+'" target="_blank" style="color:var(--accent);font-family:var(--mono);font-size:10px;text-decoration:none">listing \u2197</a>':'';
     var fbHtml='';
     if(ls.status&&ls.status!=='Not Visited'){
-      var stars=ls.rating?'★'.repeat(ls.rating)+'☆'.repeat(5-ls.rating):'—';
-      fbHtml='<div class="loran-feedback"><div class="loran-fb-label">LORAN\'S FEEDBACK</div><div><strong>'+ls.status+'</strong> '+stars+'</div>'+(ls.notes?'<div style="font-size:12px;color:var(--text2);font-style:italic;margin-top:.3rem">"'+ls.notes+'"</div>':'')+'</div>';
+      var stars=ls.rating?'\u2605'.repeat(ls.rating)+'\u2606'.repeat(5-ls.rating):'\u2014';
+      fbHtml='<div style="border-top:1px dashed var(--border);padding-top:.6rem;margin-top:.25rem"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C;margin-bottom:.25rem">LORAN\'S FEEDBACK</div><div style="font-size:12px"><strong>'+ls.status+'</strong> '+stars+'</div>'+(ls.notes?'<div style="font-size:11px;color:var(--text2);font-style:italic;margin-top:.25rem">"'+ls.notes+'"</div>':'')+'</div>';
     }
     var pipeHtml=TOUR_STEPS.map(function(step){
-      var cls='pipe-step'+(step===status?(step==='Decision'?' active-g':' active'):'');
-      return '<button class="'+cls+'" onclick="setPipe(\''+p.id+'\',\''+step+'\',this)">'+step+'</button>';
+      var active=step===status;
+      var bg=active?(step==='Decision'?'#4A7C59':'#C17D3C'):'var(--surface2)';
+      var col=active?'#fff':'var(--text3)';
+      return '<button onclick="setHPipe(\''+p.id+'\',\''+step+'\')" style="font-family:var(--mono);font-size:9px;padding:4px 9px;border-radius:5px;border:1px solid '+(active?bg:'var(--border)')+';background:'+bg+';color:'+col+';cursor:pointer">'+step+'</button>';
     }).join('');
-    div.innerHTML='<div class="prop-hdr"><div class="prop-hdr-l"><h3>'+p.name+'</h3><div class="prop-meta">'+p.hood+' · '+p.type+' · '+p.beds+(link?' · '+link:'')+'</div></div><div class="prop-hdr-r"><div class="prop-price">'+p.price+'</div><div class="prop-actions"><button class="btn-sm">'+status+'</button><button class="btn-sm'+(s.onList?' on':'')+'" onclick="toggleList(\''+p.id+'\',this)">'+(s.onList?'✓ Loran\'s List':'+ Loran\'s List')+'</button><button class="btn-sm hide" onclick="hideCard(\''+p.id+'\')">hide</button></div></div></div><div class="prop-body"><div class="court-notes"><strong>COURT\'S NOTES</strong>'+p.notes+'</div><div class="sec-label">TOUR STATUS</div><div class="pipeline">'+pipeHtml+'</div><div class="prop-fields"><div class="prop-field"><label>CONTACT / AGENT</label><input type="text" value="'+(s.contact||'')+'" placeholder="Name, phone..." onchange="ss(\''+p.id+'\',{contact:this.value})"></div><div class="prop-field"><label>APPT DATE &amp; TIME</label><input type="text" value="'+(s.apptDate||'')+'" placeholder="e.g. Sat July 26, 2pm" onchange="ss(\''+p.id+'\',{apptDate:this.value})"></div><div class="prop-field prop-field-full"><label>YOUR NOTES FOR LORAN</label><textarea rows="3" placeholder="What should Loran know before she visits?" onchange="ss(\''+p.id+'\',{courtNotes:this.value})">'+(s.courtNotes||'')+'</textarea></div></div>'+fbHtml+'</div>';
-    c.appendChild(div);
+
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1.25rem;overflow:hidden" id="hcard-'+p.id+'">';
+    if(p.courtVisited){
+      html+='<div style="background:#1A1714;padding:.6rem 1.1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;border-bottom:1px solid #3A3530"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C">\u2713 COURT VISITED</span><span style="font-size:12px;color:#C8C0B0">'+p.courtVerdict+'</span></div>';
+    }
+    html+='<div style="padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border)">';
+    html+='<div><div style="font-size:14px;font-weight:600;margin-bottom:2px">'+p.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--text3)">'+p.hood+' \u00b7 '+p.type+' \u00b7 '+p.beds+(link?' \u00b7 '+link:'')+'</div></div>';
+    html+='<div style="text-align:right"><div style="font-family:var(--mono);font-size:13px;font-weight:500">'+p.price+'</div>';
+    html+='<div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;justify-content:flex-end">';
+    html+='<span style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;background:var(--surface2);color:var(--text2)">'+status+'</span>';
+    html+='<button onclick="toggleHL(\''+p.id+'\',this)" style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid '+(s.onList?'#4A7C59':'var(--border)')+';background:'+(s.onList?'#EAF0EB':'var(--surface2)')+';color:'+(s.onList?'#4A7C59':'var(--text2)')+';cursor:pointer">'+(s.onList?'\u2713 Loran\'s List':'+ Loran\'s List')+'</button>';
+    html+='<button onclick="hideH(\''+p.id+'\')" style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer">hide</button>';
+    html+='</div></div></div>';
+    html+='<div style="padding:.85rem 1.1rem">';
+    html+='<div style="font-size:12px;color:var(--text2);line-height:1.6;background:var(--surface2);border-radius:6px;padding:.6rem .9rem;margin-bottom:.85rem"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">COURT\'S NOTES</span>'+p.notes+'</div>';
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">TOUR STATUS</div>';
+    html+='<div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.85rem">'+pipeHtml+'</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.85rem">';
+    html+='<div><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">CONTACT / AGENT</label><input type="text" value="'+(s.contact||'')+'" placeholder="Name, phone..." onchange="ss(\''+p.id+'\',{contact:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none"></div>';
+    html+='<div><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">APPT DATE &amp; TIME</label><input type="text" value="'+(s.apptDate||'')+'" placeholder="e.g. Sat July 26, 2pm" onchange="ss(\''+p.id+'\',{apptDate:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none"></div>';
+    html+='<div style="grid-column:1/-1"><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">YOUR NOTES FOR LORAN</label><textarea rows="3" placeholder="What should Loran know before she visits?" onchange="ss(\''+p.id+'\',{courtNotes:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none;resize:vertical">'+(s.courtNotes||'')+'</textarea></div>';
+    html+='</div>'+fbHtml+'</div></div>';
   });
-  document.getElementById('show-hidden-row').style.display=hasHidden?'':'none';
-  updateStats();
+
+  if(hidden.length>0){
+    html+='<div style="text-align:center;margin:.5rem 0 1.5rem"><button onclick="restoreH()" style="font-family:var(--mono);font-size:9px;padding:5px 14px;border-radius:20px;border:1px dashed var(--border);background:none;color:var(--text3);cursor:pointer">show '+hidden.length+' hidden</button></div>';
+  }
+  html+='</div>';
+  el.innerHTML=html;
 }
 
-function setPipe(id,step,btn){
-  ss(id,{tourStatus:step});
-  var card=document.getElementById('card-'+id);
-  card.querySelectorAll('.pipe-step').forEach(function(b){
-    b.className='pipe-step'+(b.textContent.trim()===step?(step==='Decision'?' active-g':' active'):'');
-  });
-  card.querySelector('.btn-sm').textContent=step;
-  updateStats();
-}
-function toggleList(id,btn){
-  var s=gs(id); var v=!s.onList; ss(id,{onList:v});
-  btn.className='btn-sm'+(v?' on':'');
-  btn.textContent=v?'✓ Loran\'s List':'+ Loran\'s List';
-}
-function hideCard(id){
-  if(confirm('Hide this property?')){ ss(id,{hidden:true}); renderCourtCards(); }
-}
-var showingHidden=false;
-function toggleHidden(){
-  showingHidden=!showingHidden;
-  PROPS.forEach(function(p){
-    var s=gs(p.id);
-    if(s.hidden){ var c=document.getElementById('card-'+p.id); if(c) c.style.display=showingHidden?'':'none'; }
-  });
-  document.querySelector('.btn-show-hidden').textContent=showingHidden?'hide hidden':'show hidden properties';
-}
+function setHPipe(id,step){ ss(id,{tourStatus:step}); renderHousing(); }
+function toggleHL(id,btn){ var s=gs(id); var v=!s.onList; ss(id,{onList:v}); renderHousing(); }
+function hideH(id){ if(confirm('Hide this property?')){ var h=JSON.parse(localStorage.getItem('housing_hidden')||'[]'); if(h.indexOf(id)===-1)h.push(id); localStorage.setItem('housing_hidden',JSON.stringify(h)); renderHousing(); } }
+function restoreH(){ localStorage.removeItem('housing_hidden'); renderHousing(); }
 
-// LORAN MODE
-function enterLoran(){ document.getElementById('court-view').style.display='none'; document.getElementById('loran-mode').style.display=''; renderLoranCards(); }
-function exitLoran(){ document.getElementById('loran-mode').style.display='none'; document.getElementById('court-view').style.display=''; }
+function renderLoranCards(el){
+  var hidden=JSON.parse(localStorage.getItem('housing_hidden')||'[]');
+  var props=HOUSING_PROPS.filter(function(p){ return hidden.indexOf(p.id)===-1; });
+  var visited=props.filter(function(p){ var ls=gl(p.id); return ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0; }).length;
+  var sy=props.filter(function(p){ return gl(p.id).status==='Strong Yes'; }).length;
 
-function renderLoranCards(){
-  var c=document.getElementById('loran-container');
-  c.innerHTML='';
-  PROPS.forEach(function(p){
-    var s=gs(p.id); if(s.hidden) return;
-    var ls=gl(p.id);
+  var html='<div style="max-width:640px;margin:0 auto;padding:1rem">';
+  html+='<div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem">';
+  html+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#C17D3C;margin-bottom:.4rem">LORAN MODE</div>';
+  html+='<div style="font-family:var(--mono);font-size:15px;margin-bottom:.4rem">Field notes for Loran</div>';
+  html+='<div style="font-size:13px;color:var(--text2)">Tap a status, rate it, leave notes \u2014 saves automatically</div>';
+  html+='<div style="display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid #C17D3C;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:#8B5E3C">\ud83d\udcc5 Move-in: July 25 or Aug 20\u201330</div><br>';
+  html+='<button onclick="toggleLoranMode()" style="margin-top:.75rem;font-family:var(--mono);font-size:10px;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text2);cursor:pointer">Back to full view</button></div>';
+  html+='<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:9px 14px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem"><span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
+
+  props.forEach(function(p){
+    var s=gs(p.id); var ls=gl(p.id);
     var status=ls.status||'Not Visited';
     var rating=ls.rating||0;
     var courtNotes=s.courtNotes||p.notes||'';
-    var apptDate=s.apptDate||'';
-    var contact=s.contact||'';
+    var apptDate=s.apptDate||''; var contact=s.contact||'';
+    var link=p.url?'<a href="'+p.url+'" target="_blank" style="color:#C17D3C;text-decoration:none;font-family:var(--mono);font-size:10px">View listing \u2197</a>':'';
 
-    var div=document.createElement('div');
-    div.className='loran-card';
-    div.id='lc-'+p.id;
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1.5rem;overflow:hidden">';
+    html+='<div style="padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start">';
+    html+='<div><div style="font-size:15px;font-weight:600;margin-bottom:3px">'+p.name+'</div><div style="font-size:11px;color:var(--text3)">'+p.hood+' \u00b7 '+p.type+'</div>'+(link?'<div style="margin-top:4px">'+link+'</div>':'')+'</div>';
+    html+='<div style="text-align:right"><div style="font-family:var(--mono);font-size:14px;font-weight:500">'+p.price+'</div><div style="font-size:11px;color:var(--text3)">'+p.beds+'</div></div></div>';
 
-    var visitedHtml='';
     if(p.courtVisited){
-      visitedHtml='<div class="visited-banner"><span class="visited-badge">✓ COURT VISITED</span><span class="visited-verdict">'+p.courtVerdict+'</span></div>';
+      html+='<div style="background:#1A1714;padding:.6rem 1.1rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C">\u2713 COURT VISITED</span><span style="font-size:12px;color:#C8C0B0">'+p.courtVerdict+'</span></div>';
     }
-    var apptHtml='';
     if(apptDate||contact){
-      apptHtml='<div class="appt-strip"><strong>APPOINTMENT INFO</strong>'+(apptDate?'📅 '+apptDate:'')+(apptDate&&contact?' · ':'')+(contact?'📞 '+contact:'')+'</div>';
+      html+='<div style="background:#F5EDE0;padding:.6rem 1.1rem;border-bottom:1px solid #E8D8C0;font-size:12px;color:#8B5E3C"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:#C17D3C;margin-bottom:.15rem">APPOINTMENT INFO</div>'+(apptDate?'\ud83d\udcc5 '+apptDate:'')+(apptDate&&contact?' \u00b7 ':'')+(contact?'\ud83d\udcf2 '+contact:'')+'</div>';
     }
-    var cnHtml='';
     if(courtNotes){
-      cnHtml='<div class="cn-strip"><strong>NOTES FROM COURT</strong>'+courtNotes+'</div>';
+      html+='<div style="padding:.6rem 1.1rem;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);margin-bottom:.2rem">NOTES FROM COURT</div>'+courtNotes+'</div>';
     }
-    var link=p.url?'<a href="'+p.url+'" target="_blank">View listing ↗</a>':'';
-    var pillsHtml=STATUSES.map(function(st){
-      var cls='s-pill'+(st===status?(st==='Strong Yes'?' active-g':st==='Pass'?' active-r':' active'):'');
-      return '<button class="'+cls+'" onclick="setStatus(\''+p.id+'\',\''+st+'\',this)">'+st+'</button>';
-    }).join('');
-    var starsHtml=[1,2,3,4,5].map(function(i){
-      return '<span class="star'+(i<=rating?' filled':'')+'" onclick="setRating(\''+p.id+'\','+i+')">★</span>';
-    }).join('');
-    var chkHtml=CHECKLIST.map(function(item,i){
-      var checked=ls.checklist&&ls.checklist[i];
-      return '<div class="chk-row'+(checked?' checked':'')+'" onclick="toggleCheck(\''+p.id+'\','+i+',this)"><span class="chk-box">'+(checked?'✓':'')+'</span><span class="chk-label">'+item+'</span></div>';
-    }).join('');
 
-    div.innerHTML='<div class="lc-hdr"><div><h3>'+p.name+'</h3><div class="lc-meta">'+p.hood+' · '+p.type+(link?'<br>'+link:'')+'</div></div><div class="lc-price"><div class="price">'+p.price+'</div><div class="beds">'+p.beds+'</div></div></div>'+visitedHtml+apptHtml+cnHtml+'<div class="lc-body"><div class="sec-label">STATUS</div><div class="status-pills">'+pillsHtml+'</div><div class="sec-label">RATING</div><div class="stars-row" id="stars-'+p.id+'">'+starsHtml+'</div><div class="sec-label">COURT\'S CHECKLIST</div><div class="checklist">'+chkHtml+'</div><div class="sec-label" style="margin-top:1rem">YOUR NOTES</div><textarea class="notes-area" id="notes-'+p.id+'" placeholder="Layout, condition, neighborhood feel, red flags, vibes…" oninput="autoSave(\''+p.id+'\',this)">'+(ls.notes||'')+'</textarea><div class="save-ind" id="save-'+p.id+'"></div></div>';
-    c.appendChild(div);
+    html+='<div style="padding:.85rem 1.1rem">';
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">STATUS</div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.1rem">';
+    LORAN_STATUSES.forEach(function(st){
+      var active=st===status;
+      var bg=active?(st==='Strong Yes'?'#4A7C59':st==='Pass'?'#8B3A3A':'#C17D3C'):'var(--surface2)';
+      var col=active?'#fff':'var(--text3)';
+      html+='<button data-pid="'+p.id+'" data-st="'+st+'" onclick="setLS(this.dataset.pid,this.dataset.st)" style="font-family:var(--mono);font-size:10px;padding:7px 13px;border-radius:20px;border:1px solid '+(active?bg:'var(--border)')+';background:'+bg+';color:'+col+';cursor:pointer">'+st+'</button>';
+    });
+    html+='</div>';
+
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem">RATING</div><div style="display:flex;gap:.3rem;margin-bottom:1.1rem">';
+    for(var i=1;i<=5;i++){
+      html+='<span data-pid="'+p.id+'" data-val="'+i+'" onclick="setLR(this.dataset.pid,parseInt(this.dataset.val))" style="font-size:24px;cursor:pointer;color:'+(i<=rating?'#C17D3C':'var(--border)')+'">&#9733;</span>';
+    }
+    html+='</div>';
+
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">COURT\'S CHECKLIST</div><div style="margin-bottom:1rem">';
+    HOUSING_CHECKLIST.forEach(function(item,idx){
+      var checked=ls.checklist&&ls.checklist[idx];
+      html+='<div data-pid="'+p.id+'" data-idx="'+idx+'" onclick="toggleLC(this.dataset.pid,parseInt(this.dataset.idx))" style="display:flex;align-items:center;gap:.6rem;padding:8px 10px;border-radius:7px;cursor:pointer;border:1px solid '+(checked?'#4A7C59':'var(--border)')+';background:'+(checked?'#EAF0EB':'var(--surface2)')+';margin-bottom:.35rem"><span style="width:18px;height:18px;border:1.5px solid '+(checked?'#4A7C59':'var(--border)')+';border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:'+(checked?'#4A7C59':'var(--surface)')+';flex-shrink:0">'+(checked?'&#10003;':'')+'</span><span style="font-size:13px;color:'+(checked?'var(--text3)':'var(--text2)')+'">'+item+'</span></div>';
+    });
+    html+='</div>';
+
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem">YOUR NOTES</div>';
+    html+='<textarea data-pid="'+p.id+'" oninput="lnTimer(this.dataset.pid,this)" placeholder="Layout, condition, neighborhood feel, red flags, vibes..." style="width:100%;min-height:90px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;font-size:13px;color:var(--text);outline:none;resize:vertical;font-family:var(--sans)">'+(ls.notes||'')+'</textarea>';
+    html+='<div id="lsave-'+p.id+'" style="font-family:var(--mono);font-size:9px;color:#4A7C59;text-align:right;min-height:14px;margin-top:.25rem"></div>';
+    html+='</div></div>';
   });
-  updateStats();
+
+  html+='</div>';
+  el.innerHTML=html;
 }
 
-function setStatus(id,status,btn){
-  sl(id,{status:status});
-  var card=document.getElementById('lc-'+id);
-  card.querySelectorAll('.s-pill').forEach(function(b){
-    var st=b.textContent.trim();
-    b.className='s-pill'+(st===status?(status==='Strong Yes'?' active-g':status==='Pass'?' active-r':' active'):'');
-  });
-  updateStats();
-}
-function setRating(id,rating){
-  sl(id,{rating:rating});
-  var row=document.getElementById('stars-'+id);
-  row.querySelectorAll('.star').forEach(function(s,i){ s.classList.toggle('filled',i<rating); });
-}
-function toggleCheck(id,index,row){
-  var s=gl(id); var chk=s.checklist||{};
-  chk[index]=!chk[index]; sl(id,{checklist:chk});
-  row.classList.toggle('checked',chk[index]);
-  row.querySelector('.chk-box').textContent=chk[index]?'✓':'';
-}
-var saveTimers={};
-function autoSave(id,textarea){
-  clearTimeout(saveTimers[id]);
-  saveTimers[id]=setTimeout(function(){
-    sl(id,{notes:textarea.value});
-    var ind=document.getElementById('save-'+id);
-    ind.textContent='SAVED';
-    setTimeout(function(){ ind.textContent=''; },2000);
+function setLS(id,status){ sl(id,{status:status}); renderHousing(); }
+function setLR(id,rating){ sl(id,{rating:rating}); renderHousing(); }
+function toggleLC(id,idx){ var s=gl(id); var chk=s.checklist||{}; chk[idx]=!chk[idx]; sl(id,{checklist:chk}); renderHousing(); }
+var lnTimers={};
+function lnTimer(id,ta){
+  clearTimeout(lnTimers[id]);
+  lnTimers[id]=setTimeout(function(){
+    sl(id,{notes:ta.value});
+    var ind=document.getElementById('lsave-'+id);
+    if(ind){ind.textContent='SAVED';setTimeout(function(){ind.textContent='';},2000);}
   },800);
 }
 
-// init
-showTab('housing');
-renderCourtCards();
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+
+renderAll();
 </script>
 </body>
 </html>
