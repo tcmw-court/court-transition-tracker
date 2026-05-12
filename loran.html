@@ -94,6 +94,19 @@ main { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem; }
 .card-price { font-family: var(--mono); font-size: 15px; font-weight: 500; white-space: nowrap; }
 .card-beds { font-size: 11px; color: var(--text3); }
 
+.court-visited-banner {
+  background: #1A1714; padding: 0.75rem 1.25rem;
+  border-bottom: 1px solid #3A3530;
+  display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: baseline;
+}
+.visited-badge {
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em;
+  color: var(--accent); white-space: nowrap;
+}
+.visited-verdict {
+  font-size: 12px; color: #C8C0B0; line-height: 1.5;
+}
+
 .appt-strip {
   background: #F5EDE0; padding: 0.7rem 1.25rem;
   border-bottom: 1px solid #E8D8C0;
@@ -290,7 +303,9 @@ const PROPERTIES = [
     price: '$2,180–2,340/mo',
     beds: '2bd/2ba',
     url: '',
-    defaultNotes: 'Court has already toured this one. Over budget. Keeping for reference.',
+    courtVisited: true,
+    courtVerdict: 'Strong option — MICA shuttle is a big plus. $2,180 no-balcony unit is the value play. Over base budget but worth revisiting if nothing else lands.',
+    defaultNotes: `COURT TOURED THIS. Contact: Nadine.\n\nUnits: $2,340/mo (floor 10+, foyer, side window, possible granite) · $2,180/mo (no balcony).\n\nCosts: Parking included · Trash $5/mo · Water $30/mo (rent portal) · Electric BGE metered · Pet $45/mo, 75lb limit, no deposit · Deposit from $500.\n\nAmenities: Built 2004 · Fitness center · Outdoor grill · Club room · MICA bus + JH shuttle · 15 min walk to MARC · Whole Foods 15 min · Safeway 10 min drive.\n\nNotes: 3% discount for MICA job. Bank statements or specific tax form required. 60-day availability window.`,
   },
   {
     id: 'fitz1',
@@ -300,7 +315,21 @@ const PROPERTIES = [
     price: '$2,218–2,503/mo',
     beds: '1bd+den to 2bd',
     url: '',
-    defaultNotes: 'Court has already toured this one. Over budget. Likely ruled out.',
+    courtVisited: true,
+    courtVerdict: 'Water at $150/mo inflates true cost significantly. Best entry is Lanier at $2,218 if 1bd+den works, but all-in cost is high.',
+    defaultNotes: `COURT TOURED THIS. 24hr concierge · Cyber cafe · Pool (pay per guest) · Gym · Emergency maintenance.\n\nUnits: Carraway 2bd/2ba $2,503 (12mo July 25: $2,387 · 15mo: $2,345) · Lanier 1bd+den W-facing $2,218 (4th floor $2,274, avail July 9) · Holiday 2bd/2ba $2,402 · Hendrick (apt 229, next to Lanier) $2,533 — not toured.\n\nCosts: Trash $15/mo · Water $150/mo · All electric · Pet deposit $350 · Pet rent $50/mo · Security deposit from $500 (up to 1 month).\n\nNotes: No wood floors. French balcony options face pool. Water cost is the dealbreaker.`,
+  },
+  {
+    id: 'vault1',
+    name: 'The Vault',
+    neighborhood: 'Downtown',
+    type: 'Apartment',
+    price: 'TBD',
+    beds: 'TBD',
+    url: '',
+    courtVisited: true,
+    courtVerdict: 'Ruled out — location problem. Too far from MICA.',
+    defaultNotes: 'COURT RULED THIS OUT. 115 N Charles St. Location does not work for MICA commute. Not worth pursuing.',
   },
 ];
 
@@ -368,6 +397,12 @@ function renderCards() {
     const contact = cs.contact || '';
     const courtNotes = cs.courtNotes || p.defaultNotes || '';
 
+    const visitedBanner = p.courtVisited ? `
+      <div class="court-visited-banner">
+        <span class="visited-badge">✓ COURT VISITED</span>
+        <span class="visited-verdict">${p.courtVerdict}</span>
+      </div>` : '';
+
     const apptBlock = (apptDate || contact) ? `
       <div class="appt-strip">
         <strong>APPOINTMENT INFO</strong>
@@ -402,6 +437,7 @@ function renderCards() {
           <div class="card-beds">${p.beds}</div>
         </div>
       </div>
+      ${visitedBanner}
       ${apptBlock}
       ${notesBlock}
       <div class="card-body">
