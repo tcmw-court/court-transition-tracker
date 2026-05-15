@@ -3,320 +3,230 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Housing Field Notes — Loran</title>
+<title>Housing Field Notes - Loran</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
-:root{--bg:#F5F0E8;--surface:#FDFAF4;--surface2:#F0EBE0;--border:#E0D8C8;--text:#1A1714;--text2:#4A4540;--text3:#8A8480;--accent:#C17D3C;--accent2:#8B5E3C;--green:#4A7C59;--red:#8B3A3A;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#F5F0E8;font-family:'DM Sans',sans-serif;color:#1A1714;min-height:100vh;}
-#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
-.gate-card{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
-.gate-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8480;margin-bottom:.5rem;}
-.gate-title{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;margin-bottom:.25rem;}
-.gate-sub{font-size:13px;color:#4A4540;margin-bottom:2rem;}
-.gate-input{width:100%;padding:12px 16px;font-family:'DM Mono',monospace;font-size:14px;background:#F0EBE0;border:1px solid #E0D8C8;border-radius:8px;color:#1A1714;outline:none;text-align:center;letter-spacing:.1em;margin-bottom:.75rem;}
-.gate-input:focus{border-color:#C17D3C;}
-.gate-btn{width:100%;padding:12px;background:#C17D3C;color:#fff;border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;}
-.gate-error{color:#8B3A3A;font-family:'DM Mono',monospace;font-size:11px;margin-top:.5rem;min-height:1rem;}
-#app{display:none;}
-header{background:#1A1714;color:#F5F0E8;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.h-name{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;}
-.h-badge{background:#C17D3C;color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;padding:3px 9px;border-radius:20px;}
-.sync-dot{width:7px;height:7px;border-radius:50%;background:#8A8480;display:inline-block;margin-right:6px;}
-.sync-dot.ok{background:#4A7C59;}
-.sync-dot.err{background:#8B3A3A;}
-main{max-width:640px;margin:0 auto;padding:1.5rem 1rem;}
-.page-intro{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;}
-.intro-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#C17D3C;margin-bottom:.4rem;}
-.intro-title{font-family:'DM Mono',monospace;font-size:16px;margin-bottom:.5rem;}
-.intro-sub{font-size:13px;color:#4A4540;line-height:1.5;}
-.intro-movein{display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid #C17D3C;border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:11px;color:#8B5E3C;}
-.stats-bar{background:#1A1714;color:#F5F0E8;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:9px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem;}
-.loran-card{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:12px;margin-bottom:1.5rem;overflow:hidden;}
-.card-header{padding:1rem 1.25rem;border-bottom:1px solid #E0D8C8;display:flex;justify-content:space-between;align-items:flex-start;}
-.card-header h3{font-size:15px;font-weight:600;margin-bottom:3px;}
-.card-meta{font-size:11px;color:#8A8480;line-height:1.6;}
-.card-meta a{color:#C17D3C;text-decoration:none;font-family:'DM Mono',monospace;font-size:10px;}
-.card-price-col{text-align:right;}
-.card-price{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;white-space:nowrap;}
-.card-beds{font-size:11px;color:#8A8480;}
-.visited-banner{background:#1A1714;padding:.6rem 1.25rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;}
-.visited-badge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#C17D3C;white-space:nowrap;}
-.visited-verdict{font-size:12px;color:#C8C0B0;line-height:1.5;}
-.cn-strip{padding:.75rem 1.25rem;background:#F0EBE0;border-bottom:1px solid #E0D8C8;font-size:12px;color:#4A4540;line-height:1.6;}
-.cn-strip strong{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;color:#8A8480;display:block;margin-bottom:.3rem;}
-.card-body{padding:1rem 1.25rem;}
-.sec-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8480;margin-bottom:.5rem;}
-.status-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;}
-.s-pill{font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.04em;padding:8px 14px;border-radius:20px;border:1px solid #E0D8C8;background:#F0EBE0;color:#8A8480;cursor:pointer;transition:all .12s;}
-.s-pill.active{background:#C17D3C;color:#fff;border-color:#C17D3C;}
-.s-pill.active-g{background:#4A7C59;color:#fff;border-color:#4A7C59;}
-.s-pill.active-r{background:#8B3A3A;color:#fff;border-color:#8B3A3A;}
-.stars-row{display:flex;gap:.4rem;margin-bottom:1.25rem;}
-.star{font-size:26px;cursor:pointer;color:#E0D8C8;transition:color .1s;}
-.star.filled{color:#C17D3C;}
-.checklist{margin-bottom:1rem;}
-.chk-row{display:flex;align-items:center;gap:.75rem;padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid #E0D8C8;background:#F0EBE0;margin-bottom:.4rem;}
-.chk-row.checked{background:#EAF0EB;border-color:#4A7C59;}
-.chk-box{width:20px;height:20px;border:1.5px solid #E0D8C8;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;background:#FDFAF4;}
-.chk-row.checked .chk-box{background:#4A7C59;color:#fff;border-color:#4A7C59;}
-.chk-label{font-size:13px;color:#4A4540;line-height:1.4;}
-.chk-row.checked .chk-label{color:#8A8480;}
-.notes-area{width:100%;min-height:110px;background:#F0EBE0;border:1px solid #E0D8C8;border-radius:8px;padding:12px;resize:vertical;font-family:'DM Sans',sans-serif;font-size:13px;color:#1A1714;outline:none;line-height:1.6;}
-.notes-area:focus{border-color:#C17D3C;}
-.save-ind{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;color:#4A7C59;text-align:right;min-height:14px;margin-top:.3rem;}
+body { background: #F5F0E8; font-family: sans-serif; color: #1A1714; margin: 0; padding: 0; }
+#gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.gc { background: #fff; border: 1px solid #ccc; border-radius: 12px; padding: 2rem; width: 320px; text-align: center; }
+.gc h2 { font-size: 18px; margin-bottom: 8px; }
+.gc p { font-size: 13px; color: #666; margin-bottom: 1.5rem; }
+.gc input { width: 100%; padding: 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px; text-align: center; margin-bottom: 8px; box-sizing: border-box; }
+.gc button { width: 100%; padding: 10px; background: #C17D3C; color: #fff; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
+.gc .err { color: red; font-size: 11px; margin-top: 6px; }
+#app { display: none; }
+header { background: #1A1714; color: #fff; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; }
+main { max-width: 600px; margin: 0 auto; padding: 1.5rem 1rem; }
+.card { background: #fff; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 1.5rem; overflow: hidden; }
+.card-top { padding: 14px 16px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+.card-top h3 { font-size: 15px; margin: 0 0 4px; }
+.card-meta { font-size: 11px; color: #888; }
+.card-meta a { color: #C17D3C; }
+.price { font-size: 14px; font-weight: 600; text-align: right; }
+.beds { font-size: 11px; color: #888; }
+.visited { background: #1A1714; padding: 8px 16px; display: flex; gap: 8px; align-items: baseline; }
+.vbadge { font-size: 9px; color: #C17D3C; letter-spacing: .1em; white-space: nowrap; }
+.vtext { font-size: 12px; color: #C8C0B0; }
+.notes-from { padding: 10px 16px; background: #F5F5F0; border-bottom: 1px solid #eee; font-size: 12px; color: #555; }
+.notes-from strong { display: block; font-size: 9px; color: #999; letter-spacing: .08em; margin-bottom: 4px; }
+.body { padding: 14px 16px; }
+.slabel { font-size: 9px; color: #999; letter-spacing: .1em; margin-bottom: 8px; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.pill { padding: 7px 12px; border-radius: 20px; border: 1px solid #ddd; background: #f5f5f5; font-size: 10px; cursor: pointer; }
+.pill.on { background: #C17D3C; color: #fff; border-color: #C17D3C; }
+.pill.on-g { background: #4A7C59; color: #fff; border-color: #4A7C59; }
+.pill.on-r { background: #8B3A3A; color: #fff; border-color: #8B3A3A; }
+.stars { display: flex; gap: 6px; margin-bottom: 16px; font-size: 26px; cursor: pointer; }
+.star { color: #ddd; }
+.star.on { color: #C17D3C; }
+.chklist { margin-bottom: 16px; }
+.chk { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 6px; border: 1px solid #ddd; background: #f9f9f7; margin-bottom: 6px; cursor: pointer; font-size: 13px; }
+.chk.on { background: #EAF0EB; border-color: #4A7C59; }
+.cbox { width: 18px; height: 18px; border: 1.5px solid #ddd; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+.chk.on .cbox { background: #4A7C59; color: #fff; border-color: #4A7C59; }
+textarea { width: 100%; min-height: 90px; padding: 10px; font-size: 13px; border: 1px solid #ddd; border-radius: 6px; resize: vertical; font-family: inherit; }
+.saved { font-size: 10px; color: #4A7C59; text-align: right; min-height: 14px; margin-top: 4px; }
+.stats { background: #1A1714; color: #fff; font-size: 10px; letter-spacing: .08em; padding: 8px 16px; border-radius: 6px; margin-bottom: 1rem; display: flex; gap: 2rem; }
+.intro { background: #fff; border: 1px solid #ddd; border-radius: 10px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: center; }
+.movein { display: inline-block; margin-top: 10px; background: #FFF0E0; border: 1px solid #C17D3C; border-radius: 6px; padding: 5px 12px; font-size: 11px; color: #8B5E3C; }
 </style>
 </head>
 <body>
+
 <div id="gate">
-  <div class="gate-card">
-    <div class="gate-label">COURT WILLIAMS &middot; 2026</div>
-    <div class="gate-title">Housing Field Notes</div>
-    <div class="gate-sub">Enter your access code to continue</div>
-    <input type="password" class="gate-input" id="pw-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')checkPw()">
-    <button class="gate-btn" onclick="checkPw()">ENTER</button>
-    <div class="gate-error" id="pw-error"></div>
+  <div class="gc">
+    <h2>Housing Field Notes</h2>
+    <p>Court Williams &middot; 2026</p>
+    <input type="password" id="pw" placeholder="password" onkeydown="if(event.key==='Enter')go()">
+    <button onclick="go()">Enter</button>
+    <div class="err" id="err"></div>
   </div>
 </div>
+
 <div id="app">
   <header>
-    <div class="h-name">LORAN &middot; FIELD NOTES</div>
-    <div style="display:flex;align-items:center;gap:.75rem">
-      <span style="font-family:'DM Mono',monospace;font-size:9px;color:#8A8480"><span class="sync-dot" id="sync-dot"></span><span id="sync-label">connecting...</span></span>
-      <div class="h-badge">COURT 2026</div>
-    </div>
+    <span style="font-size:12px;letter-spacing:.06em">LORAN &middot; FIELD NOTES</span>
+    <span style="font-size:9px;color:#aaa" id="sync-lbl">connecting...</span>
   </header>
   <main>
-    <div class="page-intro">
-      <div class="intro-label">LORAN MODE</div>
-      <div class="intro-title">Housing Field Notes</div>
-      <div class="intro-sub">Tap a status, rate it, leave notes &mdash; everything saves automatically and Court can see it.</div>
-      <div class="intro-movein">&#128197; Move-in: July 25 or Aug 20&ndash;30</div>
+    <div class="intro">
+      <div style="font-size:9px;color:#C17D3C;letter-spacing:.12em;margin-bottom:6px">LORAN MODE</div>
+      <div style="font-size:16px;font-weight:600;margin-bottom:6px">Housing Field Notes</div>
+      <div style="font-size:13px;color:#666">Tap status, rate, leave notes &mdash; Court sees everything.</div>
+      <div class="movein">Move-in: July 25 or Aug 20&ndash;30</div>
     </div>
-    <div class="stats-bar">
-      <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
-      <span>STRONG YES: <span id="stat-sy">0</span></span>
+    <div class="stats">
+      <span>VISITED: <span id="sv">0</span>/<span id="st">0</span></span>
+      <span>STRONG YES: <span id="ss">0</span></span>
     </div>
-    <div id="cards-container"></div>
+    <div id="cards"></div>
   </main>
 </div>
-<script>
-var PW = 'L00817K@i^';
-var SUPA_URL = 'https://wzfbdbmylexdmyhnyqbm.supabase.co';
-var SUPA_KEY = 'sb_publishable_f0yx-j3O5S-Tdo0k_yXKTA_ndtGQgE1';
-var supaReady = false;
 
-var CHECKLIST = ['Roomy kitchen with storage space','Pet friendly (ask explicitly)','Practical electricity bill - ask about avg monthly cost','Walkable to MICA','Close to grocery store or market','2 bathrooms (or at least 1.5)','Kairo-friendly - safe space, no major hazards'];
-var STATUSES = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
-var PROPS = [
-  {id:'rh1',name:'750 Reservoir St, Unit A',hood:'Reservoir Hill',type:'Townhouse',price:'$1,650/mo',beds:'2bd/1ba',url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',notes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA.'},
-  {id:'rh2',name:'750 Reservoir St, Unit B',hood:'Reservoir Hill',type:'Townhouse',price:'~$1,750/mo',beds:'2bd/2ba',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',notes:'Same building as Unit A. 2bd/2ba. Also renovated 2025.'},
-  {id:'rh3',name:'Reservoir Hill Renovated Unit',hood:'Reservoir Hill',type:'Apartment/Unit',price:'TBD',beds:'2bd/1ba',url:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',notes:'Main-level unit, updated 2025. LVP floors, new kitchen, open layout. Via RE/MAX Distinctive.'},
-  {id:'rh4',name:'1121 Whitelock St',hood:'Reservoir Hill',type:'House',price:'$1,300/mo',beds:'2bd/1ba',url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',notes:'Below market - verify listing is current. 1,180 sqft. Pets OK.'},
-  {id:'lh4',name:'1339 W Lafayette Ave, Unit 1',hood:'Harlem Park',type:'Townhouse',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/',notes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.'},
-  {id:'lh5',name:'805 Washington Blvd, Unit A',hood:'Pigtown',type:'House',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',notes:'1,050 sqft. Hardwood floors, W/D in unit. Contact: Victoria Lin (301) 738-7777.'},
-  {id:'lh6',name:'1926 E 28th St',hood:'Coldstream/Montebello',type:'Townhouse',price:'$1,950/mo',beds:'2bd/2.5ba',url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',notes:'1,500 sqft. Kitchen island, patio, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.'},
-  {id:'bh1',name:'Bolton House',hood:'Bolton Hill',type:'Apartment',price:'TBD',beds:'2bd (710 sqft)',url:'https://boltonhouse.com/',notes:'High-rise with downtown views. Steps from MICA. Compact but very central.'},
-  {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180-2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option - MICA shuttle is a big plus. $2,180 no-balcony is the value play.',notes:'COURT TOURED. Contact: Nadine. Units: $2,340/mo (floor 10+) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb. MICA bus + JH shuttle. 3% MICA discount.'},
-  {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218-2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 / Holiday 2bd/2ba $2,402. Water $150/mo is the dealbreaker.'},
-  {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out - location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.'}
+<script>
+var PW='L00817K@i^';
+var SURL='https://wzfbdbmylexdmyhnyqbm.supabase.co';
+var SKEY='sb_publishable_f0yx-j3O5S-Tdo0k_yXKTA_ndtGQgE1';
+var CL=['Roomy kitchen with storage','Pet friendly (ask explicitly)','Practical electricity bill','Walkable to MICA','Close to grocery store','2 bathrooms (or at least 1.5)','Kairo-friendly - safe space'];
+var ST=['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
+var PR=[
+  {id:'rh1',n:'750 Reservoir St, Unit A',h:'Reservoir Hill',t:'Townhouse',p:'$1,650/mo',b:'2bd/1ba',u:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',c:'Fully renovated 2025. LVP floors, new appliances. Minutes from Druid Hill Park and MICA.'},
+  {id:'rh2',n:'750 Reservoir St, Unit B',h:'Reservoir Hill',t:'Townhouse',p:'~$1,750/mo',b:'2bd/2ba',u:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',c:'Same building as Unit A. 2bd/2ba. Also renovated 2025.'},
+  {id:'rh3',n:'Reservoir Hill Renovated Unit',h:'Reservoir Hill',t:'Apartment',p:'TBD',b:'2bd/1ba',u:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',c:'Main-level unit updated 2025. LVP floors, new kitchen. Via RE/MAX Distinctive.'},
+  {id:'rh4',n:'1121 Whitelock St',h:'Reservoir Hill',t:'House',p:'$1,300/mo',b:'2bd/1ba',u:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',c:'Below market - verify listing current. 1,180 sqft. Pets OK.'},
+  {id:'lh4',n:'1339 W Lafayette Ave, Unit 1',h:'Harlem Park',t:'Townhouse',p:'$1,650/mo',b:'2bd/2ba',u:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/',c:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.'},
+  {id:'lh5',n:'805 Washington Blvd, Unit A',h:'Pigtown',t:'House',p:'$1,650/mo',b:'2bd/2ba',u:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',c:'1,050 sqft. Hardwood floors, W/D in unit. Contact: Victoria Lin (301) 738-7777.'},
+  {id:'lh6',n:'1926 E 28th St',h:'Coldstream',t:'Townhouse',p:'$1,950/mo',b:'2bd/2.5ba',u:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',c:'1,500 sqft. Kitchen island, patio, full basement. Also for sale $205K. Contact: Darrell Harris (443) 632-3000.'},
+  {id:'bh1',n:'Bolton House',h:'Bolton Hill',t:'Apartment',p:'TBD',b:'2bd (710 sqft)',u:'https://boltonhouse.com/',c:'High-rise with downtown views. Steps from MICA.'},
+  {id:'sym1',n:'Symphony Center Apartments',h:'Bolton Hill area',t:'Apartment',p:'$2,180-2,340/mo',b:'2bd/2ba',u:'',v:true,vt:'Strong option - MICA shuttle is a big plus. $2,180 no-balcony is the value play.',c:'COURT TOURED. Contact: Nadine. Units: $2,340 (floor 10+) / $2,180 (no balcony). Parking incl. Water $30/mo. BGE electric. Pet $45/mo. 3% MICA discount.'},
+  {id:'fitz1',n:'The Fitzgerald',h:'Mount Royal',t:'Apartment',p:'$2,218-2,503/mo',b:'1bd+den to 2bd',u:'',v:true,vt:'Water at $150/mo inflates true cost significantly.',c:'COURT TOURED. Carraway 2bd $2,503 / Lanier 1bd+den $2,218 / Holiday 2bd $2,402. Water $150/mo is the dealbreaker.'},
+  {id:'vault1',n:'The Vault',h:'Downtown',t:'Apartment',p:'Ruled out',b:'TBD',u:'',v:true,vt:'Ruled out - location problem. Too far from MICA.',c:'COURT RULED OUT. 115 N Charles St.'}
 ];
 
-// Local state - always works even if Supabase fails
-var localState = {};
-PROPS.forEach(function(p){ localState[p.id] = {}; });
+function gl(id){try{return JSON.parse(localStorage.getItem('ln_'+id)||'null')||{};}catch(e){return{};}}
+function sl(id,u){var s=gl(id);Object.assign(s,u);localStorage.setItem('ln_'+id,JSON.stringify(s));}
 
-function getLS(id){ try{ return JSON.parse(localStorage.getItem('loran_'+id)||'null')||{}; }catch(e){ return{}; } }
-function saveLS(id,u){ var s=getLS(id); Object.assign(s,u); localStorage.setItem('loran_'+id,JSON.stringify(s)); }
-
-// Supabase sync
-function supaFetch(method, path, body) {
-  return fetch(SUPA_URL + '/rest/v1/' + path, {
-    method: method,
-    headers: {
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'resolution=merge-duplicates' : ''
-    },
-    body: body ? JSON.stringify(body) : undefined
+function sfetch(m,path,body){
+  return fetch(SURL+'/rest/v1/'+path,{
+    method:m,
+    headers:{'apikey':SKEY,'Authorization':'Bearer '+SKEY,'Content-Type':'application/json','Prefer':m==='POST'?'resolution=merge-duplicates':''},
+    body:body?JSON.stringify(body):undefined
   });
 }
 
-function syncUp(id) {
-  var s = getLS(id);
-  supaFetch('POST', 'loran_notes?on_conflict=prop_id', {
-    prop_id: id,
-    status: s.status || null,
-    rating: s.rating || null,
-    notes: s.notes || null,
-    checklist: s.checklist ? JSON.stringify(s.checklist) : null,
-    updated_at: new Date().toISOString()
+function sync(id){
+  var s=gl(id);
+  sfetch('POST','loran_notes?on_conflict=prop_id',{
+    prop_id:id,status:s.status||null,rating:s.rating||null,
+    notes:s.notes||null,checklist:s.checklist?JSON.stringify(s.checklist):null,
+    updated_at:new Date().toISOString()
   }).then(function(r){
-    if(r.ok){
-      setSyncStatus(true);
-    }
-  }).catch(function(){ setSyncStatus(false); });
-}
-
-function syncDown() {
-  supaFetch('GET', 'loran_notes?select=*').then(function(r){
-    if(!r.ok) throw new Error('not ok');
-    return r.json();
-  }).then(function(rows){
-    supaReady = true;
-    setSyncStatus(true);
-    rows.forEach(function(row){
-      var existing = getLS(row.prop_id);
-      var merged = Object.assign({}, existing, {
-        status: row.status || existing.status,
-        rating: row.rating || existing.rating,
-        notes: row.notes || existing.notes,
-        checklist: row.checklist ? JSON.parse(row.checklist) : existing.checklist
-      });
-      saveLS(row.prop_id, merged);
-    });
-    renderCards();
-    updateStats();
+    document.getElementById('sync-lbl').textContent=r.ok?'synced':'local only';
   }).catch(function(){
-    supaReady = false;
-    setSyncStatus(false);
-    // Render anyway with local data
-    renderCards();
-    updateStats();
+    document.getElementById('sync-lbl').textContent='local only';
   });
 }
 
-function setSyncStatus(ok) {
-  var dot = document.getElementById('sync-dot');
-  var lbl = document.getElementById('sync-label');
-  if (!dot) return;
-  dot.className = 'sync-dot ' + (ok ? 'ok' : 'err');
-  lbl.textContent = ok ? 'synced' : 'local only';
-}
-
-function checkPw(){
-  var val = document.getElementById('pw-input').value;
-  if(val === PW){
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('app').style.display = '';
-    // Try Supabase, fall back to local
-    syncDown();
+function go(){
+  if(document.getElementById('pw').value===PW){
+    document.getElementById('gate').style.display='none';
+    document.getElementById('app').style.display='';
+    sfetch('GET','loran_notes?select=*').then(function(r){return r.json();}).then(function(rows){
+      rows.forEach(function(row){
+        sl(row.prop_id,{
+          status:row.status||undefined,rating:row.rating||undefined,
+          notes:row.notes||undefined,checklist:row.checklist?JSON.parse(row.checklist):undefined
+        });
+      });
+      document.getElementById('sync-lbl').textContent='synced';
+      render();stats();
+    }).catch(function(){
+      document.getElementById('sync-lbl').textContent='local only';
+      render();stats();
+    });
   } else {
-    document.getElementById('pw-error').textContent = 'Incorrect password - try again';
-    document.getElementById('pw-input').value = '';
-    document.getElementById('pw-input').focus();
+    document.getElementById('err').textContent='Incorrect password';
+    document.getElementById('pw').value='';
   }
 }
 
-function updateStats(){
-  var total = PROPS.length;
-  var visited = PROPS.filter(function(p){
-    var s = getLS(p.id);
-    return s.status && ['Visited','Strong Yes','Maybe','Pass'].indexOf(s.status) >= 0;
-  }).length;
-  var sy = PROPS.filter(function(p){ return getLS(p.id).status === 'Strong Yes'; }).length;
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-visited').textContent = visited;
-  document.getElementById('stat-sy').textContent = sy;
+function stats(){
+  var v=PR.filter(function(p){var s=gl(p.id);return s.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(s.status)>=0;}).length;
+  var sy=PR.filter(function(p){return gl(p.id).status==='Strong Yes';}).length;
+  document.getElementById('sv').textContent=v;
+  document.getElementById('st').textContent=PR.length;
+  document.getElementById('ss').textContent=sy;
 }
 
-function renderCards(){
-  var c = document.getElementById('cards-container');
-  c.innerHTML = '';
-  PROPS.forEach(function(p){
-    var ls = getLS(p.id);
-    var status = ls.status || 'Not Visited';
-    var rating = ls.rating || 0;
-    var div = document.createElement('div');
-    div.className = 'loran-card';
+function render(){
+  var c=document.getElementById('cards');
+  c.innerHTML='';
+  PR.forEach(function(p){
+    var ls=gl(p.id);
+    var status=ls.status||'Not Visited';
+    var rating=ls.rating||0;
+    var el=document.createElement('div');
+    el.className='card';
 
-    var headerHtml = '<div class="card-header"><div><h3>'+p.name+'</h3><div class="card-meta">'+p.hood+' &middot; '+p.type+'<br>'+(p.url?'<a href="'+p.url+'" target="_blank">View listing &#8599;</a>':'')+'</div></div><div class="card-price-col"><div class="card-price">'+p.price+'</div><div class="card-beds">'+p.beds+'</div></div></div>';
+    var top='<div class="card-top"><div><h3>'+p.n+'</h3><div class="card-meta">'+p.h+' &middot; '+p.t+(p.u?'<br><a href="'+p.u+'" target="_blank">View listing</a>':'')+'</div></div><div><div class="price">'+p.p+'</div><div class="beds">'+p.b+'</div></div></div>';
+    var vis=p.v?'<div class="visited"><span class="vbadge">COURT VISITED</span><span class="vtext">'+p.vt+'</span></div>':'';
+    var nfc=p.c?'<div class="notes-from"><strong>NOTES FROM COURT</strong>'+p.c+'</div>':'';
 
-    var visitedHtml = '';
-    if(p.courtVisited){
-      visitedHtml = '<div class="visited-banner"><span class="visited-badge">&#10003; COURT VISITED</span><span class="visited-verdict">'+p.courtVerdict+'</span></div>';
-    }
-
-    var cnHtml = '';
-    if(p.notes){
-      cnHtml = '<div class="cn-strip"><strong>NOTES FROM COURT</strong>'+p.notes+'</div>';
-    }
-
-    var pillsHtml = '<div class="status-pills">';
-    STATUSES.forEach(function(st){
-      var active = st === status;
-      var cls = 's-pill' + (active ? (st==='Strong Yes'?' active-g':st==='Pass'?' active-r':' active') : '');
-      pillsHtml += '<button class="'+cls+'" data-id="'+p.id+'" data-st="'+st+'" onclick="setStatus(this)">'+st+'</button>';
+    var pills='<div class="pills">';
+    ST.forEach(function(st){
+      var a=st===status;
+      var cls='pill'+(a?(st==='Strong Yes'?' on-g':st==='Pass'?' on-r':' on'):'');
+      pills+='<button class="'+cls+'" data-id="'+p.id+'" data-st="'+st+'" onclick="setSt(this)">'+st+'</button>';
     });
-    pillsHtml += '</div>';
+    pills+='</div>';
 
-    var starsHtml = '<div class="stars-row" id="stars-'+p.id+'">';
-    for(var i=1;i<=5;i++){
-      starsHtml += '<span class="star'+(i<=rating?' filled':'')+'" data-id="'+p.id+'" data-val="'+i+'" onclick="setRating(this)">&#9733;</span>';
-    }
-    starsHtml += '</div>';
+    var stars='<div class="stars" id="stars-'+p.id+'">';
+    for(var i=1;i<=5;i++) stars+='<span class="star'+(i<=rating?' on':'')+'" data-id="'+p.id+'" data-v="'+i+'" onclick="setR(this)">&#9733;</span>';
+    stars+='</div>';
 
-    var chkHtml = '<div class="checklist">';
-    CHECKLIST.forEach(function(item, idx){
-      var checked = ls.checklist && ls.checklist[idx];
-      chkHtml += '<div class="chk-row'+(checked?' checked':'')+'" data-id="'+p.id+'" data-idx="'+idx+'" onclick="toggleChk(this)"><span class="chk-box">'+(checked?'&#10003;':'')+'</span><span class="chk-label">'+item+'</span></div>';
+    var chk='<div class="chklist">';
+    CL.forEach(function(item,i){
+      var ch=ls.checklist&&ls.checklist[i];
+      chk+='<div class="chk'+(ch?' on':'')+'" data-id="'+p.id+'" data-i="'+i+'" onclick="toggleC(this)"><span class="cbox">'+(ch?'&#10003;':'')+'</span>'+item+'</div>';
     });
-    chkHtml += '</div>';
+    chk+='</div>';
 
-    div.innerHTML = headerHtml + visitedHtml + cnHtml +
-      '<div class="card-body">' +
-      '<div class="sec-label">STATUS</div>' + pillsHtml +
-      '<div class="sec-label">RATING</div>' + starsHtml +
-      '<div class="sec-label">COURT\'S CHECKLIST</div>' + chkHtml +
-      '<div class="sec-label" style="margin-top:1rem">YOUR NOTES</div>' +
-      '<textarea class="notes-area" data-id="'+p.id+'" oninput="noteTimer(this)" placeholder="Layout, condition, neighborhood feel, red flags, vibes...">'+(ls.notes||'')+'</textarea>' +
-      '<div class="save-ind" id="save-'+p.id+'"></div>' +
-      '</div>';
-
-    c.appendChild(div);
+    el.innerHTML=top+vis+nfc+'<div class="body"><div class="slabel">STATUS</div>'+pills+'<div class="slabel">RATING</div>'+stars+'<div class="slabel">CHECKLIST</div>'+chk+'<div class="slabel">YOUR NOTES</div><textarea data-id="'+p.id+'" oninput="noteT(this)" placeholder="Layout, condition, vibes, red flags...">'+(ls.notes||'')+'</textarea><div class="saved" id="sv-'+p.id+'"></div></div>';
+    c.appendChild(el);
   });
 }
 
-function setStatus(btn){
-  var id = btn.dataset.id; var st = btn.dataset.st;
-  saveLS(id, {status:st});
-  btn.parentNode.querySelectorAll('.s-pill').forEach(function(b){
-    var bst = b.dataset.st;
-    b.className = 's-pill'+(bst===st?(st==='Strong Yes'?' active-g':st==='Pass'?' active-r':' active'):'');
+function setSt(btn){
+  var id=btn.dataset.id;var st=btn.dataset.st;
+  sl(id,{status:st});
+  btn.parentNode.querySelectorAll('.pill').forEach(function(b){
+    var bst=b.dataset.st;
+    b.className='pill'+(bst===st?(st==='Strong Yes'?' on-g':st==='Pass'?' on-r':' on'):'');
   });
-  updateStats();
-  syncUp(id);
+  stats();sync(id);
 }
-
-function setRating(span){
-  var id = span.dataset.id; var val = parseInt(span.dataset.val);
-  saveLS(id, {rating:val});
-  document.getElementById('stars-'+id).querySelectorAll('.star').forEach(function(s,i){
-    s.classList.toggle('filled', i < val);
-  });
-  syncUp(id);
+function setR(span){
+  var id=span.dataset.id;var v=parseInt(span.dataset.v);
+  sl(id,{rating:v});
+  document.getElementById('stars-'+id).querySelectorAll('.star').forEach(function(s,i){s.classList.toggle('on',i<v);});
+  sync(id);
 }
-
-function toggleChk(row){
-  var id = row.dataset.id; var idx = parseInt(row.dataset.idx);
-  var s = getLS(id); var chk = s.checklist || {};
-  chk[idx] = !chk[idx]; saveLS(id, {checklist:chk});
-  row.classList.toggle('checked', chk[idx]);
-  row.querySelector('.chk-box').innerHTML = chk[idx] ? '&#10003;' : '';
-  syncUp(id);
+function toggleC(row){
+  var id=row.dataset.id;var i=parseInt(row.dataset.i);
+  var s=gl(id);var ch=s.checklist||{};
+  ch[i]=!ch[i];sl(id,{checklist:ch});
+  row.classList.toggle('on',ch[i]);
+  row.querySelector('.cbox').innerHTML=ch[i]?'&#10003;':'';
+  sync(id);
 }
-
-var timers = {};
-function noteTimer(ta){
-  var id = ta.dataset.id;
-  clearTimeout(timers[id]);
-  timers[id] = setTimeout(function(){
-    saveLS(id, {notes:ta.value});
-    syncUp(id);
-    var ind = document.getElementById('save-'+id);
-    if(ind){ ind.textContent = 'SAVED'; setTimeout(function(){ ind.textContent=''; }, 2000); }
-  }, 800);
+var tmrs={};
+function noteT(ta){
+  var id=ta.dataset.id;
+  clearTimeout(tmrs[id]);
+  tmrs[id]=setTimeout(function(){
+    sl(id,{notes:ta.value});sync(id);
+    var el=document.getElementById('sv-'+id);
+    if(el){el.textContent='saved';setTimeout(function(){el.textContent='';},2000);}
+  },800);
 }
 </script>
 </body>
