@@ -3,257 +3,1261 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Housing Field Notes — Loran</title>
+<title>Court — Logistics Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
-:root{--bg:#F5F0E8;--surface:#FDFAF4;--surface2:#F0EBE0;--border:#E0D8C8;--text:#1A1714;--text2:#4A4540;--text3:#8A8480;--accent:#C17D3C;--accent2:#8B5E3C;--green:#4A7C59;--red:#8B3A3A;--mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);font-family:var(--sans);color:var(--text);min-height:100vh;}
-#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;}
-.gate-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:360px;text-align:center;}
-.gate-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem;}
-.gate-title{font-family:var(--mono);font-size:18px;font-weight:500;margin-bottom:.25rem;}
-.gate-sub{font-size:13px;color:var(--text2);margin-bottom:2rem;}
-.gate-input{width:100%;padding:12px 16px;font-family:var(--mono);font-size:14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);outline:none;text-align:center;letter-spacing:.1em;margin-bottom:.75rem;}
-.gate-input:focus{border-color:var(--accent);}
-.gate-btn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;cursor:pointer;}
-.gate-error{color:var(--red);font-family:var(--mono);font-size:11px;margin-top:.5rem;min-height:1rem;}
-#app{display:none;}
-header{background:#1A1714;color:#F5F0E8;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
-.h-name{font-family:var(--mono);font-size:12px;letter-spacing:.08em;}
-.h-badge{background:var(--accent);color:#fff;font-family:var(--mono);font-size:9px;letter-spacing:.06em;padding:3px 9px;border-radius:20px;}
-main{max-width:640px;margin:0 auto;padding:1.5rem 1rem;}
-.page-intro{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;}
-.intro-label{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:var(--accent);margin-bottom:.4rem;}
-.intro-title{font-family:var(--mono);font-size:16px;margin-bottom:.5rem;}
-.intro-sub{font-size:13px;color:var(--text2);line-height:1.5;}
-.intro-movein{display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid var(--accent);border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:var(--accent2);}
-.stats-bar{background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:9px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem;}
-.loran-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:1.5rem;overflow:hidden;}
-.card-header{padding:1rem 1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;}
-.card-header h3{font-size:15px;font-weight:600;margin-bottom:3px;}
-.card-meta{font-size:11px;color:var(--text3);line-height:1.6;}
-.card-meta a{color:var(--accent);text-decoration:none;font-weight:500;font-family:var(--mono);font-size:10px;}
-.card-price-col{text-align:right;}
-.card-price{font-family:var(--mono);font-size:15px;font-weight:500;white-space:nowrap;}
-.card-beds{font-size:11px;color:var(--text3);}
-.visited-banner{background:#1A1714;padding:.6rem 1.25rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;}
-.visited-badge{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--accent);white-space:nowrap;}
-.visited-verdict{font-size:12px;color:#C8C0B0;line-height:1.5;}
-.appt-strip{background:#F5EDE0;padding:.6rem 1.25rem;border-bottom:1px solid #E8D8C0;font-size:12px;color:var(--accent2);}
-.appt-strip strong{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--accent);display:block;margin-bottom:.2rem;}
-.cn-strip{padding:.75rem 1.25rem;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.6;}
-.cn-strip strong{font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.3rem;}
-.card-body{padding:1rem 1.25rem;}
-.sec-label{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem;}
-.status-pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;}
-.s-pill{font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:8px 14px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;transition:all .12s;}
-.s-pill:hover{border-color:var(--accent);color:var(--accent);}
-.s-pill.active{background:var(--accent);color:#fff;border-color:var(--accent);}
-.s-pill.active-g{background:var(--green);color:#fff;border-color:var(--green);}
-.s-pill.active-r{background:var(--red);color:#fff;border-color:var(--red);}
-.stars-row{display:flex;gap:.4rem;margin-bottom:1.25rem;}
-.star{font-size:26px;cursor:pointer;color:var(--border);transition:color .1s;}
-.star.filled{color:var(--accent);}
-.checklist{margin-bottom:1rem;}
-.chk-row{display:flex;align-items:center;gap:.75rem;padding:9px 12px;border-radius:8px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:.4rem;transition:all .12s;}
-.chk-row:hover{border-color:var(--accent);}
-.chk-row.checked{background:#EAF0EB;border-color:var(--green);}
-.chk-box{width:20px;height:20px;border:1.5px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;background:var(--surface);}
-.chk-row.checked .chk-box{background:var(--green);color:#fff;border-color:var(--green);}
-.chk-label{font-size:13px;color:var(--text2);line-height:1.4;}
-.chk-row.checked .chk-label{color:var(--text3);}
-.notes-area{width:100%;min-height:110px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:12px;resize:vertical;font-family:var(--sans);font-size:13px;color:var(--text);outline:none;line-height:1.6;}
-.notes-area:focus{border-color:var(--accent);}
-.save-ind{font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--green);text-align:right;min-height:14px;margin-top:.3rem;}
+:root {
+  --bg: #F7F5F0;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE6;
+  --border: #E2DDD4;
+  --text: #1A1714;
+  --text2: #6B6560;
+  --text3: #9E9890;
+  --accent: #C17D3C;
+  --accent-light: #F5EBD8;
+  --mono: 'DM Mono', monospace;
+  --sans: 'DM Sans', sans-serif;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0;
+}
+/* HEADER */
+.header {
+  background: var(--text);
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header-name {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+.header-date {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: #666;
+  letter-spacing: 0.05em;
+}
+.surgery-pill {
+  background: #8B1A1A;
+  color: #FFD0D0;
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  letter-spacing: 0.04em;
+}
+/* TABS */
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 54px;
+  z-index: 99;
+}
+.tab {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  padding: 12px 16px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s;
+}
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+/* VIEWS */
+.view { display: none; padding: 1.5rem; }
+.view.active { display: block; }
+/* PROGRESS */
+.progress-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 4px;
+}
+.progress-fill {
+  height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-bottom: 1.5rem;
+}
+/* BOARD TOGGLE */
+.board-toggle {
+  display: flex;
+  gap: 0;
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
+.board-toggle-btn {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 5px 14px;
+  border: none;
+  background: none;
+  color: var(--text3);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.board-toggle-btn.active {
+  background: var(--surface);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+/* PROJECT BOARD */
+.proj-section { margin-bottom: 1.5rem; }
+.proj-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.proj-section-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+}
+.proj-section-count {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text3);
+}
+.proj-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+}
+/* KANBAN */
+.kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+.k-col {
+  background: var(--surface2);
+  border-radius: var(--radius);
+  padding: 10px;
+  min-height: 80px;
+}
+.k-col-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding: 0 2px;
+  display: flex;
+  justify-content: space-between;
+}
+.k-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+  transition: border-color 0.1s, transform 0.1s;
+}
+.k-card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.k-card.is-done { opacity: 0.45; }
+.k-card-title {
+  font-size: 12px;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+.k-card.is-done .k-card-title { text-decoration: line-through; color: var(--text3); }
+.k-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+.k-card-note {
+  font-size: 10px;
+  color: var(--text3);
+  margin-top: 3px;
+  line-height: 1.3;
+}
+/* BADGES */
+.badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+.due-tag {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--text3);
+  white-space: nowrap;
+}
+/* ADD ROW */
+.add-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+.add-row input, .add-row select {
+  font-family: var(--sans);
+  font-size: 13px;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  outline: none;
+}
+.add-row input:focus, .add-row select:focus { border-color: var(--accent); }
+.add-row input { flex: 1; min-width: 160px; }
+.add-row select { min-width: 110px; }
+.add-row .due-input { min-width: 80px; flex: none; }
+.add-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  padding: 7px 16px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.add-btn:hover { opacity: 0.85; }
+/* CALENDAR */
+.cal-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.cal-nav-title {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.07em;
+  color: var(--text);
+}
+.cal-nav-btn {
+  font-family: var(--mono);
+  font-size: 12px;
+  padding: 5px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  color: var(--text2);
+  transition: border-color 0.15s;
+}
+.cal-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.cal-dow {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  text-align: center;
+  padding: 4px 0 6px;
+}
+.cal-day {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  min-height: 72px;
+  padding: 5px;
+  cursor: default;
+  position: relative;
+  transition: border-color 0.1s;
+}
+.cal-day.other-month { background: var(--bg); border-color: transparent; }
+.cal-day.other-month .cal-day-num { color: var(--text3); opacity: 0.35; }
+.cal-day.today { border-color: var(--accent); background: var(--accent-light); }
+.cal-day.has-tasks { cursor: pointer; }
+.cal-day.has-tasks:hover { border-color: var(--accent); }
+.cal-day-num {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text2);
+  margin-bottom: 3px;
+  line-height: 1;
+}
+.cal-day.today .cal-day-num {
+  color: var(--accent);
+  font-weight: 500;
+}
+.cal-dot-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  margin-top: 2px;
+}
+.cal-chip {
+  font-size: 8.5px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+.cal-chip.done { opacity: 0.4; text-decoration: line-through; }
+.cal-phase-band {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 0 0 4px 4px;
+}
+/* Day detail panel */
+.cal-detail {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 1rem;
+  min-height: 60px;
+}
+.cal-detail-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+.tl-task {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+  cursor: pointer;
+}
+.tl-task:hover { background: none; opacity: 0.8; }
+.tl-check {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  border-radius: 3px;
+  border: 1.5px solid var(--border);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s, border-color 0.1s;
+}
+.tl-check.done { background: var(--accent); border-color: var(--accent); }
+.tl-check svg { display: none; }
+.tl-check.done svg { display: block; }
+.tl-body { flex: 1; }
+.tl-title { font-size: 13px; color: var(--text); line-height: 1.4; }
+.tl-title.struck { text-decoration: line-through; color: var(--text3); }
+.tl-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tl-right { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+.cal-day.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+@media (max-width: 500px) {
+  .cal-grid { gap: 2px; }
+  .cal-day { min-height: 52px; padding: 3px; }
+  .cal-chip { display: none; }
+}
+/* FINANCE */
+.finance-block { margin-bottom: 1.5rem; }
+.finance-block-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.07em;
+  color: var(--text3);
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+.f-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--bg);
+  gap: 12px;
+}
+.f-label { font-size: 13px; color: var(--text); }
+.f-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.f-right { text-align: right; flex-shrink: 0; }
+.f-amount { font-family: var(--mono); font-size: 13px; font-weight: 500; }
+.f-total {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0 0;
+  border-top: 1px solid var(--border);
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.gap-box {
+  background: #FFF8F0;
+  border: 1px solid #E8C89A;
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 1rem;
+}
+.gap-box-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+.gap-box-text { font-size: 13px; color: #8B5E1A; line-height: 1.5; }
+.gap-amount {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--accent);
+  margin: 6px 0 2px;
+}
+/* METRIC CARDS */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.metric-label { font-family: var(--mono); font-size: 10px; color: var(--text3); letter-spacing: 0.05em; margin-bottom: 4px; }
+.metric-value { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--text); }
+.metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+@media (max-width: 500px) {
+  .kanban { grid-template-columns: 1fr 1fr; }
+  .view { padding: 1rem; }
+  .header { padding: 1rem; }
+}
+
+/* HOUSING TAB */
+.housing-wrap { padding: 1.5rem; max-width: 1100px; margin: 0 auto; }
+.housing-meta { font-family: var(--mono); font-size: 10px; color: var(--text2); letter-spacing: 0.06em; margin-bottom: 1.5rem; }
+.housing-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+.prop-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.prop-header { padding: 1rem 1.1rem 0.75rem; border-bottom: 1px solid var(--border); }
+.prop-name { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--text); letter-spacing: 0.04em; }
+.prop-address { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.prop-status { display: inline-block; font-family: var(--mono); font-size: 9px; letter-spacing: 0.06em; padding: 2px 7px; border-radius: 20px; margin-top: 6px; }
+.prop-body { padding: 1rem 1.1rem; }
+.prop-section { margin-bottom: 0.85rem; }
+.prop-section-label { font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 0.4rem; }
+.prop-units { display: flex; flex-direction: column; gap: 0.35rem; }
+.unit-row { display: flex; justify-content: space-between; align-items: baseline; font-size: 12px; padding: 5px 8px; background: var(--surface2); border-radius: 5px; }
+.unit-name { color: var(--text2); }
+.unit-price { font-family: var(--mono); font-weight: 500; color: var(--text); }
+.unit-avail { font-size: 10px; color: var(--accent); font-family: var(--mono); }
+.prop-facts { display: flex; flex-wrap: wrap; gap: 5px; }
+.fact-pill { font-size: 10px; font-family: var(--mono); padding: 2px 8px; background: var(--surface2); border-radius: 20px; color: var(--text2); }
+.prop-notes { font-size: 11px; color: var(--text2); line-height: 1.55; }
+.prop-costs { display: flex; flex-direction: column; gap: 4px; }
+.cost-row { display: flex; justify-content: space-between; font-size: 11px; }
+.cost-label { color: var(--text2); }
+.cost-val { font-family: var(--mono); color: var(--text); }
+.verdict-box { margin: 0 1.1rem 1rem; padding: 8px 10px; border-radius: 6px; font-size: 11px; line-height: 1.5; border-left: 3px solid; }
 </style>
 </head>
 <body>
-<div id="gate">
-  <div class="gate-card">
-    <div class="gate-label">COURT WILLIAMS &middot; 2026</div>
-    <div class="gate-title">Housing Field Notes</div>
-    <div class="gate-sub">Enter your access code to continue</div>
-    <input type="password" class="gate-input" id="pw-input" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')checkPw()">
-    <button class="gate-btn" onclick="checkPw()">ENTER</button>
-    <div class="gate-error" id="pw-error"></div>
+
+<div class="header">
+  <span class="header-name">COURT WILLIAMS</span>
+  <span class="surgery-pill">2026 transition</span>
+  <div style="display:flex;align-items:center;gap:10px">
+    <a href="https://tcmw-court.github.io/court-transition-tracker" target="_blank" style="font-family:var(--mono);font-size:10px;color:#666;letter-spacing:0.04em;text-decoration:none;border:1px solid #444;padding:2px 8px;border-radius:20px;transition:color 0.15s" onmouseover="this.style.color='#C17D3C';this.style.borderColor='#C17D3C'" onmouseout="this.style.color='#666';this.style.borderColor='#444'">↗ live</a>
+    <span class="header-date" id="hdr-date"></span>
   </div>
 </div>
-<div id="app">
-  <header>
-    <div class="h-name">LORAN &middot; FIELD NOTES</div>
-    <div class="h-badge">COURT 2026</div>
-  </header>
-  <main>
-    <div class="page-intro">
-      <div class="intro-label">LORAN MODE</div>
-      <div class="intro-title">Housing Field Notes</div>
-      <div class="intro-sub">These are the places Court wants you to check out. Tap a status, rate it, leave notes &mdash; everything saves automatically.</div>
-      <div class="intro-movein">&#128197; Move-in: July 25 or Aug 20&ndash;30</div>
-    </div>
-    <div class="stats-bar">
-      <span>VISITED: <span id="stat-visited">0</span>/<span id="stat-total">0</span></span>
-      <span>STRONG YES: <span id="stat-sy">0</span></span>
-    </div>
-    <div id="cards-container"></div>
-  </main>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('board')">BOARD</button>
+  <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
+  <button class="tab" onclick="switchTab('finance')">FINANCE</button>
+  <button class="tab" onclick="switchTab('housing')">HOUSING</button>
 </div>
+
+<div id="view-board" class="view active"></div>
+<div id="view-timeline" class="view"></div>
+<div id="view-finance" class="view"></div>
+<div id="view-housing" class="view"></div>
+
 <script>
-var PW = 'L00817K@i^';
-var CHECKLIST = [
-  '&#127859; Roomy kitchen with storage space',
-  '&#128062; Pet friendly (ask explicitly)',
-  '&#9889; Practical electricity bill — ask about avg monthly cost',
-  '&#127979; Walkable to MICA',
-  '&#128717; Close to grocery store or market',
-  '&#128703; 2 bathrooms (or at least 1.5)',
-  '&#128118; Kairo-friendly — safe space, no major hazards'
+const CAT_STYLES = {
+  Surgery:   {bg:'#FFF0F5',color:'#8B1A4A'},
+  Loans:     {bg:'#E8F2FC',color:'#0D3D6E'},
+  Howard:    {bg:'#FFF8E0',color:'#7A4800'},
+  MICA:      {bg:'#EDFAF0',color:'#145228'},
+  Financial: {bg:'#F5EDFF',color:'#4A1275'},
+  Personal:  {bg:'#E0F7FA',color:'#00494E'},
+  EcoDepot:  {bg:'#FFF0E8',color:'#7A2C00'},
+  Housing:   {bg:'#EEF0FF',color:'#1A2060'},
+};
+const STATUS_STYLES = {
+  'Done':        {bg:'#EDFAF0',color:'#145228'},
+  'In Progress': {bg:'#FFFBE0',color:'#6B5700'},
+  'Not Started': {bg:'#F0EDE6',color:'#6B6560'},
+  'Urgent':      {bg:'#FFF0E8',color:'#7A2C00'},
+  'Blocked':     {bg:'#FFECEC',color:'#7A1212'},
+  'Pending':     {bg:'#E8F2FC',color:'#0D3D6E'},
+};
+
+const DEFAULTS = [
+  {id:1,  title:'Complete Confirmed Consent paperwork',     cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'css.confirmedconsent.com — due noon CST'},
+  {id:2,  title:'Sign surgical confirmation packet',        cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'carelynks.cranects.com PIN: 648024'},
+  {id:3,  title:'Westlake patient registration',            cat:'Surgery',  status:'Urgent',      due:'Apr 30', note:'westlakemedical.com'},
+  {id:4,  title:'Call Howard registrar',                    cat:'Howard',   status:'Not Started', due:'Apr 29', note:'202-806-2700'},
+  {id:5,  title:'TISLA consult call',                       cat:'Loans',    status:'In Progress', due:'This wk',note:'Awaiting reply'},
+  {id:6,  title:'Call DMCS re: consolidation',              cat:'Loans',    status:'Not Started', due:'May 2',  note:'800-621-3115 — after TISLA'},
+  {id:7,  title:'Initiate consolidation or rehabilitation', cat:'Loans',    status:'Not Started', due:'May 7',  note:'Must start before May 9'},
+  {id:8,  title:'Confirm $2,500 liquid for surgery',        cat:'Financial',status:'Not Started', due:'May 9',  note:'Due day-of — must be ready'},
+  {id:9,  title:'Book Court Elliott flight',                cat:'Surgery',  status:'Not Started', due:'May 9',  note:'<$500'},
+  {id:10, title:'Share Amazon supply list',                 cat:'Surgery',  status:'Not Started', due:'Apr 29', note:'Sus, brothers, others'},
+  {id:11, title:'Call Sus + brothers',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:'Surgery prep calls'},
+  {id:12, title:'Call mom re: shipping',                    cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:13, title:'Reach out to Selena',                      cat:'Surgery',  status:'Not Started', due:'Apr 30', note:''},
+  {id:14, title:'Call insurance',                           cat:'Surgery',  status:'Not Started', due:'May 2',  note:'Confirm coverage'},
+  {id:15, title:'Pay friend ~$950 (Airbnb loan)',           cat:'Financial',status:'Not Started', due:'May 9',  note:'Friend absorbing $600'},
+  {id:16, title:'Confirm Howard degree pathway',            cat:'Howard',   status:'Not Started', due:'May 7',  note:'Retake vs petition vs proficiency'},
+  {id:17, title:'Contact Carolyn Case',                     cat:'MICA',     status:'Not Started', due:'May 7',  note:'Re: grad internship'},
+  {id:18, title:'Follow up Howard every 5 business days',   cat:'Howard',   status:'Not Started', due:'Ongoing',note:'Do not let slip during recovery'},
+  {id:19, title:'Send servicer letter to MICA',             cat:'Loans',    status:'Blocked',     due:'TBD',    note:'Blocked on default resolution'},
+  {id:20, title:'Confirm Howard degree to MICA',            cat:'Howard',   status:'Blocked',     due:'Summer', note:'Blocked on registrar + coursework'},
+  {id:21, title:'MICA aid disbursement',                    cat:'MICA',     status:'Blocked',     due:'Fall',   note:'Blocked on default + degree'},
+  {id:22, title:'Baltimore apartment hunt',                 cat:'Housing',  status:'Not Started', due:'May–Jun',note:'App likely due end of June'},
+  {id:23, title:'Credit score improvement',                 cat:'Financial',status:'Not Started', due:'Jun',    note:'Tied to loan resolution — 40–80pt jump expected'},
+  {id:24, title:'EcoDepot fellowship — await decision',     cat:'EcoDepot', status:'Pending',     due:'TBD',    note:'Applied Apr 20 via MICA 12twenty'},
+  {id:25, title:'EcoDepot travel prep (if selected)',        cat:'EcoDepot', status:'Pending',     due:'Jul 27', note:'In-country Aug 1–16, Ileret Kenya'},
+  {id:26, title:'Pre-op appointment',                       cat:'Surgery',  status:'Not Started', due:'May 11', note:'Monday — Austin', event:true},
+  {id:27, title:'Surgery day',                              cat:'Surgery',  status:'Not Started', due:'May 14', note:'Ashley Deleon MD, Crane Center', event:true},
+  {id:28, title:'Post-op appointment',                      cat:'Surgery',  status:'Not Started', due:'May 21', note:'While Loran is there', event:true},
+  {id:29, title:'Howard registrar email sent',              cat:'Howard',   status:'Done',        due:'Done',   note:''},
+  {id:30, title:'MICA financial aid email sent',            cat:'MICA',     status:'Done',        due:'Done',   note:'Awaiting Christine reply'},
+  {id:31, title:'TISLA email sent',                         cat:'Loans',    status:'Done',        due:'Done',   note:''},
+  {id:32, title:'FAFSA 26-27 completed',                    cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:33, title:'MICA enrollment deposit paid',             cat:'MICA',     status:'Done',        due:'Done',   note:'$350'},
+  {id:34, title:'Comm Engaged Thesis grant won',            cat:'MICA',     status:'Done',        due:'Done',   note:'$4,000 + $750 to SolFood'},
+  {id:35, title:'Summer Fieldwork App submitted',           cat:'MICA',     status:'Done',        due:'Done',   note:''},
+  {id:36, title:'Austin Airbnb booked',                     cat:'Surgery',  status:'Done',        due:'Done',   note:'$3,200 via friend loan'},
+  {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot', status:'Done',        due:'Done',   note:'Apr 20 deadline'},
+  {id:38, title:'Ask Scott for support',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Also ask if anyone in his orbit would want to contribute'},
+  {id:39, title:'Thank Mr. Neal + ask for a connection',    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'Reply to his message — gratitude + warm ask for intro'},
+  {id:40, title:'Follow up with Calvin',                    cat:'Surgery',  status:'Urgent',      due:'May 3',  note:'WhatsApp message — check in + ask for support'},
+  {id:41, title:'Maurice reaches out to Matt re: sister',   cat:'Surgery',  status:'Urgent',      due:'May 5',  note:'Matt\'s sister as potential donor — Maurice to make contact'},
+  {id:42, title:'Finish + notarize living will',            cat:'Surgery',  status:'Urgent',      due:'May 9',  note:'Must be done before leaving Oakland — blocks Westlake registration'},
+  {id:43, title:'Contact Westlake re: registration',        cat:'Surgery',  status:'Blocked',     due:'May 9',  note:'Blocked on living will being finalized'},
+  {id:44, title:'Complete Westlake patient registration',   cat:'Surgery',  status:'Blocked',     due:'May 11', note:'westlakemedical.com — blocked on living will'},
+  {id:45, title:'Johns Hopkins MBA application',            cat:'MICA',     status:'Not Started', due:'May 27', note:'Application due May 27'},
 ];
-var STATUSES = ['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
-var PROPS = [
+
+
+
+function loadTasks() {
+  try {
+    const s = localStorage.getItem('court_v2');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULTS));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULTS)); }
+}
+function saveTasks(tasks) {
+  try { localStorage.setItem('court_v2', JSON.stringify(tasks)); } catch(e){}
+}
+
+let tasks = loadTasks();
+
+function getNextId() { return Math.max(0, ...tasks.map(t=>t.id)) + 1; }
+
+function catBadge(cat) {
+  const s = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${cat}</span>`;
+}
+function statusBadge(status) {
+  const s = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+  return `<span class="badge" style="background:${s.bg};color:${s.color}">${status}</span>`;
+}
+function statusOptions(current) {
+  const statuses = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  return statuses.map(s => '<option value="' + s + '"' + (s===current?' selected':'') + '>' + s + '</option>').join('');
+}
+
+function checkSVG() {
+  return `<svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1 4.5l2.5 2.5 4.5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+
+function toggleTask(id) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = t.status === 'Done' ? 'Not Started' : 'Done';
+  saveTasks(tasks);
+  renderAll();
+}
+
+function moveTask(id, newStatus) {
+  const t = tasks.find(t=>t.id===id);
+  if (!t) return;
+  t.status = newStatus;
+  saveTasks(tasks);
+  closeContextMenu();
+  renderAll();
+}
+
+function addTask() {
+  const title = document.getElementById('new-title').value.trim();
+  if (!title) return;
+  const cat = document.getElementById('new-cat').value;
+  const due = document.getElementById('new-due').value.trim();
+  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:''});
+  saveTasks(tasks);
+  document.getElementById('new-title').value = '';
+  document.getElementById('new-due').value = '';
+  renderAll();
+}
+
+let boardView = 'status'; // 'status' | 'project'
+
+function renderBoard() {
+  if (boardView === 'project') { renderProjectBoard(); return; }
+
+  const cols = [
+    {key:'Urgent',      label:'urgent'},
+    {key:'Not Started', label:'not started'},
+    {key:'In Progress', label:'in progress'},
+    {key:'Pending',     label:'pending'},
+    {key:'Blocked',     label:'blocked'},
+    {key:'Done',        label:'done'},
+  ];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn active" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>
+  <div class="metrics">`;
+
+  const urgentCount = tasks.filter(t=>t.status==='Urgent').length;
+  const blockedCount = tasks.filter(t=>t.status==='Blocked').length;
+  const activeCount = tasks.filter(t=>t.status==='In Progress').length;
+
+  html += `<div class="metric"><div class="metric-label">IN PROGRESS</div><div class="metric-value">${activeCount}</div><div class="metric-sub">active</div></div>`;
+  html += `<div class="metric"><div class="metric-label">URGENT</div><div class="metric-value" style="color:#7A2C00">${urgentCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">BLOCKED</div><div class="metric-value" style="color:#7A1212">${blockedCount}</div><div class="metric-sub">items</div></div>`;
+  html += `<div class="metric"><div class="metric-label">SURGERY GOAL</div><div class="metric-value" style="color:#145228">$5k</div><div class="metric-sub">before May 14</div></div>`;
+  html += `</div><div class="kanban">`;
+
+  cols.forEach(({key, label}) => {
+    const colTasks = tasks.filter(t=>t.status===key && !t.event);
+    html += `<div class="k-col"><div class="k-col-title"><span>${label}</span><span>${colTasks.length}</span></div>`;
+    colTasks.forEach(t => {
+      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+      html += `<div class="k-card ${key==='Done'?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+        <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
+        <div class="k-card-meta">
+          <span class="badge" style="background:rgba(255,255,255,0.55);color:${cs.color};font-size:9px">${t.cat}</span>
+          ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+        </div>
+        ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+        <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+          ${statusOptions(t.status)}
+        </select>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  html += `</div>
+  <div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function renderProjectBoard() {
+  const STATUS_ORDER = ['Urgent','Not Started','In Progress','Pending','Blocked','Done'];
+  const done = tasks.filter(t=>t.status==='Done').length;
+  const pct = Math.round(done/tasks.length*100);
+
+  let html = `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${done} of ${tasks.length} done · ${pct}%</div>
+  <div class="board-toggle">
+    <button class="board-toggle-btn" onclick="setBoardView('status')">BY STATUS</button>
+    <button class="board-toggle-btn active" onclick="setBoardView('project')">BY PROJECT</button>
+  </div>`;
+
+  Object.keys(CAT_STYLES).forEach(cat => {
+    const catTasks = tasks.filter(t => t.cat === cat && !t.event);
+    if (!catTasks.length) return;
+    const cs = CAT_STYLES[cat];
+    const catDone = catTasks.filter(t=>t.status==='Done').length;
+
+    html += `<div class="proj-section">
+      <div class="proj-section-header">
+        <span class="proj-section-label" style="color:${cs.color}">${cat.toUpperCase()}</span>
+        <span class="proj-section-count">${catDone}/${catTasks.length}</span>
+      </div>
+      <div class="proj-kanban">`;
+
+    STATUS_ORDER.forEach(status => {
+      const statusTasks = catTasks.filter(t => t.status === status);
+      if (!statusTasks.length) return;
+      const ss = STATUS_STYLES[status]||STATUS_STYLES['Not Started'];
+      html += `<div class="k-col"><div class="k-col-title"><span>${status.toLowerCase()}</span><span>${statusTasks.length}</span></div>`;
+      statusTasks.forEach(t => {
+        const isDone = status === 'Done';
+        html += `<div class="k-card ${isDone?'is-done':''}" style="background:${cs.bg};border-color:${cs.bg}">
+          <div class="k-card-title" onclick="toggleTask(${t.id})">${t.title}</div>
+          <div class="k-card-meta">
+            <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${status}</span>
+            ${t.due?`<span class="due-tag">${t.due}</span>`:''}
+          </div>
+          ${t.note?`<div class="k-card-note">${t.note}</div>`:''}
+          <select onchange="moveTask(${t.id},this.value)" onclick="event.stopPropagation()" style="margin-top:6px;width:100%;font-family:var(--mono);font-size:9px;padding:3px 4px;border:1px solid rgba(0,0,0,0.12);border-radius:4px;background:rgba(255,255,255,0.6);color:${cs.color};cursor:pointer;outline:none;">
+            ${statusOptions(t.status)}
+          </select>
+        </div>`;
+      });
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `<div class="add-row">
+    <input id="new-title" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()"/>
+    <select id="new-cat">${Object.keys(CAT_STYLES).map(c=>`<option>${c}</option>`).join('')}</select>
+    <input id="new-due" class="due-input" placeholder="Due date"/>
+    <button class="add-btn" onclick="addTask()">+ ADD</button>
+  </div>`;
+
+  document.getElementById('view-board').innerHTML = html;
+}
+
+function setBoardView(v) {
+  boardView = v;
+  renderBoard();
+}
+
+// ── Calendar state ──────────────────────────────────────────────
+let calYear = 2026;
+let calMonth = 4; // 0-indexed → April = 3... use 1-indexed: April=4
+// We'll use 1-indexed months throughout
+
+// Map due-date strings to {month,day} pairs (year assumed 2026)
+const DUE_MAP = {
+  'Apr 28':{m:4,d:28},'Apr 29':{m:4,d:29},'Apr 30':{m:4,d:30},
+  'May 1':{m:5,d:1},'May 2':{m:5,d:2},'May 3':{m:5,d:3},
+  'May 4':{m:5,d:4},'May 5':{m:5,d:5},'May 7':{m:5,d:7},
+  'May 9':{m:5,d:9},'May 10':{m:5,d:10},'May 11':{m:5,d:11},
+  'May 12':{m:5,d:12},'May 14':{m:5,d:14},'May 21':{m:5,d:21},
+  'May 27':{m:5,d:27},
+  'Jun':{m:6,d:1},'Jul 1':{m:7,d:1},'Jul 25':{m:7,d:25},'Jul 27':{m:7,d:27},
+};
+
+// Calendar-only events (not tasks)
+const CAL_EVENTS = [
+  {m:7, d:25, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:26, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+  {m:7, d:27, title:'Move-in', color:'#1A2060', bg:'#EEF0FF'},
+];
+
+// Phase color bands: each entry has a date range and color
+const PHASE_BANDS = [
+  {start:{m:4,d:28},end:{m:5,d:9},  color:'#E8A25A',label:'Now–May 9'},
+  {start:{m:5,d:9}, end:{m:5,d:11}, color:'#7A6FC0',label:'Travel'},
+  {start:{m:5,d:14},end:{m:5,d:14}, color:'#8B1A1A',label:'Surgery'},
+  {start:{m:5,d:14},end:{m:6,d:8},  color:'#D4A5A5',label:'Recovery'},
+  {start:{m:6,d:9}, end:{m:7,d:1},  color:'#5A8B6A',label:'Post-recovery'},
+  {start:{m:7,d:27},end:{m:8,d:16}, color:'#C17D3C',label:'EcoDepot'},
+];
+
+function dateToNum(m,d) { return m*100+d; }
+function getPhaseColor(m,d) {
+  const n = dateToNum(m,d);
+  for (const ph of PHASE_BANDS) {
+    if (n >= dateToNum(ph.start.m,ph.start.d) && n <= dateToNum(ph.end.m,ph.end.d)) return ph.color;
+  }
+  return null;
+}
+
+function getTasksForDay(m, d) {
+  return tasks.filter(t => {
+    const due = DUE_MAP[t.due];
+    if (!due) return false;
+    return due.m === m && due.d === d;
+  });
+}
+
+function getCalEventsForDay(m, d) {
+  return CAL_EVENTS.filter(e => e.m === m && e.d === d);
+}
+
+let selectedDay = null;
+
+function renderCalendar() {
+  const MONTH_NAMES = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+  const firstDow = new Date(calYear, calMonth-1, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+  const today = new Date();
+  const todayM = today.getMonth()+1;
+  const todayD = today.getDate();
+  const todayY = today.getFullYear();
+
+  const daysToSurgery = Math.ceil((new Date('2026-05-14') - today) / 86400000);
+  const daysToOakland = Math.max(0, Math.ceil((new Date('2026-05-09') - today) / 86400000));
+
+  let html = `<div class="metrics" style="margin-bottom:1rem">
+    <div class="metric"><div class="metric-label">SURGERY</div><div class="metric-value" style="color:#8B1A1A">${daysToSurgery}</div><div class="metric-sub">days away</div></div>
+    <div class="metric"><div class="metric-label">OAKLAND UNTIL</div><div class="metric-value">${daysToOakland}</div><div class="metric-sub">days left</div></div>
+  </div>
+  <div class="cal-nav">
+    <button class="cal-nav-btn" onclick="calPrev()">← prev</button>
+    <span class="cal-nav-title">${MONTH_NAMES[calMonth].toUpperCase()} ${calYear}</span>
+    <button class="cal-nav-btn" onclick="calNext()">next →</button>
+  </div>
+  <div class="cal-grid">`;
+
+  DOW.forEach(d => { html += `<div class="cal-dow">${d}</div>`; });
+
+  // leading empty cells
+  const prevDays = new Date(calYear, calMonth-1, 0).getDate();
+  for (let i=0;i<firstDow;i++) {
+    const d = prevDays - firstDow + 1 + i;
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  for (let d=1; d<=daysInMonth; d++) {
+    const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
+    const dayTasks = getTasksForDay(calMonth, d);
+    const dayEvents = getCalEventsForDay(calMonth, d);
+    const phColor = getPhaseColor(calMonth, d);
+    const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
+
+    let cls = 'cal-day';
+    if (isToday) cls += ' today';
+    if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
+    if (sel) cls += ' selected';
+
+    html += `<div class="${cls}" onclick="selectDay(${calMonth},${d})">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-dot-row">`;
+
+    dayEvents.forEach(e => {
+      html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">📦 ${e.title}</span>`;
+    });
+    dayTasks.slice(0,3).forEach(t => {
+      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+      const doneClass = t.status==='Done' ? ' done' : '';
+      html += `<span class="cal-chip${doneClass}" style="background:${cs.bg};color:${cs.color}">${t.title.split(' ').slice(0,2).join(' ')}</span>`;
+    });
+    if (dayTasks.length > 3) html += `<span class="cal-chip" style="background:var(--surface2);color:var(--text3)">+${dayTasks.length-3}</span>`;
+
+    html += `</div>`;
+    if (phColor) html += `<div class="cal-phase-band" style="background:${phColor}"></div>`;
+    html += `</div>`;
+  }
+
+  // trailing cells
+  const totalCells = firstDow + daysInMonth;
+  const trailing = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+  for (let i=1; i<=trailing; i++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${i}</div></div>`;
+  }
+
+  html += `</div>`;
+
+  // Phase legend
+  html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px">`;
+  PHASE_BANDS.forEach(ph => {
+    html += `<span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:0.04em;color:var(--text3)">
+      <span style="display:inline-block;width:10px;height:3px;border-radius:2px;background:${ph.color}"></span>${ph.label}</span>`;
+  });
+  html += `</div>`;
+
+  // Detail panel
+  html += `<div class="cal-detail" id="cal-detail">`;
+  if (selectedDay) {
+    const dayTasks = getTasksForDay(selectedDay.m, selectedDay.d);
+    const dayEvents = getCalEventsForDay(selectedDay.m, selectedDay.d);
+    const total = dayTasks.length + dayEvents.length;
+    const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    html += `<div class="cal-detail-title">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${total} item${total!==1?'s':''}</div>`;
+    if (total === 0) {
+      html += `<div style="font-size:12px;color:var(--text3)">No tasks due this day.</div>`;
+    } else {
+      dayEvents.forEach(e => {
+        html += `<div class="tl-task" style="cursor:default">
+          <div style="font-size:16px;line-height:1;margin-top:1px">📦</div>
+          <div class="tl-body"><div class="tl-title">${e.title} weekend</div></div>
+          <div class="tl-right"><span class="badge" style="background:${e.bg};color:${e.color};font-size:9px">Event</span></div>
+        </div>`;
+      });
+      dayTasks.forEach(t => {
+        const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+        const isDone = t.status==='Done';
+        html += `<div class="tl-task" onclick="toggleTask(${t.id});renderTimeline()">
+          <div class="tl-check ${isDone?'done':''}">${isDone?checkSVG():''}</div>
+          <div class="tl-body">
+            <div class="tl-title ${isDone?'struck':''}">${t.title}</div>
+            ${t.note?`<div class="tl-sub">${t.note}</div>`:''}
+          </div>
+          <div class="tl-right">
+            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
+          </div>
+        </div>`;
+      });
+    }
+  } else {
+    html += `<div style="font-size:12px;color:var(--text3)">Tap a day to see tasks due.</div>`;
+  }
+  html += `</div>`;
+
+  document.getElementById('view-timeline').innerHTML = html;
+}
+
+function selectDay(m, d) {
+  if (selectedDay && selectedDay.m===m && selectedDay.d===d) {
+    selectedDay = null;
+  } else {
+    selectedDay = {m,d};
+  }
+  renderTimeline();
+}
+
+function calPrev() {
+  calMonth--;
+  if (calMonth < 1) { calMonth = 12; calYear--; }
+  renderTimeline();
+}
+function calNext() {
+  calMonth++;
+  if (calMonth > 12) { calMonth = 1; calYear++; }
+  renderTimeline();
+}
+
+function renderTimeline() { renderCalendar(); }
+
+function renderFinance() {
+  var html = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;max-width:900px">';
+  // card helper
+  function card(title, rows, note) {
+    var c = '<div style="background:#FDFAF4;border:1px solid #E0D8C8;border-radius:10px;padding:1.25rem">';
+    c += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:#8A8480;margin-bottom:.75rem">'+title+'</div>';
+    rows.forEach(function(r) {
+      var amtColor = r.urgent ? '#8B3A3A' : (r.total ? 'var(--accent)' : 'var(--text)');
+      var weight = r.total ? '600' : '500';
+      var borderTop = r.total ? '1px solid #E0D8C8' : '1px solid #F5F0E8';
+      c += '<div style="display:flex;justify-content:space-between;align-items:baseline;padding:.4rem 0;border-bottom:'+borderTop+';font-size:13px">';
+      c += '<span style="color:'+(r.total?'var(--text)':'#4A4540')+';font-weight:'+(r.total?'600':'400')+'">'+r.label+'</span>';
+      c += '<span style="font-family:var(--mono);font-weight:'+weight+';color:'+amtColor+'">'+r.amount+'</span></div>';
+    });
+    if (note) c += '<div style="font-size:11px;color:#8A8480;margin-top:.4rem;font-style:italic">'+note+'</div>';
+    c += '</div>';
+    return c;
+  }
+
+  html += card('SURGERY — OUTBOUND', [
+    {label:'Crane Center surgical fee', amount:'$680.62', urgent:true},
+    {label:'Remaining out-of-pocket (est.)', amount:'~$1,819'},
+    {label:'Westlake anesthesia', amount:'TBD'},
+    {label:'Surgery total (est.)', amount:'~$2,500', total:true},
+  ], '$680.62 paid to Crane Center May 11. Westlake cost pending.');
+
+  html += card('BALTIMORE HOUSING — PROJECTED', [
+    {label:'Target monthly rent', amount:'<$1,800'},
+    {label:'Hard ceiling', amount:'$2,500'},
+    {label:'Est. utilities', amount:'~$150–200'},
+    {label:'All-in target', amount:'<$2,000/mo', total:true},
+  ], 'Rent first, buy later. Budget under $200K for eventual purchase in Reservoir Hill.');
+
+  html += card('INCOME — MICA', [
+    {label:'Grad Teaching Internship', amount:'TBD'},
+    {label:'PBL @ BHS Year 2', amount:'TBD'},
+    {label:'Total projected', amount:'TBD', total:true},
+  ], 'Update once MICA compensation details confirmed.');
+
+  html += card('NOTES & FEES', [
+    {label:'Symphony 3% discount', amount:'if MICA job confirmed'},
+    {label:'Security deposit (typical)', amount:'$500–1 mo rent'},
+    {label:'Pet fee (typical)', amount:'$45–50/mo'},
+  ], null);
+
+  html += '</div>';
+
+  // fundraising progress block
+  var confirmed = 1500;
+  var goal = 5200;
+  var pct = Math.min(100, Math.round(confirmed/goal*100));
+  html += '<div style="max-width:900px;background:#FFF8F0;border:1px solid #E8C89A;border-radius:10px;padding:1.1rem 1.25rem;margin-bottom:1.25rem">';
+  html += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--accent);margin-bottom:.4rem">IMMEDIATE FUNDRAISING GOAL</div>';
+  html += '<div style="font-family:var(--mono);font-size:28px;font-weight:500;color:var(--accent)">$5,200</div>';
+  html += '<div style="margin:10px 0 4px"><div style="height:6px;background:rgba(0,0,0,0.08);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:#8B5E1A;border-radius:3px"></div></div>';
+  html += '<div style="display:flex;justify-content:space-between;margin-top:4px;font-family:var(--mono);font-size:9px;color:var(--text3)"><span>$1,500 raised</span><span>$3,700 to go</span></div></div>';
+  html += '<div style="font-size:13px;color:#8B5E1A;margin-top:8px">Covers Airbnb balance, surgery costs, flight, and post-op care.</div>';
+  html += '</div>';
+
+  html += '<div style="max-width:900px;padding:12px 14px;background:var(--surface2);border-radius:10px;font-size:12px;color:var(--text3);line-height:1.6">';
+  html += '<div style="font-family:var(--mono);font-size:10px;letter-spacing:.06em;color:var(--text3);margin-bottom:8px">RESTRICTED / NOT FOR SURGERY</div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:.35rem 0;border-bottom:1px solid var(--bg)"><span>Comm Engaged Thesis grant</span><span style="font-family:var(--mono)">$4,000</span></div>';
+  html += '<div style="display:flex;justify-content:space-between;font-size:12px;padding:.35rem 0;margin-bottom:8px"><span>SolFood grant portion</span><span style="font-family:var(--mono)">$750</span></div>';
+  html += 'Carrot benefit: $10,000 lifetime · covers HRT, labs, binders — not surgery.</div>';
+
+  document.getElementById('view-finance').innerHTML = html;
+}
+
+function renderAll() {
+  renderBoard();
+  renderTimeline();
+  renderFinance();
+  renderHousing();
+}
+
+
+// ── Housing localStorage helpers ──
+function gs(id){ try{ return JSON.parse(localStorage.getItem('prop_'+id)||'null')||{}; }catch(e){ return{}; } }
+function ss(id,u){ var s=gs(id); Object.assign(s,u); localStorage.setItem('prop_'+id,JSON.stringify(s)); }
+function gl(id){ try{ return JSON.parse(localStorage.getItem('loran_'+id)||'null')||{}; }catch(e){ return{}; } }
+function sl(id,u){ var s=gl(id); Object.assign(s,u); localStorage.setItem('loran_'+id,JSON.stringify(s)); }
+
+var HOUSING_CHECKLIST=['🍳 Roomy kitchen with storage space','🐾 Pet friendly (ask explicitly)','⚡ Practical electricity bill — ask about avg monthly cost','🎓 Walkable to MICA','🛒 Close to grocery store or market','🚿 2 bathrooms (or at least 1.5)','👶 Kairo-friendly — safe space, no major hazards'];
+var TOUR_STEPS=['Not Started','Contacted','Appt Set','Toured','Decision'];
+var LORAN_STATUSES=['Not Visited','Scheduled','Visited','Strong Yes','Maybe','Pass'];
+var HOUSING_PROPS=[
   {id:'rh1',name:'750 Reservoir St, Unit A',hood:'Reservoir Hill',type:'Townhouse',price:'$1,650/mo',beds:'2bd/1ba',url:'https://www.homes.com/property/750-reservoir-st-baltimore-md-unit-a/gq9ql5pld59vx/',notes:'Fully renovated 2025. LVP floors, new appliances, open layout. Minutes from Druid Hill Park and MICA.'},
-  {id:'rh2',name:'750 Reservoir St, Unit B',hood:'Reservoir Hill',type:'Townhouse',price:'~$1,750/mo',beds:'2bd/2ba',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',notes:'Same building as Unit A. 2bd/2ba - extra bath is a plus. Also renovated 2025.'},
-  {id:'rh3',name:'Reservoir Hill Renovated Unit',hood:'Reservoir Hill',type:'Apartment/Unit',price:'TBD',beds:'2bd/1ba',url:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',notes:'Main-level unit, updated 2025. LVP floors, new kitchen, open layout. Good for WFH. Via RE/MAX Distinctive.'},
-  {id:'rh4',name:'1121 Whitelock St',hood:'Reservoir Hill',type:'House',price:'$1,300/mo',beds:'2bd/1ba',url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',notes:'Below market pricing - verify listing is current. 1,180 sqft. Pets OK.'},
+  {id:'rh2',name:'750 Reservoir St, Unit B',hood:'Reservoir Hill',type:'Townhouse',price:'~$1,750/mo',beds:'2bd/2ba',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/townhouses-for-rent/',notes:'Same building as Unit A. 2bd/2ba. Also renovated 2025.'},
+  {id:'rh3',name:'Reservoir Hill Renovated Unit',hood:'Reservoir Hill',type:'Apartment/Unit',price:'TBD',beds:'2bd/1ba',url:'https://www.homes.com/baltimore-city-county-md/townhouses-for-rent/2-bedroom/',notes:'Main-level unit, updated 2025. LVP floors, new kitchen, open layout. Good for WFH. Via RE/MAX Distinctive / Mike Kane.'},
+  {id:'rh4',name:'1121 Whitelock St',hood:'Reservoir Hill',type:'House',price:'$1,300/mo',beds:'2bd/1ba',url:'https://www.apartmentadvisor.com/apartments/reservoir-hill-baltimore-md',notes:'Below market — verify listing is current. 1,180 sqft. Pets allowed.'},
   {id:'lh4',name:'1339 W Lafayette Ave, Unit 1',hood:'Harlem Park',type:'Townhouse',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/1339-w-lafayette-ave-baltimore-md-unit-1/x7ccvv7c8vten/',notes:'Renovated 2023. Central A/C, stacked W/D, water included. Contact: Marcus King (775) 237-8463.'},
   {id:'lh5',name:'805 Washington Blvd, Unit A',hood:'Pigtown',type:'House',price:'$1,650/mo',beds:'2bd/2ba',url:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',notes:'1,050 sqft. Hardwood floors, W/D in unit. Contact: Victoria Lin (301) 738-7777.'},
   {id:'lh6',name:'1926 E 28th St',hood:'Coldstream/Montebello',type:'Townhouse',price:'$1,950/mo',beds:'2bd/2.5ba',url:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',notes:'1,500 sqft. Kitchen island, patio, full basement. Also for sale at $205K. Contact: Darrell Harris (443) 632-3000.'},
-  {id:'bh1',name:'Bolton House',hood:'Bolton Hill',type:'Apartment',price:'TBD',beds:'2bd (710 sqft)',url:'https://boltonhouse.com/',notes:'High-rise with downtown views. Steps from MICA. 2bd is 710 sqft - compact but very central.'},
-  {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180-2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option - MICA shuttle is a big plus. $2,180 no-balcony is the value play. Over budget but worth revisiting.',notes:'COURT TOURED. Contact: Nadine. Units: $2,340/mo (floor 10+, foyer) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.'},
-  {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218-2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly. Lanier at $2,218 is best entry but all-in is high.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet $350 dep + $50/mo. All electric. No wood floors.'},
-  {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out - location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.'}
+  {id:'bh1',name:'Bolton House',hood:'Bolton Hill',type:'Apartment',price:'TBD',beds:'2bd (710 sqft)',url:'https://boltonhouse.com/',notes:'High-rise with downtown views. Steps from MICA. 2bd is 710 sqft — compact but very central.'},
+  {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180-2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option — MICA shuttle is a big plus. $2,180 no-balcony is the value play.',notes:'COURT TOURED. Contact: Nadine. Units: $2,340/mo (floor 10+, foyer) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb no deposit. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.',defaultStatus:'Toured'},
+  {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218-2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet $350 dep + $50/mo. All electric.',defaultStatus:'Decision'},
+  {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out — location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.',defaultStatus:'Decision'}
 ];
 
-function getLS(id){ try{ return JSON.parse(localStorage.getItem('loran_'+id)||'null')||{}; }catch(e){ return{}; } }
-function saveLS(id,u){ var s=getLS(id); Object.assign(s,u); localStorage.setItem('loran_'+id,JSON.stringify(s)); }
-function getCS(id){ try{ return JSON.parse(localStorage.getItem('prop_'+id)||'null')||{}; }catch(e){ return{}; } }
+var loranModeActive=false;
+function toggleLoranMode(){ loranModeActive=!loranModeActive; renderHousing(); }
 
-function checkPw(){
-  var val=document.getElementById('pw-input').value;
-  if(val===PW){
-    document.getElementById('gate').style.display='none';
-    document.getElementById('app').style.display='';
-    renderCards();
-    updateStats();
-  } else {
-    document.getElementById('pw-error').textContent='Incorrect password - try again';
-    document.getElementById('pw-input').value='';
-    document.getElementById('pw-input').focus();
+function renderHousing(){
+  var el=document.getElementById('view-housing');
+  if(!el) return;
+  if(loranModeActive){ renderLoranCards(el); return; }
+  var hidden=JSON.parse(localStorage.getItem('housing_hidden')||'[]');
+  var props=HOUSING_PROPS.filter(function(p){ return hidden.indexOf(p.id)===-1; });
+  var visited=props.filter(function(p){ var ls=gl(p.id); return ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0; }).length;
+  var sy=props.filter(function(p){ return gl(p.id).status==='Strong Yes'; }).length;
+
+  var html='<div style="padding:1.25rem;max-width:900px;margin:0 auto">';
+  html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">';
+  html+='<div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text3)">BALTIMORE HOUSING</div>';
+  html+='<div style="font-size:12px;color:var(--text2);margin-top:2px">Move-in: July 25 or Aug 20\u201330 \u00b7 Budget under $1,800 (hard ceiling $2,500)</div></div>';
+  html+='<button onclick="toggleLoranMode()" style="font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.06em;padding:7px 18px;border-radius:20px;border:none;background:#C17D3C;color:#fff;cursor:pointer">+ LORAN MODE</button></div>';
+  html+='<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem">';
+  html+='<span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
+
+  props.forEach(function(p){
+    var s=gs(p.id); var ls=gl(p.id);
+    var status=s.tourStatus||p.defaultStatus||'Not Started';
+    var link=p.url?'<a href="'+p.url+'" target="_blank" style="color:var(--accent);font-family:var(--mono);font-size:10px;text-decoration:none">listing \u2197</a>':'';
+    var fbHtml='';
+    if(ls.status&&ls.status!=='Not Visited'){
+      var stars=ls.rating?'\u2605'.repeat(ls.rating)+'\u2606'.repeat(5-ls.rating):'\u2014';
+      fbHtml='<div style="border-top:1px dashed var(--border);padding-top:.6rem;margin-top:.25rem"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C;margin-bottom:.25rem">LORAN\'S FEEDBACK</div><div style="font-size:12px"><strong>'+ls.status+'</strong> '+stars+'</div>'+(ls.notes?'<div style="font-size:11px;color:var(--text2);font-style:italic;margin-top:.25rem">"'+ls.notes+'"</div>':'')+'</div>';
+    }
+    var pipeHtml=TOUR_STEPS.map(function(step){
+      var active=step===status;
+      var bg=active?(step==='Decision'?'#4A7C59':'#C17D3C'):'var(--surface2)';
+      var col=active?'#fff':'var(--text3)';
+      return '<button onclick="setHPipe(\''+p.id+'\',\''+step+'\')" style="font-family:var(--mono);font-size:9px;padding:4px 9px;border-radius:5px;border:1px solid '+(active?bg:'var(--border)')+';background:'+bg+';color:'+col+';cursor:pointer">'+step+'</button>';
+    }).join('');
+
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1.25rem;overflow:hidden" id="hcard-'+p.id+'">';
+    if(p.courtVisited){
+      html+='<div style="background:#1A1714;padding:.6rem 1.1rem;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;border-bottom:1px solid #3A3530"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C">\u2713 COURT VISITED</span><span style="font-size:12px;color:#C8C0B0">'+p.courtVerdict+'</span></div>';
+    }
+    html+='<div style="padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid var(--border)">';
+    html+='<div><div style="font-size:14px;font-weight:600;margin-bottom:2px">'+p.name+'</div>';
+    html+='<div style="font-size:11px;color:var(--text3)">'+p.hood+' \u00b7 '+p.type+' \u00b7 '+p.beds+(link?' \u00b7 '+link:'')+'</div></div>';
+    html+='<div style="text-align:right"><div style="font-family:var(--mono);font-size:13px;font-weight:500">'+p.price+'</div>';
+    html+='<div style="display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;justify-content:flex-end">';
+    html+='<span style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;background:var(--surface2);color:var(--text2)">'+status+'</span>';
+    html+='<button onclick="toggleHL(\''+p.id+'\',this)" style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid '+(s.onList?'#4A7C59':'var(--border)')+';background:'+(s.onList?'#EAF0EB':'var(--surface2)')+';color:'+(s.onList?'#4A7C59':'var(--text2)')+';cursor:pointer">'+(s.onList?'\u2713 Loran\'s List':'+ Loran\'s List')+'</button>';
+    html+='<button onclick="hideH(\''+p.id+'\')" style="font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer">hide</button>';
+    html+='</div></div></div>';
+    html+='<div style="padding:.85rem 1.1rem">';
+    html+='<div style="font-size:12px;color:var(--text2);line-height:1.6;background:var(--surface2);border-radius:6px;padding:.6rem .9rem;margin-bottom:.85rem"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">COURT\'S NOTES</span>'+p.notes+'</div>';
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">TOUR STATUS</div>';
+    html+='<div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-bottom:.85rem">'+pipeHtml+'</div>';
+    html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:.85rem">';
+    html+='<div><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">CONTACT / AGENT</label><input type="text" value="'+(s.contact||'')+'" placeholder="Name, phone..." onchange="ss(\''+p.id+'\',{contact:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none"></div>';
+    html+='<div><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">APPT DATE &amp; TIME</label><input type="text" value="'+(s.apptDate||'')+'" placeholder="e.g. Sat July 26, 2pm" onchange="ss(\''+p.id+'\',{apptDate:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none"></div>';
+    html+='<div style="grid-column:1/-1"><label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.25rem">YOUR NOTES FOR LORAN</label><textarea rows="3" placeholder="What should Loran know before she visits?" onchange="ss(\''+p.id+'\',{courtNotes:this.value})" style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:7px 9px;font-size:12px;color:var(--text);outline:none;resize:vertical">'+(s.courtNotes||'')+'</textarea></div>';
+    html+='</div>'+fbHtml+'</div></div>';
+  });
+
+  if(hidden.length>0){
+    html+='<div style="text-align:center;margin:.5rem 0 1.5rem"><button onclick="restoreH()" style="font-family:var(--mono);font-size:9px;padding:5px 14px;border-radius:20px;border:1px dashed var(--border);background:none;color:var(--text3);cursor:pointer">show '+hidden.length+' hidden</button></div>';
   }
+  html+='</div>';
+  el.innerHTML=html;
 }
 
-function updateStats(){
-  var total=PROPS.length;
-  var visited=PROPS.filter(function(p){ var s=getLS(p.id); return s.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(s.status)>=0; }).length;
-  var sy=PROPS.filter(function(p){ return getLS(p.id).status==='Strong Yes'; }).length;
-  document.getElementById('stat-total').textContent=total;
-  document.getElementById('stat-visited').textContent=visited;
-  document.getElementById('stat-sy').textContent=sy;
-}
+function setHPipe(id,step){ ss(id,{tourStatus:step}); renderHousing(); }
+function toggleHL(id,btn){ var s=gs(id); var v=!s.onList; ss(id,{onList:v}); renderHousing(); }
+function hideH(id){ if(confirm('Hide this property?')){ var h=JSON.parse(localStorage.getItem('housing_hidden')||'[]'); if(h.indexOf(id)===-1)h.push(id); localStorage.setItem('housing_hidden',JSON.stringify(h)); renderHousing(); } }
+function restoreH(){ localStorage.removeItem('housing_hidden'); renderHousing(); }
 
-function renderCards(){
-  var c=document.getElementById('cards-container');
-  c.innerHTML='';
-  PROPS.forEach(function(p){
-    var ls=getLS(p.id);
-    var cs=getCS(p.id);
+function renderLoranCards(el){
+  var hidden=JSON.parse(localStorage.getItem('housing_hidden')||'[]');
+  var props=HOUSING_PROPS.filter(function(p){ return hidden.indexOf(p.id)===-1; });
+  var visited=props.filter(function(p){ var ls=gl(p.id); return ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0; }).length;
+  var sy=props.filter(function(p){ return gl(p.id).status==='Strong Yes'; }).length;
+
+  var html='<div style="max-width:640px;margin:0 auto;padding:1rem">';
+  html+='<div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1.25rem">';
+  html+='<div style="font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#C17D3C;margin-bottom:.4rem">LORAN MODE</div>';
+  html+='<div style="font-family:var(--mono);font-size:15px;margin-bottom:.4rem">Field notes for Loran</div>';
+  html+='<div style="font-size:13px;color:var(--text2)">Tap a status, rate it, leave notes \u2014 saves automatically</div>';
+  html+='<div style="display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid #C17D3C;border-radius:6px;padding:6px 14px;font-family:var(--mono);font-size:11px;color:#8B5E3C">\ud83d\udcc5 Move-in: July 25 or Aug 20\u201330</div><br>';
+  html+='<button onclick="toggleLoranMode()" style="margin-top:.75rem;font-family:var(--mono);font-size:10px;padding:6px 14px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--text2);cursor:pointer">Back to full view</button></div>';
+  html+='<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:9px 14px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem"><span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
+
+  props.forEach(function(p){
+    var s=gs(p.id); var ls=gl(p.id);
     var status=ls.status||'Not Visited';
     var rating=ls.rating||0;
-    var courtNotes=cs.courtNotes||p.notes||'';
-    var apptDate=cs.apptDate||'';
-    var contact=cs.contact||'';
+    var courtNotes=s.courtNotes||p.notes||'';
+    var apptDate=s.apptDate||''; var contact=s.contact||'';
+    var link=p.url?'<a href="'+p.url+'" target="_blank" style="color:#C17D3C;text-decoration:none;font-family:var(--mono);font-size:10px">View listing \u2197</a>':'';
 
-    var div=document.createElement('div');
-    div.className='loran-card';
+    html+='<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:1.5rem;overflow:hidden">';
+    html+='<div style="padding:.85rem 1.1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start">';
+    html+='<div><div style="font-size:15px;font-weight:600;margin-bottom:3px">'+p.name+'</div><div style="font-size:11px;color:var(--text3)">'+p.hood+' \u00b7 '+p.type+'</div>'+(link?'<div style="margin-top:4px">'+link+'</div>':'')+'</div>';
+    html+='<div style="text-align:right"><div style="font-family:var(--mono);font-size:14px;font-weight:500">'+p.price+'</div><div style="font-size:11px;color:var(--text3)">'+p.beds+'</div></div></div>';
 
-    var headerHtml='<div class="card-header"><div><h3>'+p.name+'</h3><div class="card-meta">'+p.hood+' &middot; '+p.type+'<br>'+(p.url?'<a href="'+p.url+'" target="_blank">View listing &#8599;</a>':'<span style="color:var(--text3);font-size:10px">no listing link</span>')+'</div></div><div class="card-price-col"><div class="card-price">'+p.price+'</div><div class="card-beds">'+p.beds+'</div></div></div>';
-
-    var visitedHtml='';
     if(p.courtVisited){
-      visitedHtml='<div class="visited-banner"><span class="visited-badge">&#10003; COURT VISITED</span><span class="visited-verdict">'+p.courtVerdict+'</span></div>';
+      html+='<div style="background:#1A1714;padding:.6rem 1.1rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline"><span style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:#C17D3C">\u2713 COURT VISITED</span><span style="font-size:12px;color:#C8C0B0">'+p.courtVerdict+'</span></div>';
     }
-
-    var apptHtml='';
     if(apptDate||contact){
-      apptHtml='<div class="appt-strip"><strong>APPOINTMENT INFO</strong>'+(apptDate?'&#128197; '+apptDate:'')+(apptDate&&contact?' &middot; ':'')+(contact?'&#128222; '+contact:'')+'</div>';
+      html+='<div style="background:#F5EDE0;padding:.6rem 1.1rem;border-bottom:1px solid #E8D8C0;font-size:12px;color:#8B5E3C"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:#C17D3C;margin-bottom:.15rem">APPOINTMENT INFO</div>'+(apptDate?'\ud83d\udcc5 '+apptDate:'')+(apptDate&&contact?' \u00b7 ':'')+(contact?'\ud83d\udcf2 '+contact:'')+'</div>';
     }
-
-    var cnHtml='';
     if(courtNotes){
-      cnHtml='<div class="cn-strip"><strong>NOTES FROM COURT</strong>'+courtNotes+'</div>';
+      html+='<div style="padding:.6rem 1.1rem;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;color:var(--text2);line-height:1.5"><div style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);margin-bottom:.2rem">NOTES FROM COURT</div>'+courtNotes+'</div>';
     }
 
-    var pillsHtml='<div class="status-pills">';
-    STATUSES.forEach(function(st){
+    html+='<div style="padding:.85rem 1.1rem">';
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">STATUS</div><div style="display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.1rem">';
+    LORAN_STATUSES.forEach(function(st){
       var active=st===status;
-      var cls='s-pill'+(active?(st==='Strong Yes'?' active-g':st==='Pass'?' active-r':' active'):'');
-      pillsHtml+='<button class="'+cls+'" data-id="'+p.id+'" data-st="'+st+'" onclick="setStatus(this)">'+st+'</button>';
+      var bg=active?(st==='Strong Yes'?'#4A7C59':st==='Pass'?'#8B3A3A':'#C17D3C'):'var(--surface2)';
+      var col=active?'#fff':'var(--text3)';
+      html+='<button data-pid="'+p.id+'" data-st="'+st+'" onclick="setLS(this.dataset.pid,this.dataset.st)" style="font-family:var(--mono);font-size:10px;padding:7px 13px;border-radius:20px;border:1px solid '+(active?bg:'var(--border)')+';background:'+bg+';color:'+col+';cursor:pointer">'+st+'</button>';
     });
-    pillsHtml+='</div>';
+    html+='</div>';
 
-    var starsHtml='<div class="stars-row" id="stars-'+p.id+'">';
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem">RATING</div><div style="display:flex;gap:.3rem;margin-bottom:1.1rem">';
     for(var i=1;i<=5;i++){
-      starsHtml+='<span class="star'+(i<=rating?' filled':'')+'" data-id="'+p.id+'" data-val="'+i+'" onclick="setRating(this)">&#9733;</span>';
+      html+='<span data-pid="'+p.id+'" data-val="'+i+'" onclick="setLR(this.dataset.pid,parseInt(this.dataset.val))" style="font-size:24px;cursor:pointer;color:'+(i<=rating?'#C17D3C':'var(--border)')+'">&#9733;</span>';
     }
-    starsHtml+='</div>';
+    html+='</div>';
 
-    var chkHtml='<div class="checklist">';
-    CHECKLIST.forEach(function(item,idx){
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.5rem">COURT\'S CHECKLIST</div><div style="margin-bottom:1rem">';
+    HOUSING_CHECKLIST.forEach(function(item,idx){
       var checked=ls.checklist&&ls.checklist[idx];
-      chkHtml+='<div class="chk-row'+(checked?' checked':'')+'" data-id="'+p.id+'" data-idx="'+idx+'" onclick="toggleChk(this)"><span class="chk-box">'+(checked?'&#10003;':'')+'</span><span class="chk-label">'+item+'</span></div>';
+      html+='<div data-pid="'+p.id+'" data-idx="'+idx+'" onclick="toggleLC(this.dataset.pid,parseInt(this.dataset.idx))" style="display:flex;align-items:center;gap:.6rem;padding:8px 10px;border-radius:7px;cursor:pointer;border:1px solid '+(checked?'#4A7C59':'var(--border)')+';background:'+(checked?'#EAF0EB':'var(--surface2)')+';margin-bottom:.35rem"><span style="width:18px;height:18px;border:1.5px solid '+(checked?'#4A7C59':'var(--border)')+';border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;background:'+(checked?'#4A7C59':'var(--surface)')+';flex-shrink:0">'+(checked?'&#10003;':'')+'</span><span style="font-size:13px;color:'+(checked?'var(--text3)':'var(--text2)')+'">'+item+'</span></div>';
     });
-    chkHtml+='</div>';
+    html+='</div>';
 
-    div.innerHTML=headerHtml+visitedHtml+apptHtml+cnHtml
-      +'<div class="card-body">'
-      +'<div class="sec-label">STATUS</div>'+pillsHtml
-      +'<div class="sec-label">RATING</div>'+starsHtml
-      +'<div class="sec-label">COURT\'S CHECKLIST</div>'+chkHtml
-      +'<div class="sec-label" style="margin-top:1rem">YOUR NOTES</div>'
-      +'<textarea class="notes-area" id="notes-'+p.id+'" data-id="'+p.id+'" oninput="autoSave(this)" placeholder="Layout, condition, neighborhood feel, red flags, vibes...">'+(ls.notes||'')+'</textarea>'
-      +'<div class="save-ind" id="save-'+p.id+'"></div>'
-      +'</div>';
-
-    c.appendChild(div);
+    html+='<div style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--text3);margin-bottom:.4rem">YOUR NOTES</div>';
+    html+='<textarea data-pid="'+p.id+'" oninput="lnTimer(this.dataset.pid,this)" placeholder="Layout, condition, neighborhood feel, red flags, vibes..." style="width:100%;min-height:90px;background:var(--surface2);border:1px solid var(--border);border-radius:7px;padding:10px;font-size:13px;color:var(--text);outline:none;resize:vertical;font-family:var(--sans)">'+(ls.notes||'')+'</textarea>';
+    html+='<div id="lsave-'+p.id+'" style="font-family:var(--mono);font-size:9px;color:#4A7C59;text-align:right;min-height:14px;margin-top:.25rem"></div>';
+    html+='</div></div>';
   });
+
+  html+='</div>';
+  el.innerHTML=html;
 }
 
-function setStatus(btn){
-  var id=btn.dataset.id; var st=btn.dataset.st;
-  saveLS(id,{status:st});
-  var pills=btn.parentNode.querySelectorAll('.s-pill');
-  pills.forEach(function(b){
-    var bst=b.dataset.st;
-    b.className='s-pill'+(bst===st?(st==='Strong Yes'?' active-g':st==='Pass'?' active-r':' active'):'');
-  });
-  updateStats();
-}
-
-function setRating(span){
-  var id=span.dataset.id; var val=parseInt(span.dataset.val);
-  saveLS(id,{rating:val});
-  var row=document.getElementById('stars-'+id);
-  row.querySelectorAll('.star').forEach(function(s,i){ s.classList.toggle('filled',i<val); });
-}
-
-function toggleChk(row){
-  var id=row.dataset.id; var idx=parseInt(row.dataset.idx);
-  var s=getLS(id); var chk=s.checklist||{};
-  chk[idx]=!chk[idx]; saveLS(id,{checklist:chk});
-  row.classList.toggle('checked',chk[idx]);
-  row.querySelector('.chk-box').innerHTML=chk[idx]?'&#10003;':'';
-}
-
-var timers={};
-function autoSave(ta){
-  var id=ta.dataset.id;
-  clearTimeout(timers[id]);
-  timers[id]=setTimeout(function(){
-    saveLS(id,{notes:ta.value});
-    var ind=document.getElementById('save-'+id);
-    if(ind){ ind.textContent='SAVED'; setTimeout(function(){ ind.textContent=''; },2000); }
+function setLS(id,status){ sl(id,{status:status}); renderHousing(); }
+function setLR(id,rating){ sl(id,{rating:rating}); renderHousing(); }
+function toggleLC(id,idx){ var s=gl(id); var chk=s.checklist||{}; chk[idx]=!chk[idx]; sl(id,{checklist:chk}); renderHousing(); }
+var lnTimers={};
+function lnTimer(id,ta){
+  clearTimeout(lnTimers[id]);
+  lnTimers[id]=setTimeout(function(){
+    sl(id,{notes:ta.value});
+    var ind=document.getElementById('lsave-'+id);
+    if(ind){ind.textContent='SAVED';setTimeout(function(){ind.textContent='';},2000);}
   },800);
 }
+
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${name}')"]`).classList.add('active');
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+document.getElementById('hdr-date').textContent = new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'}).toUpperCase();
+
+renderAll();
 </script>
 </body>
 </html>
