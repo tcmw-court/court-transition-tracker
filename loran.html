@@ -6,6 +6,7 @@
 <title>Housing Field Notes - Loran</title>
 <style>
 body { background: #F5F0E8; font-family: sans-serif; color: #1A1714; margin: 0; padding: 0; }
+.hidden { display: none !important; }
 #entry-screen { min-height: 100vh; display: flex !important; align-items: center; justify-content: center; }
 .gc { background: #fff; border: 1px solid #ccc; border-radius: 12px; padding: 2rem; width: 320px; text-align: center; }
 .gc h2 { font-size: 18px; margin-bottom: 8px; }
@@ -62,7 +63,7 @@ textarea { width: 100%; min-height: 90px; padding: 10px; font-size: 13px; border
   </div>
 </div>
 
-<div id="main-app">
+<div id="main-app" class="hidden">
   <header>
     <span style="font-size:12px;letter-spacing:.06em">LORAN &middot; FIELD NOTES</span>
     <span style="font-size:9px;color:#aaa" id="sync-lbl">connecting...</span>
@@ -128,8 +129,8 @@ function sync(id){
 
 function go(){
   if(document.getElementById('pw').value===PW){
-    document.getElementById('entry-screen').style.display='none';
-    document.getElementById('main-app').style.display='';
+    document.getElementById('entry-screen').classList.add('hidden');
+    document.getElementById('main-app').classList.remove('hidden');
     sfetch('GET','loran_notes?select=*').then(function(r){return r.json();}).then(function(rows){
       rows.forEach(function(row){
         sl(row.prop_id,{
