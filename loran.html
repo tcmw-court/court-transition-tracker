@@ -4,73 +4,95 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Housing Field Notes - Loran</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body{background:#F5F0E8;font-family:sans-serif;color:#1A1714;margin:0;padding:0;}
+body{background:#F5F0E8;font-family:'DM Sans',sans-serif;color:#1A1714;margin:0;padding:0;}
 #overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:#F5F0E8;z-index:9999;display:flex;align-items:center;justify-content:center;}
-.gc{background:#fff;border:1px solid #ccc;border-radius:12px;padding:2rem;width:320px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-.gc h2{font-size:18px;margin-bottom:8px;}
-.gc p{font-size:13px;color:#666;margin-bottom:1.5rem;}
-.gc input{width:100%;padding:10px;font-size:14px;border:1px solid #ccc;border-radius:6px;text-align:center;margin-bottom:8px;box-sizing:border-box;}
-.gc button{width:100%;padding:10px;background:#C17D3C;color:#fff;border:none;border-radius:6px;font-size:13px;cursor:pointer;}
-.err{color:red;font-size:11px;margin-top:6px;}
-header{background:#1A1714;color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;}
-main{max-width:600px;margin:0 auto;padding:1.5rem 1rem;}
-.card{background:#fff;border:1px solid #ddd;border-radius:10px;margin-bottom:1.5rem;overflow:hidden;}
-.card-top{padding:14px 16px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;}
-.card-top h3{font-size:15px;margin:0 0 4px;}
-.card-meta{font-size:11px;color:#888;}
-.card-meta a{color:#C17D3C;}
-.price{font-size:14px;font-weight:600;text-align:right;}
-.beds{font-size:11px;color:#888;}
-.visited{background:#1A1714;padding:8px 16px;display:flex;gap:8px;align-items:baseline;}
-.vbadge{font-size:9px;color:#C17D3C;letter-spacing:.1em;white-space:nowrap;}
-.vtext{font-size:12px;color:#C8C0B0;}
-.notes-from{padding:10px 16px;background:#F5F5F0;border-bottom:1px solid #eee;font-size:12px;color:#555;}
-.notes-from strong{display:block;font-size:9px;color:#999;letter-spacing:.08em;margin-bottom:4px;}
-.cbody{padding:14px 16px;}
-.slabel{font-size:9px;color:#999;letter-spacing:.1em;margin-bottom:8px;}
-.pills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
-.pill{padding:7px 12px;border-radius:20px;border:1px solid #ddd;background:#f5f5f5;font-size:10px;cursor:pointer;}
+.gc{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:16px;padding:2.5rem 2rem;width:320px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+.gc-label{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8480;margin-bottom:.5rem;}
+.gc h2{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;margin-bottom:.25rem;}
+.gc p{font-size:13px;color:#4A4540;margin-bottom:2rem;}
+.gc input{width:100%;padding:12px 16px;font-family:'DM Mono',monospace;font-size:14px;background:#F0EBE0;border:1px solid #E0D8C8;border-radius:8px;color:#1A1714;outline:none;text-align:center;letter-spacing:.1em;margin-bottom:.75rem;box-sizing:border-box;}
+.gc input:focus{border-color:#C17D3C;}
+.gc button{width:100%;padding:12px;background:#C17D3C;color:#fff;border:none;border-radius:8px;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;cursor:pointer;}
+.err{color:#8B3A3A;font-family:'DM Mono',monospace;font-size:11px;margin-top:.5rem;}
+header{background:#1A1714;color:#F5F0E8;padding:0 1.5rem;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.h-name{font-family:'DM Mono',monospace;font-size:12px;letter-spacing:.08em;}
+.h-badge{background:#C17D3C;color:#fff;font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.06em;padding:3px 9px;border-radius:20px;}
+main{max-width:640px;margin:0 auto;padding:1.5rem 1rem;}
+.intro{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;text-align:center;}
+.intro-lbl{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.12em;color:#C17D3C;margin-bottom:.4rem;}
+.intro-ttl{font-family:'DM Mono',monospace;font-size:16px;margin-bottom:.5rem;}
+.intro-sub{font-size:13px;color:#4A4540;line-height:1.5;}
+.movein{display:inline-block;margin-top:.75rem;background:#F5EDE0;border:1px solid #C17D3C;border-radius:6px;padding:6px 14px;font-family:'DM Mono',monospace;font-size:11px;color:#8B5E3C;}
+.stats{background:#1A1714;color:#F5F0E8;font-family:'DM Mono',monospace;font-size:10px;letter-spacing:.08em;padding:9px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem;}
+.card{background:#FDFAF4;border:1px solid #E0D8C8;border-radius:12px;margin-bottom:1.5rem;overflow:hidden;}
+.card-top{padding:1rem 1.25rem;border-bottom:1px solid #E0D8C8;display:flex;justify-content:space-between;align-items:flex-start;}
+.card-top h3{font-size:15px;font-weight:600;margin-bottom:3px;}
+.card-meta{font-size:11px;color:#8A8480;line-height:1.6;}
+.card-meta a{color:#C17D3C;text-decoration:none;font-family:'DM Mono',monospace;font-size:10px;}
+.price{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;text-align:right;white-space:nowrap;}
+.beds{font-size:11px;color:#8A8480;text-align:right;}
+.visited{background:#1A1714;padding:.6rem 1.25rem;border-bottom:1px solid #3A3530;display:flex;flex-wrap:wrap;gap:.5rem;align-items:baseline;}
+.vbadge{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#C17D3C;white-space:nowrap;}
+.vtext{font-size:12px;color:#C8C0B0;line-height:1.5;}
+.notes-from{padding:.75rem 1.25rem;background:#F0EBE0;border-bottom:1px solid #E0D8C8;font-size:12px;color:#4A4540;line-height:1.6;}
+.notes-from strong{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.08em;color:#8A8480;display:block;margin-bottom:.3rem;}
+.collapsed-bar{padding:.75rem 1.25rem;background:#F5F0E8;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#8A8480;border-bottom:1px solid #E0D8C8;}
+.collapsed-bar:hover{background:#EDE8DF;}
+.collapsed-bar .verdict{font-size:11px;font-style:italic;}
+.cbody{padding:1rem 1.25rem;}
+.slabel{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:.1em;color:#8A8480;margin-bottom:.5rem;}
+.pills{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem;}
+.pill{padding:7px 12px;border-radius:20px;border:1px solid #E0D8C8;background:#F0EBE0;font-family:'DM Mono',monospace;font-size:10px;cursor:pointer;color:#8A8480;}
 .pill.on{background:#C17D3C;color:#fff;border-color:#C17D3C;}
 .pill.on-g{background:#4A7C59;color:#fff;border-color:#4A7C59;}
 .pill.on-r{background:#8B3A3A;color:#fff;border-color:#8B3A3A;}
-.stars{display:flex;gap:6px;margin-bottom:16px;font-size:26px;cursor:pointer;}
-.star{color:#ddd;}
+.stars{display:flex;gap:.4rem;margin-bottom:1.25rem;font-size:26px;cursor:pointer;}
+.star{color:#E0D8C8;}
 .star.on{color:#C17D3C;}
-.chklist{margin-bottom:16px;}
-.chk{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;border:1px solid #ddd;background:#f9f9f7;margin-bottom:6px;cursor:pointer;font-size:13px;}
+.chklist{margin-bottom:1rem;}
+.chk{display:flex;align-items:center;gap:.75rem;padding:9px 12px;border-radius:8px;border:1px solid #E0D8C8;background:#F0EBE0;margin-bottom:.4rem;cursor:pointer;font-size:13px;color:#4A4540;}
 .chk.on{background:#EAF0EB;border-color:#4A7C59;}
-.cbox{width:18px;height:18px;border:1.5px solid #ddd;border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;}
+.cbox{width:20px;height:20px;border:1.5px solid #E0D8C8;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;background:#FDFAF4;}
 .chk.on .cbox{background:#4A7C59;color:#fff;border-color:#4A7C59;}
-textarea{width:100%;min-height:90px;padding:10px;font-size:13px;border:1px solid #ddd;border-radius:6px;resize:vertical;font-family:inherit;}
-.saved{font-size:10px;color:#4A7C59;text-align:right;min-height:14px;margin-top:4px;}
-.stats{background:#1A1714;color:#fff;font-size:10px;letter-spacing:.08em;padding:8px 16px;border-radius:6px;margin-bottom:1rem;display:flex;gap:2rem;}
-.intro{background:#fff;border:1px solid #ddd;border-radius:10px;padding:1.25rem;margin-bottom:1.25rem;text-align:center;}
-.movein{display:inline-block;margin-top:10px;background:#FFF0E0;border:1px solid #C17D3C;border-radius:6px;padding:5px 12px;font-size:11px;color:#8B5E3C;}
+.appt-section{background:#FFF8F0;border:1px solid #E8C89A;border-radius:8px;padding:.85rem 1rem;margin-bottom:1rem;}
+.appt-section .slabel{color:#C17D3C;}
+.appt-row{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.5rem;}
+.appt-row input{padding:8px 10px;font-size:12px;border:1px solid #E8C89A;border-radius:6px;background:#FDFAF4;color:#1A1714;outline:none;font-family:'DM Sans',sans-serif;width:100%;box-sizing:border-box;}
+.appt-row input:focus{border-color:#C17D3C;}
+textarea{width:100%;min-height:90px;padding:10px;font-size:13px;border:1px solid #E0D8C8;border-radius:8px;resize:vertical;font-family:'DM Sans',sans-serif;background:#F0EBE0;color:#1A1714;outline:none;box-sizing:border-box;}
+textarea:focus{border-color:#C17D3C;}
+.saved{font-family:'DM Mono',monospace;font-size:9px;color:#4A7C59;text-align:right;min-height:14px;margin-top:.3rem;}
 </style>
 </head>
 <body>
 
 <div id="overlay">
   <div class="gc">
+    <div class="gc-label">COURT WILLIAMS &middot; 2026</div>
     <h2>Housing Field Notes</h2>
-    <p>Court Williams &middot; 2026</p>
-    <input type="password" id="pw" placeholder="password" onkeydown="if(event.key==='Enter')go()">
-    <button onclick="go()">Enter</button>
+    <p>Enter your access code to continue</p>
+    <input type="password" id="pw" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" onkeydown="if(event.key==='Enter')go()">
+    <button onclick="go()">ENTER</button>
     <div class="err" id="err"></div>
   </div>
 </div>
 
 <header>
-  <span style="font-size:12px;letter-spacing:.06em">LORAN &middot; FIELD NOTES</span>
-  <span style="font-size:9px;color:#aaa" id="sync-lbl">connecting...</span>
+  <div class="h-name">LORAN &middot; FIELD NOTES</div>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span style="font-family:'DM Mono',monospace;font-size:9px;color:#8A8480" id="sync-lbl">connecting...</span>
+    <div class="h-badge">COURT 2026</div>
+  </div>
 </header>
+
 <main>
   <div class="intro">
-    <div style="font-size:9px;color:#C17D3C;letter-spacing:.12em;margin-bottom:6px">LORAN MODE</div>
-    <div style="font-size:16px;font-weight:600;margin-bottom:6px">Housing Field Notes</div>
-    <div style="font-size:13px;color:#666">Tap status, rate, leave notes &mdash; Court sees everything.</div>
-    <div class="movein">Move-in: July 25 or Aug 20&ndash;30</div>
+    <div class="intro-lbl">LORAN MODE</div>
+    <div class="intro-ttl">Housing Field Notes</div>
+    <div class="intro-sub">These are the places to check out. Tap a status, rate it, leave notes &mdash; Court sees everything.</div>
+    <div class="movein">&#128197; Move-in: July 25 or Aug 20&ndash;30</div>
   </div>
   <div class="stats">
     <span>VISITED: <span id="sv">0</span>/<span id="st">0</span></span>
@@ -94,9 +116,9 @@ var PR=[
   {id:'lh5',n:'805 Washington Blvd, Unit A',h:'Pigtown',t:'House',p:'$1,650/mo',b:'2bd/2ba',u:'https://www.homes.com/property/805-washington-blvd-baltimore-md-unit-a/9w8lf2ez9y6cm/',c:'1,050 sqft. Hardwood floors, W/D in unit. Contact: Victoria Lin (301) 738-7777.'},
   {id:'lh6',n:'1926 E 28th St',h:'Coldstream',t:'Townhouse',p:'$1,950/mo',b:'2bd/2.5ba',u:'https://www.homes.com/property/1926-e-28th-st-baltimore-md/33kkey8202dpq/',c:'1,500 sqft. Kitchen island, patio, full basement. Also for sale $205K. Contact: Darrell Harris (443) 632-3000.'},
   {id:'bh1',n:'Bolton House',h:'Bolton Hill',t:'Apartment',p:'TBD',b:'2bd (710 sqft)',u:'https://boltonhouse.com/',c:'High-rise with downtown views. Steps from MICA.'},
-  {id:'sym1',n:'Symphony Center Apartments',h:'Bolton Hill area',t:'Apartment',p:'$2,180-2,340/mo',b:'2bd/2ba',u:'',v:true,vt:'Strong option - MICA shuttle is a big plus. $2,180 no-balcony is the value play.',c:'COURT TOURED. Contact: Nadine. $2,340 (floor 10+) / $2,180 (no balcony). Parking incl. Water $30/mo. Pet $45/mo. 3% MICA discount.'},
-  {id:'fitz1',n:'The Fitzgerald',h:'Mount Royal',t:'Apartment',p:'$2,218-2,503/mo',b:'1bd+den to 2bd',u:'',v:true,vt:'Water at $150/mo inflates true cost significantly.',c:'COURT TOURED. Carraway 2bd $2,503 / Lanier 1bd+den $2,218 / Holiday 2bd $2,402. Water $150/mo is the dealbreaker.'},
-  {id:'vault1',n:'The Vault',h:'Downtown',t:'Apartment',p:'Ruled out',b:'TBD',u:'',v:true,vt:'Ruled out - location problem. Too far from MICA.',c:'COURT RULED OUT. 115 N Charles St.'}
+  {id:'vault1',n:'The Vault',h:'Downtown',t:'Apartment',p:'Ruled out',b:'TBD',u:'',cv:true,cvt:'Ruled out - location problem. Too far from MICA.',c:'COURT RULED OUT. 115 N Charles St.',dv:'Pass'},
+  {id:'sym1',n:'Symphony Center Apartments',h:'Bolton Hill area',t:'Apartment',p:'$2,180-2,340/mo',b:'2bd/2ba',u:'',cv:true,cvt:'Strong option - MICA shuttle is a big plus. $2,180 no-balcony is the value play.',c:'COURT TOURED. Contact: Nadine. $2,340 (floor 10+) / $2,180 (no balcony). Parking incl. Water $30/mo. Pet $45/mo. 3% MICA discount.',dv:'Maybe'},
+  {id:'fitz1',n:'The Fitzgerald',h:'Mount Royal',t:'Apartment',p:'$2,218-2,503/mo',b:'1bd+den to 2bd',u:'',cv:true,cvt:'Water at $150/mo inflates true cost significantly.',c:'COURT TOURED. Carraway 2bd $2,503 / Lanier 1bd+den $2,218 / Holiday 2bd $2,402. Water $150/mo is the dealbreaker.',dv:'Maybe'}
 ];
 
 function gl(id){try{return JSON.parse(localStorage.getItem('ln_'+id)||'null')||{};}catch(e){return{};}}
@@ -115,12 +137,11 @@ function sync(id){
   sfetch('POST','loran_notes?on_conflict=prop_id',{
     prop_id:id,status:s.status||null,rating:s.rating||null,
     notes:s.notes||null,checklist:s.checklist?JSON.stringify(s.checklist):null,
+    appt_date:s.appt_date||null,appt_contact:s.appt_contact||null,
     updated_at:new Date().toISOString()
   }).then(function(r){
     document.getElementById('sync-lbl').textContent=r.ok?'synced':'local only';
-  }).catch(function(){
-    document.getElementById('sync-lbl').textContent='local only';
-  });
+  }).catch(function(){document.getElementById('sync-lbl').textContent='local only';});
 }
 
 function go(){
@@ -132,7 +153,8 @@ function go(){
       rows.forEach(function(row){
         if(row.prop_id) sl(row.prop_id,{
           status:row.status||undefined,rating:row.rating||undefined,
-          notes:row.notes||undefined,checklist:row.checklist?JSON.parse(row.checklist):undefined
+          notes:row.notes||undefined,checklist:row.checklist?JSON.parse(row.checklist):undefined,
+          appt_date:row.appt_date||undefined,appt_contact:row.appt_contact||undefined
         });
       });
       document.getElementById('sync-lbl').textContent='synced';
@@ -155,18 +177,35 @@ function stats(){
   document.getElementById('ss').textContent=sy;
 }
 
+var collapsed={vault1:true,sym1:true,fitz1:true};
+
+function toggleCollapse(id){
+  collapsed[id]=!collapsed[id];
+  render();
+}
+
 function render(){
   var c=document.getElementById('cards');
   c.innerHTML='';
   PR.forEach(function(p){
     var ls=gl(p.id);
-    var status=ls.status||'Not Visited';
+    var status=ls.status||(p.dv||'Not Visited');
     var rating=ls.rating||0;
     var el=document.createElement('div');
     el.className='card';
-    var top='<div class="card-top"><div><h3>'+p.n+'</h3><div class="card-meta">'+p.h+' &middot; '+p.t+(p.u?'<br><a href="'+p.u+'" target="_blank">View listing</a>':'')+'</div></div><div><div class="price">'+p.p+'</div><div class="beds">'+p.b+'</div></div></div>';
-    var vis=p.v?'<div class="visited"><span class="vbadge">COURT VISITED</span><span class="vtext">'+p.vt+'</span></div>':'';
-    var nfc=p.c?'<div class="notes-from"><strong>NOTES FROM COURT</strong>'+p.c+'</div>':'';
+
+    var topHtml='<div class="card-top"><div><h3>'+p.n+'</h3><div class="card-meta">'+p.h+' &middot; '+p.t+(p.u?'<br><a href="'+p.u+'" target="_blank">View listing &#8599;</a>':'')+'</div></div><div><div class="price">'+p.p+'</div><div class="beds">'+p.b+'</div></div></div>';
+    var visHtml=p.cv?'<div class="visited"><span class="vbadge">&#10003; COURT VISITED</span><span class="vtext">'+p.cvt+'</span></div>':'';
+
+    if(p.cv&&collapsed[p.id]){
+      el.innerHTML=topHtml+visHtml+'<div class="collapsed-bar" onclick="toggleCollapse(this.getAttribute("data-pid"))" data-pid="'+p.id+'"><span>Tap to expand &darr;</span><span class="verdict">Court verdict: <strong>'+p.dv+'</strong></span></div>';
+      c.appendChild(el);
+      return;
+    }
+
+    var nfcHtml=p.c?'<div class="notes-from"><strong>NOTES FROM COURT</strong>'+p.c+'</div>':'';
+    var collapseBar=p.cv?'<div class="collapsed-bar" onclick="toggleCollapse(this.getAttribute("data-pid"))" data-pid="'+p.id+'"><span>Collapse &uarr;</span><span class="verdict">Court verdict: <strong>'+p.dv+'</strong></span></div>':'';
+
     var pills='<div class="pills">';
     ST.forEach(function(st){
       var a=st===status;
@@ -174,16 +213,39 @@ function render(){
       pills+='<button class="'+cls+'" data-id="'+p.id+'" data-st="'+st+'" onclick="setSt(this)">'+st+'</button>';
     });
     pills+='</div>';
+
     var stars='<div class="stars" id="stars-'+p.id+'">';
     for(var i=1;i<=5;i++) stars+='<span class="star'+(i<=rating?' on':'')+'" data-id="'+p.id+'" data-v="'+i+'" onclick="setR(this)">&#9733;</span>';
     stars+='</div>';
+
     var chk='<div class="chklist">';
     CL.forEach(function(item,i){
       var ch=ls.checklist&&ls.checklist[i];
       chk+='<div class="chk'+(ch?' on':'')+'" data-id="'+p.id+'" data-i="'+i+'" onclick="toggleC(this)"><span class="cbox">'+(ch?'&#10003;':'')+'</span>'+item+'</div>';
     });
     chk+='</div>';
-    el.innerHTML=top+vis+nfc+'<div class="cbody"><div class="slabel">STATUS</div>'+pills+'<div class="slabel">RATING</div>'+stars+'<div class="slabel">CHECKLIST</div>'+chk+'<div class="slabel">YOUR NOTES</div><textarea data-id="'+p.id+'" oninput="noteT(this)" placeholder="Layout, condition, vibes, red flags...">'+(ls.notes||'')+'</textarea><div class="saved" id="sv-'+p.id+'"></div></div>';
+
+    var appt='<div class="appt-section">'
+      +'<div class="slabel" style="margin-bottom:.5rem">SCHEDULING</div>'
+      +'<div class="appt-row">'
+      +'<input type="text" placeholder="Date &amp; time (e.g. Sat July 26, 2pm)" value="'+(ls.appt_date||'')+'" data-id="'+p.id+'" data-f="appt_date" oninput="saveAppt(this)" style="grid-column:1/-1">'
+      +'</div>'
+      +'<div class="appt-row">'
+      +'<input type="text" placeholder="Contact name" value="'+(ls.appt_contact_name||'')+'" data-id="'+p.id+'" data-f="appt_contact_name" oninput="saveAppt(this)">'
+      +'<input type="text" placeholder="Phone / email" value="'+(ls.appt_contact_info||'')+'" data-id="'+p.id+'" data-f="appt_contact_info" oninput="saveAppt(this)">'
+      +'</div>'
+      +'</div>';
+
+    el.innerHTML=topHtml+visHtml+collapseBar+nfcHtml
+      +'<div class="cbody">'
+      +appt
+      +'<div class="slabel">STATUS</div>'+pills
+      +'<div class="slabel">RATING</div>'+stars
+      +'<div class="slabel">CHECKLIST</div>'+chk
+      +'<div class="slabel">YOUR NOTES</div>'
+      +'<textarea data-id="'+p.id+'" oninput="noteT(this)" placeholder="Layout, condition, neighborhood feel, red flags, vibes...">'+(ls.notes||'')+'</textarea>'
+      +'<div class="saved" id="sv-'+p.id+'"></div>'
+      +'</div>';
     c.appendChild(el);
   });
 }
@@ -209,6 +271,15 @@ function toggleC(row){
   row.classList.toggle('on',ch[i]);
   row.querySelector('.cbox').innerHTML=ch[i]?'&#10003;':'';
   sync(id);
+}
+var apptTimers={};
+function saveAppt(input){
+  var id=input.dataset.id;var f=input.dataset.f;
+  clearTimeout(apptTimers[id+f]);
+  apptTimers[id+f]=setTimeout(function(){
+    var u={};u[f]=input.value;
+    sl(id,u);sync(id);
+  },600);
 }
 var tmrs={};
 function noteT(ta){
