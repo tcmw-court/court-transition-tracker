@@ -274,6 +274,103 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
   .cal-day { min-height: 52px; padding: 3px; }
   .cal-chip { display: none; }
 }
+
+/* MAP VIEW */
+.map-toolbar {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 1.25rem; flex-wrap: wrap;
+}
+.map-edit-btn {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .05em;
+  padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text2); cursor: pointer; transition: all .15s;
+}
+.map-edit-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+.map-edit-btn:hover:not(.active) { border-color: var(--accent); color: var(--accent); }
+
+.cluster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+.cluster {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  transition: box-shadow .15s;
+}
+.cluster.drag-target { outline: 2px dashed var(--accent); background: var(--accent-light); }
+.cluster-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px; cursor: pointer; user-select: none;
+  border-bottom: 1px solid var(--border);
+  transition: background .15s;
+}
+.cluster-header:hover { background: var(--surface2); }
+.cluster-header-left { display: flex; align-items: center; gap: 8px; }
+.cluster-color-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.cluster-title { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; color: var(--text); }
+.cluster-count { font-family: var(--mono); font-size: 10px; color: var(--text3); }
+.cluster-chevron { font-size: 10px; color: var(--text3); transition: transform .2s; }
+.cluster-chevron.open { transform: rotate(90deg); }
+.cluster-body { padding: 8px; display: none; }
+.cluster-body.open { display: block; }
+.cluster-note { font-size: 11px; color: var(--text3); padding: 4px 6px 8px; line-height: 1.5; font-style: italic; }
+
+.map-task {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 7px 8px; border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  margin-bottom: 4px; cursor: pointer;
+  transition: background .1s, border-color .1s;
+  position: relative;
+}
+.map-task:hover { background: var(--surface2); border-color: var(--border); }
+.map-task.dragging-map { opacity: .35; }
+.map-task-check {
+  width: 13px; height: 13px; min-width: 13px; border-radius: 3px;
+  border: 1.5px solid var(--border); display: flex; align-items: center;
+  justify-content: center; margin-top: 2px; flex-shrink: 0;
+  transition: background .1s, border-color .1s;
+}
+.map-task-check.done { background: var(--accent); border-color: var(--accent); }
+.map-task-body { flex: 1; min-width: 0; }
+.map-task-title { font-size: 12px; color: var(--text); line-height: 1.4; }
+.map-task-title.struck { text-decoration: line-through; color: var(--text3); }
+.map-task-meta { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 3px; }
+.map-task-note { font-size: 10px; color: var(--text3); margin-top: 3px; line-height: 1.3; }
+.map-task-drag-handle {
+  display: none; font-size: 12px; color: var(--text3); cursor: grab;
+  padding: 0 2px; align-self: center; flex-shrink: 0;
+}
+.map-editing .map-task-drag-handle { display: block; }
+.map-editing .map-task { cursor: default; }
+.map-editing .map-task:hover { border-color: var(--accent); }
+
+.cluster-add-btn {
+  display: none; width: 100%; text-align: left;
+  font-family: var(--mono); font-size: 10px; letter-spacing: .04em;
+  padding: 6px 8px; background: none; border: 1px dashed var(--border);
+  border-radius: var(--radius-sm); color: var(--text3); cursor: pointer;
+  margin-top: 4px; transition: border-color .15s, color .15s;
+}
+.map-editing .cluster-add-btn { display: block; }
+.cluster-add-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+.new-cluster-btn {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .05em;
+  padding: 6px 14px; border-radius: 20px; border: 1px dashed var(--border);
+  background: none; color: var(--text3); cursor: pointer; transition: all .15s;
+}
+.new-cluster-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* shared tags badges in map */
+.shared-tag {
+  display: inline-block; font-family: var(--mono); font-size: 8px;
+  letter-spacing: .03em; padding: 1px 5px; border-radius: 10px;
+  background: var(--surface2); color: var(--text3); white-space: nowrap;
+}
 </style>
 </head>
 <body>
@@ -291,6 +388,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
   <button class="tab active" onclick="switchTab('board')">BOARD</button>
   <button class="tab" onclick="switchTab('weekly')">WEEKLY</button>
   <button class="tab" onclick="switchTab('timeline')">TIMELINE</button>
+  <button class="tab" onclick="switchTab('map')">MAP</button>
   <button class="tab" onclick="switchTab('finance')">FINANCE</button>
   <button class="tab" onclick="switchTab('housing')">HOUSING</button>
 </div>
@@ -298,6 +396,7 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 <div id="view-board" class="view active"></div>
 <div id="view-weekly" class="view"></div>
 <div id="view-timeline" class="view"></div>
+<div id="view-map" class="view"></div>
 <div id="view-finance" class="view"></div>
 <div id="view-housing" class="view"></div>
 
@@ -1049,44 +1148,68 @@ function renderCalendar() {
     html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
   }
 
+  // Track which cell index is Monday for week-jump links
+  let cellIndex = firstDow;
   for (let d=1; d<=daysInMonth; d++) {
     const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
     const dayTasks = getTasksForDay(calMonth, d);
     const dayEvents = getCalEventsForDay(calMonth, d);
     const phColor = getPhaseColor(calMonth, d);
     const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
+    const dow = (firstDow + d - 1) % 7; // 0=Sun,1=Mon,...
 
     let cls = 'cal-day';
     if (isToday) cls += ' today';
     if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
     if (sel) cls += ' selected';
 
-    html += `<div class="${cls}" 
+    // Week-jump: Monday header click
+    const isMon = dow === 1;
+    const monClick = isMon ? `goToWeek(${calMonth},${d});event.stopPropagation();` : '';
+    const monTitle = isMon ? ' title="Jump to this week →"' : '';
+
+    html += `<div class="${cls}"
       onclick="selectDay(${calMonth},${d})"
       ondragover="calDayDragOver(event)"
       ondragleave="calDayDragLeave(event)"
-      ondrop="calDayDrop(event,${calMonth},${d})">
-      <div class="cal-day-num">${d}</div>
-      <div class="cal-dot-row">`;
+      ondrop="calDayDrop(event,${calMonth},${d})">`;
 
+    // Day number — Monday gets a subtle week-jump affordance
+    if (isMon) {
+      html += `<div class="cal-day-num" style="display:flex;align-items:center;gap:3px">
+        <span>${d}</span>
+        <span onclick="${monClick}" ${monTitle} style="font-family:var(--mono);font-size:7px;color:var(--accent);opacity:.7;cursor:pointer;letter-spacing:0;padding:1px 3px;border-radius:3px;border:1px solid var(--accent)" title="View this week">wk→</span>
+      </div>`;
+    } else {
+      html += `<div class="cal-day-num">${d}</div>`;
+    }
+
+    html += `<div class="cal-dot-row">`;
+
+    // Pinned events (keep as chips — they're high level already)
     dayEvents.forEach(e => {
       html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">${e.title}</span>`;
     });
-    dayTasks.slice(0,2).forEach(t => {
-      const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-      const doneClass = t.status==='Done' ? ' done' : '';
-      html += `<span class="cal-chip${doneClass}" 
-        style="background:${cs.bg};color:${cs.color};cursor:grab"
-        draggable="true"
-        ondragstart="calDragStart(event,${t.id})"
-        onclick="event.stopPropagation();openEditModal(${t.id})"
-        title="${t.title}">${t.title.split(' ').slice(0,3).join(' ')}</span>`;
-    });
-    if (dayTasks.length > 2) html += `<span class="cal-chip" style="background:var(--surface2);color:var(--text3)">+${dayTasks.length-2}</span>`;
+
+    // Category dots — one dot per category that has tasks today (not per task)
+    if (dayTasks.length > 0) {
+      const cats = [...new Set(dayTasks.map(t => t.cat))];
+      const doneFrac = dayTasks.filter(t=>t.status==='Done').length / dayTasks.length;
+      html += `<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;align-items:center">`;
+      cats.slice(0,4).forEach(cat => {
+        const cs = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
+        html += `<span title="${cat}" style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${cs.color};opacity:.8"></span>`;
+      });
+      if (dayTasks.length > 0) {
+        html += `<span style="font-family:var(--mono);font-size:8px;color:var(--text3);margin-left:2px">${dayTasks.length}</span>`;
+      }
+      html += `</div>`;
+    }
 
     html += `</div>`;
     if (phColor) html += `<div class="cal-phase-band" style="background:${phColor}"></div>`;
     html += `</div>`;
+    cellIndex++;
   }
 
   const totalCells = firstDow + daysInMonth;
@@ -1111,13 +1234,23 @@ function renderCalendar() {
     const dayT = getTasksForDay(selectedDay.m, selectedDay.d);
     const dayE = getCalEventsForDay(selectedDay.m, selectedDay.d);
     const total = dayT.length + dayE.length;
-    html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div class="cal-detail-title" style="margin-bottom:0">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d} — ${total} item${total!==1?'s':''}</div>
-      <button onclick="openAddFromDay(${selectedDay.m},${selectedDay.d})" 
-        style="font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:4px 12px;background:var(--accent);color:white;border:none;border-radius:20px;cursor:pointer">+ add task</button>
+    const done = dayT.filter(t=>t.status==='Done').length;
+    // Find Monday of this day's week
+    const dayDate = new Date(calYear, selectedDay.m-1, selectedDay.d);
+    const dowOfDay = dayDate.getDay();
+    const monDate = new Date(dayDate);
+    monDate.setDate(dayDate.getDate() - (dowOfDay===0?6:dowOfDay-1));
+    const monM = monDate.getMonth()+1;
+    const monD = monDate.getDate();
+    html += `<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <div class="cal-detail-title" style="margin-bottom:0">${MONTH_SHORT[selectedDay.m]} ${selectedDay.d}</div>
+      <div style="display:flex;gap:6px">
+        <button onclick="goToWeek(${monM},${monD})" style="font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:4px 12px;background:var(--surface2);color:var(--text2);border:1px solid var(--border);border-radius:20px;cursor:pointer">→ view week</button>
+        <button onclick="openAddFromDay(${selectedDay.m},${selectedDay.d})" style="font-family:var(--mono);font-size:10px;letter-spacing:.04em;padding:4px 12px;background:var(--accent);color:white;border:none;border-radius:20px;cursor:pointer">+ add task</button>
+      </div>
     </div>`;
     if (total === 0) {
-      html += `<div style="font-size:12px;color:var(--text3);padding:8px 0">No tasks due this day. Hit + add task to create one.</div>`;
+      html += `<div style="font-size:12px;color:var(--text3);padding:8px 0">No tasks due. Hit + add task to create one.</div>`;
     } else {
       dayE.forEach(e => {
         html += `<div class="tl-task" style="cursor:default">
@@ -1126,26 +1259,31 @@ function renderCalendar() {
           <div class="tl-right"><span class="badge" style="background:${e.bg};color:${e.color};font-size:9px">Event</span></div>
         </div>`;
       });
-      dayT.forEach(t => {
-        const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-        const ss = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
-        const isDone = t.status==='Done';
-        html += `<div class="tl-task">
-          <div class="tl-check ${isDone?'done':''}" onclick="toggleTask(${t.id});renderTimeline()">${isDone?checkSVG():''}</div>
-          <div class="tl-body" onclick="openEditModal(${t.id})" style="cursor:pointer">
-            <div class="tl-title ${isDone?'struck':''}">${t.title}</div>
-            ${t.note?`<div class="tl-sub">${t.note}</div>`:''}
-          </div>
-          <div class="tl-right" onclick="openEditModal(${t.id})" style="cursor:pointer">
-            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:9px">${t.cat}</span>
-            <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:9px">${t.status}</span>
-            <span style="font-family:var(--mono);font-size:9px;color:var(--text3)">✎ edit</span>
-          </div>
-        </div>`;
-      });
+      if (dayT.length > 0) {
+        const bycat = {};
+        dayT.forEach(t => { if(!bycat[t.cat]) bycat[t.cat]={total:0,done:0,urgent:0}; bycat[t.cat].total++; if(t.status==='Done')bycat[t.cat].done++; if(t.status==='Urgent')bycat[t.cat].urgent++; });
+        html += `<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px">`;
+        Object.entries(bycat).forEach(([cat,counts]) => {
+          const cs = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
+          const label = counts.done===counts.total ? `${cat} ✓` : counts.urgent ? `${cat} !!` : `${cat} ${counts.done}/${counts.total}`;
+          html += `<span style="font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:20px;background:${cs.bg};color:${cs.color}">${label}</span>`;
+        });
+        html += `</div>`;
+        const urgentTasks = dayT.filter(t=>t.status==='Urgent');
+        if (urgentTasks.length) {
+          html += `<div style="font-family:var(--mono);font-size:9px;letter-spacing:.06em;color:var(--text3);margin-bottom:5px">URGENT</div>`;
+          urgentTasks.forEach(t => {
+            html += `<div class="tl-task" onclick="openEditModal(${t.id})" style="cursor:pointer">
+              <div class="tl-check" style="border-color:#8B3A3A"></div>
+              <div class="tl-body"><div class="tl-title" style="color:#8B3A3A">${t.title}</div></div>
+            </div>`;
+          });
+        }
+        html += `<div style="font-size:11px;color:var(--text3);margin-top:6px">${dayT.length} task${dayT.length!==1?'s':''} · ${done} done · <span onclick="goToWeek(${monM},${monD})" style="color:var(--accent);cursor:pointer;text-decoration:underline">see full week →</span></div>`;
+      }
     }
   } else {
-    html += `<div style="font-size:12px;color:var(--text3)">Tap a day to see tasks — or drag a task chip onto any day to reschedule it.</div>`;
+    html += `<div style="font-size:12px;color:var(--text3)">Tap a day for a summary — or click <span style="font-family:var(--mono);font-size:10px;border:1px solid var(--border);padding:1px 5px;border-radius:3px">wk→</span> on any Monday to jump to that week's task list.</div>`;
   }
   html += `</div>`;
 
@@ -1155,6 +1293,43 @@ function renderCalendar() {
 function selectDay(m,d) {
   selectedDay = (selectedDay && selectedDay.m===m && selectedDay.d===d) ? null : {m,d};
   renderTimeline();
+}
+function goToWeek(m,d) {
+  selectedDay = null;
+  switchTab('weekly');
+  // After render, find which week block contains this date and scroll+flash it
+  setTimeout(function() {
+    const target = new Date(calYear, m-1, d);
+    const blocks = document.querySelectorAll('.week-block');
+    let found = null;
+    WEEKS.forEach((wk, wi) => {
+      // Parse dates string like "Jun 2 – Jun 8" or "May 26 – Jun 1"
+      const parts = wk.dates.split('–').map(s=>s.trim());
+      if (parts.length < 2) return;
+      const parseD = s => {
+        const p = s.match(/([A-Za-z]+)\s+(\d+)/);
+        if (!p) return null;
+        const mi = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(p[1]);
+        if (mi<1) return null;
+        const yr = (mi < m - 3) ? calYear+1 : calYear; // rough year wrap
+        return new Date(yr, mi-1, parseInt(p[2]));
+      };
+      const start = parseD(parts[0]);
+      const end = parseD(parts[1]);
+      if (start && end && target >= start && target <= end) found = wi;
+    });
+    if (found !== null) {
+      const el = document.getElementById('week-body-'+found);
+      const header = el ? el.previousElementSibling : null;
+      if (el && !el.classList.contains('open')) header && header.click();
+      const block = blocks[found];
+      if (block) {
+        block.scrollIntoView({behavior:'smooth', block:'start'});
+        block.style.outline = '2px solid var(--accent)';
+        setTimeout(()=>{ block.style.outline=''; }, 1800);
+      }
+    }
+  }, 80);
 }
 function calPrev() { calMonth--; if(calMonth<1){calMonth=12;calYear--;} renderTimeline(); }
 function calNext() { calMonth++; if(calMonth>12){calMonth=1;calYear++;} renderTimeline(); }
@@ -1254,22 +1429,52 @@ const HOUSING_PROPS = [
   {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180–2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option — MICA shuttle is a big plus. $2,180 no-balcony is the value play.',notes:'COURT TOURED. Contact: Nadine. $2,340/mo (floor 10+) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb no deposit. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.',defaultStatus:'Toured'},
   {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218–2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet $350 dep + $50/mo. All electric.',defaultStatus:'Decision'},
   {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out — location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.',defaultStatus:'Decision'},
+  // ── NEW ───────────────────────────────────────────────────────
+  {id:'rh5',name:'1815 Park Ave, #3',hood:'Reservoir Hill',type:'Apartment',price:'$1,695/mo',beds:'2bd/1ba',url:'https://www.zumper.com/apartments-for-rent/baltimore-md/reservoir-hill',notes:'Available Aug 1. Active listing verified May 2025. Park Ave is well-placed in Reservoir Hill — ~17 min walk to Lazarus Center.'},
+  {id:'rh6',name:'The Renaissance at Reservoir Hill',hood:'Reservoir Hill',type:'Apartment',price:'TBD — call',beds:'2bd',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/apartments-for-rent/2-bedroom/',notes:'20-unit building, built 1910, renovated 2013–14. Granite counters, SS appliances, oak hardwood, in-unit W/D, central A/C. Individually metered. Architectural character preserved. Worth calling directly.'},
+  {id:'rh7',name:'The Riviera / The Chateau',hood:'Reservoir Hill',type:'Apartment',price:'TBD — call',beds:'2bd',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/apartments-for-rent/2-bedroom/',notes:'101-unit complex overlooking Druid Park Lake. Updated kitchens, large windows, some units with park/downtown views. No two floor plans identical. Tour for the views alone.'},
+  {id:'mv1',name:'ReNew Mt. Vernon',hood:'Mount Vernon',type:'Apartment',price:'$1,469+/mo (call for 2bd)',beds:'Studio–2bd',url:'https://www.apartments.com/renew-mt-vernon-baltimore-md/vbt38me/',notes:'1111 Park Ave. Walk Score 98 neighborhood. Call for current 2bd pricing. Pet fee $350 + $50/mo. Strong transit — free Circulator every 15 min, CityLink, Light Rail all nearby.'},
+  {id:'mv2',name:'Mt. Vernon Apartments (Chase St portfolio)',hood:'Mount Vernon',type:'Apartment',price:'From $949/mo',beds:'Various up to 2bd',url:'https://www.apartments.com/mount-vernon-apartments-baltimore-md/k7dsxxb/',notes:'12–16 E Chase St. Multiple buildings, 400–2,626 sqft range. Walk to Penn Station and Light Rail. Off-street parking $169/mo. 24hr maintenance. Pet-friendly ($300 fee + $35/mo).'},
+  {id:'mv3',name:'HH Midtown Apartments',hood:'Midtown-Belvedere',type:'Apartment',price:'TBD',beds:'Studio, 2bd, 4bd',url:'https://baltimorestudentliving.com/',notes:'Between UBalt, MICA, and UMD campuses. Blocks from Penn Station. Furnished options available. Can lease by the bedroom.'},
+];
+
+const HOOD_INTEL = [
+  {name:'Reservoir Hill',walk:'~17 min',bike:'~8 min',transit:'Penn-North Metro + MTA buses',rent2br:'~$1,080–1,695/mo',vibe:'Top pick. Affordable, community-driven, Druid Hill Park adjacent. Active neighborhood council. Dovecote Cafe.',priority:true},
+  {name:'Mount Vernon',walk:'~15–20 min',bike:'~8 min',transit:'Charm City Circulator (free, every 15 min) + CityLink + Light Rail',rent2br:'~$1,300–1,800/mo',vibe:'Walk Score 98 — most walkable in city. Restaurants, bars, museums, yoga. Penn Station 10 min walk.',priority:true},
+  {name:'Bolton Hill',walk:'~10 min',bike:'~5 min',transit:'State Center Metro (4 min walk) + Light Rail at southern edge',rent2br:'~$1,400–1,650/mo',vibe:'MICA is in this neighborhood. Quiet, historic. Minimal amenities — one cafe, one restaurant, discount grocery only.',priority:false},
+  {name:'Station North',walk:'~5 min to Lazarus',bike:'~3 min',transit:'Penn Station steps away + CityLink Gold/Green',rent2br:'~$1,400–1,600/mo',vibe:'Social Design building is here. Arts district. Shortest commute possible, less residential inventory.',priority:false},
+  {name:'Charles Village',walk:'~25–30 min',bike:'~10 min',transit:'CityLink Gold + MTA buses south',rent2br:'~$1,550–1,750/mo',vibe:'Edge of walk range — bus most days realistic. JHU-adjacent, active, BMA nearby, new restaurants in Old Goucher.',priority:false},
 ];
 
 function renderHousing() {
   const el = document.getElementById('view-housing');
   if (!el) return;
   const hidden = JSON.parse(localStorage.getItem('housing_hidden')||'[]');
-  const props = HOUSING_PROPS.filter(p => hidden.indexOf(p.id)===-1);
+  const allProps = HOUSING_PROPS.concat(JSON.parse(localStorage.getItem('loran_added_props')||'[]'));
+  const props = allProps.filter(p => hidden.indexOf(p.id)===-1);
   const visited = props.filter(p => { const ls=gl(p.id); return ls.status&&['Visited','Strong Yes','Maybe','Pass'].indexOf(ls.status)>=0; }).length;
   const sy = props.filter(p => gl(p.id).status==='Strong Yes').length;
 
   let html = '<div style="max-width:1100px">';
   html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem">';
   html += '<div><div style="font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text3)">BALTIMORE HOUSING</div>';
-  html += '<div style="font-size:12px;color:var(--text2);margin-top:2px">Move-in: July 25 or Aug 20–30 or early Sept · Budget under $1,800 (hard ceiling $2,500) · Must be in Baltimore before school starts</div></div></div>';
-  html += '<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem">';
+  html += '<div style="font-size:12px;color:var(--text2);margin-top:2px">Move-in: July 25 or Aug 20–30 · Budget under $1,800 (hard ceiling $2,500) · Genuine 2BR required · Must be in Baltimore before school starts</div></div></div>';
+  html += '<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem;flex-wrap:wrap">';
   html += '<span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
+
+  // Neighborhood intel panel
+  html += '<details style="margin-bottom:1.25rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">';
+  html += '<summary style="padding:.75rem 1rem;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text2);cursor:pointer;list-style:none">▸ NEIGHBORHOOD INTEL (click to expand)</summary>';
+  html += '<div style="padding:.75rem 1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem">';
+  HOOD_INTEL.forEach(h => {
+    const border = h.priority ? '2px solid var(--accent)' : '1px solid var(--border)';
+    html += `<div style="background:var(--surface);border:${border};border-radius:8px;padding:.75rem">`;
+    html += `<div style="font-family:var(--mono);font-size:11px;font-weight:600;color:var(--text);margin-bottom:.4rem">${h.name}${h.priority?' ★':''}</div>`;
+    html += `<div style="font-size:11px;color:var(--text2);line-height:1.6">`;
+    html += `<b>Walk to MICA:</b> ${h.walk}<br><b>Bike:</b> ${h.bike}<br><b>Transit:</b> ${h.transit}<br><b>2BR avg:</b> ${h.rent2br}<br>`;
+    html += `<span style="color:var(--text3)">${h.vibe}</span></div></div>`;
+  });
+  html += '</div></details>';
 
   props.forEach(p => {
     const s = gs(p.id); const ls = gl(p.id);
@@ -1321,7 +1526,316 @@ function setHPipe(id,step){ ss(id,{tourStatus:step}); renderHousing(); }
 function hideH(id){ if(confirm('Hide this property?')){ const h=JSON.parse(localStorage.getItem('housing_hidden')||'[]'); if(h.indexOf(id)===-1)h.push(id); localStorage.setItem('housing_hidden',JSON.stringify(h)); renderHousing(); } }
 function restoreH(){ localStorage.removeItem('housing_hidden'); renderHousing(); }
 
-// ── TAB SWITCHING ────────────────────────────────────────────────
+// ── MAP VIEW ─────────────────────────────────────────────────────
+// Clusters stored in localStorage as court_clusters
+// Each cluster: { id, title, color, note, taskIds[], collapsed }
+
+const CLUSTER_COLORS = [
+  '#C17D3C','#8B1A4A','#145228','#0D3D6E','#7A2C00','#4A1275','#2A5C3A','#7A4800','#1A2060','#5A5A5A'
+];
+
+const DEFAULT_CLUSTERS = [
+  {
+    id:'cl1', title:'Recovery & Body', color:'#8B1A4A', collapsed:false,
+    note:'Everything related to healing, PT, and rebuilding physically.',
+    taskIds:[53,54,55,56,57,58,59,60,61,62,63,64,86]
+  },
+  {
+    id:'cl2', title:'Community & Fundraising', color:'#C17D3C', collapsed:true,
+    note:'Network support, the article, and financial asks.',
+    taskIds:[65,66]
+  },
+  {
+    id:'cl3', title:'Baltimore Housing Chain', color:'#1A2060', collapsed:false,
+    note:'Sequential: shortlist → application → move-in → setup. Each step unlocks the next.',
+    taskIds:[80,81,82,83,84,85,73]
+  },
+  {
+    id:'cl4', title:'Loan Resolution Pipeline', color:'#0D3D6E', collapsed:true,
+    note:'TISLA → DMCS → consolidation → servicer letter to MICA → credit score improvement. Strictly sequential.',
+    taskIds:[5,6,7,19,23]
+  },
+  {
+    id:'cl5', title:'MICA Enrollment', color:'#145228', collapsed:false,
+    note:'Course reg, financial aid, Howard clearance — all interconnected. Howard blocks MICA aid.',
+    taskIds:[90,91,92,93,94,97]
+  },
+  {
+    id:'cl6', title:'EcoDepot / Kenya', color:'#7A2C00', collapsed:true,
+    note:'Internship decision gates travel prep. Must be Baltimore-settled before departure.',
+    taskIds:[95,96]
+  },
+  {
+    id:'cl7', title:'Routing & Logistics', color:'#2A5C3A', collapsed:true,
+    note:'June 20 onward: Oakland → Indy → (NYC?) → Baltimore. Johannesburg shipment decision is parallel.',
+    taskIds:[70,71,72,74,75]
+  },
+  {
+    id:'cl8', title:'Strava Consulting', color:'#5A5A5A', collapsed:true,
+    note:'Meeting first, then proposal. Income-critical — prioritize early.',
+    taskIds:[100,101]
+  },
+  {
+    id:'cl9', title:'BHS / Bladensburg Work', color:'#7A4800', collapsed:true,
+    note:'Midpoint report is overdue. Summit system deadline TBD.',
+    taskIds:[102,103]
+  },
+  {
+    id:'cl10', title:'3461 & Oakland', color:'#4A1275', collapsed:true,
+    note:'Maurice conversation needed before Oakland trip to understand value/timeline.',
+    taskIds:[104,71]
+  },
+];
+
+function loadClusters() {
+  try {
+    const s = localStorage.getItem('court_clusters');
+    return s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEFAULT_CLUSTERS));
+  } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_CLUSTERS)); }
+}
+function saveClusters(cls) {
+  try { localStorage.setItem('court_clusters', JSON.stringify(cls)); } catch(e) {}
+}
+
+let clusters = loadClusters();
+let mapEditing = false;
+let mapDragTaskId = null;
+let mapDragFromCluster = null;
+
+function getClusterNextId() {
+  const nums = clusters.map(c => parseInt(c.id.replace('cl',''))||0);
+  return 'cl' + (Math.max(0,...nums)+1);
+}
+
+function toggleCluster(cid) {
+  const c = clusters.find(c=>c.id===cid);
+  if (c) { c.collapsed = !c.collapsed; saveClusters(clusters); renderMap(); }
+}
+
+function renderMap() {
+  const el = document.getElementById('view-map');
+  if (!el) return;
+
+  // find tasks not in any cluster
+  const allClusteredIds = clusters.flatMap(c=>c.taskIds);
+  const unassigned = tasks.filter(t => !allClusteredIds.includes(t.id) && !t.event);
+
+  let html = `<div class="${mapEditing?'map-editing':''}">`;
+
+  // toolbar
+  html += `<div class="map-toolbar">
+    <button class="map-edit-btn ${mapEditing?'active':''}" onclick="toggleMapEdit()">
+      ${mapEditing ? '✓ Done editing' : '✎ Edit clusters'}
+    </button>`;
+  if (mapEditing) {
+    html += `<button class="new-cluster-btn" onclick="newCluster()">+ New cluster</button>`;
+    html += `<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Drag tasks between clusters · click cluster name to rename</span>`;
+  } else {
+    html += `<span style="font-family:var(--mono);font-size:10px;color:var(--text3)">Click cluster to expand · click task to edit</span>`;
+  }
+  html += `</div>`;
+
+  html += `<div class="cluster-grid">`;
+
+  clusters.forEach(cl => {
+    const clTasks = cl.taskIds.map(id=>tasks.find(t=>t.id===id)).filter(Boolean);
+    const done = clTasks.filter(t=>t.status==='Done').length;
+    const isOpen = !cl.collapsed;
+
+    html += `<div class="cluster" id="cluster-${cl.id}"
+      ondragover="mapClusterDragOver(event,'${cl.id}')"
+      ondragleave="mapClusterDragLeave(event)"
+      ondrop="mapClusterDrop(event,'${cl.id}')">
+
+      <div class="cluster-header" onclick="toggleCluster('${cl.id}')">
+        <div class="cluster-header-left">
+          <div class="cluster-color-dot" style="background:${cl.color}"></div>
+          ${mapEditing
+            ? `<input value="${cl.title}" onclick="event.stopPropagation()" onchange="renameCluster('${cl.id}',this.value)"
+                style="font-family:var(--mono);font-size:11px;letter-spacing:.06em;background:none;border:none;border-bottom:1px solid var(--border);outline:none;color:var(--text);width:160px">`
+            : `<span class="cluster-title">${cl.title}</span>`}
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="cluster-count">${done}/${clTasks.length}</span>
+          ${mapEditing ? `<button onclick="event.stopPropagation();deleteCluster('${cl.id}')" style="font-family:var(--mono);font-size:9px;padding:2px 6px;border:1px solid #FFECEC;background:#FFECEC;color:#7A1212;border-radius:4px;cursor:pointer">×</button>` : ''}
+          <span class="cluster-chevron ${isOpen?'open':''}">▶</span>
+        </div>
+      </div>
+
+      <div class="cluster-body ${isOpen?'open':''}">
+        ${cl.note ? `<div class="cluster-note">${mapEditing ? `<input value="${cl.note}" onclick="event.stopPropagation()" onchange="updateClusterNote('${cl.id}',this.value)" style="width:100%;font-family:var(--sans);font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);outline:none;color:var(--text3);font-style:italic">` : cl.note}</div>` : ''}
+        ${clTasks.map(t => {
+          const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+          const ss = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
+          const isDone = t.status==='Done';
+          return `<div class="map-task"
+            draggable="${mapEditing}"
+            ondragstart="mapTaskDragStart(event,${t.id},'${cl.id}')"
+            ondragend="mapTaskDragEnd(event)">
+            <span class="map-task-drag-handle">⠿</span>
+            <div class="map-task-check ${isDone?'done':''}" onclick="toggleTask(${t.id});renderMap()">
+              ${isDone?checkSVG():''}
+            </div>
+            <div class="map-task-body" onclick="${mapEditing?'':` openEditModal(${t.id})`}">
+              <div class="map-task-title ${isDone?'struck':''}">${t.title}</div>
+              <div class="map-task-meta">
+                <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:8px">${t.cat}</span>
+                <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:8px">${t.status}</span>
+                ${t.due?`<span class="shared-tag">${t.due}</span>`:''}
+              </div>
+              ${t.note && !isDone ? `<div class="map-task-note">${t.note.slice(0,80)}${t.note.length>80?'…':''}</div>` : ''}
+            </div>
+          </div>`;
+        }).join('')}
+        <button class="cluster-add-btn" onclick="pickTaskForCluster('${cl.id}')">+ assign task to this cluster</button>
+      </div>
+    </div>`;
+  });
+
+  // Unassigned tasks cluster
+  if (unassigned.length > 0 || mapEditing) {
+    html += `<div class="cluster" style="border-style:dashed">
+      <div class="cluster-header" onclick="toggleUnassigned()">
+        <div class="cluster-header-left">
+          <div class="cluster-color-dot" style="background:var(--text3)"></div>
+          <span class="cluster-title" style="color:var(--text3)">Unassigned</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span class="cluster-count">${unassigned.length}</span>
+          <span class="cluster-chevron ${mapEditing?'open':''}" id="unassigned-chevron">▶</span>
+        </div>
+      </div>
+      <div class="cluster-body ${mapEditing?'open':''}" id="unassigned-body"
+        ondragover="mapClusterDragOver(event,'__unassigned')"
+        ondragleave="mapClusterDragLeave(event)"
+        ondrop="mapClusterDrop(event,'__unassigned')">
+        ${unassigned.map(t => {
+          const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
+          const ss = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
+          const isDone = t.status==='Done';
+          return `<div class="map-task" draggable="${mapEditing}"
+            ondragstart="mapTaskDragStart(event,${t.id},'__unassigned')"
+            ondragend="mapTaskDragEnd(event)">
+            <span class="map-task-drag-handle">⠿</span>
+            <div class="map-task-check ${isDone?'done':''}" onclick="toggleTask(${t.id});renderMap()">${isDone?checkSVG():''}</div>
+            <div class="map-task-body" onclick="${mapEditing?'':` openEditModal(${t.id})`}">
+              <div class="map-task-title ${isDone?'struck':''}">${t.title}</div>
+              <div class="map-task-meta">
+                <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:8px">${t.cat}</span>
+                <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:8px">${t.status}</span>
+              </div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+
+  html += `</div></div>`;
+  el.innerHTML = html;
+}
+
+function toggleUnassigned() {
+  const body = document.getElementById('unassigned-body');
+  const chev = document.getElementById('unassigned-chevron');
+  if (body) body.classList.toggle('open');
+  if (chev) chev.classList.toggle('open');
+}
+
+function toggleMapEdit() {
+  mapEditing = !mapEditing;
+  renderMap();
+}
+
+function renameCluster(cid, val) {
+  const c = clusters.find(c=>c.id===cid);
+  if (c) { c.title = val; saveClusters(clusters); }
+}
+
+function updateClusterNote(cid, val) {
+  const c = clusters.find(c=>c.id===cid);
+  if (c) { c.note = val; saveClusters(clusters); }
+}
+
+function deleteCluster(cid) {
+  if (!confirm('Remove this cluster? Tasks will become unassigned.')) return;
+  clusters = clusters.filter(c=>c.id!==cid);
+  saveClusters(clusters);
+  renderMap();
+}
+
+function newCluster() {
+  const title = prompt('Cluster name:');
+  if (!title) return;
+  const color = CLUSTER_COLORS[clusters.length % CLUSTER_COLORS.length];
+  clusters.push({ id: getClusterNextId(), title, color, note:'', taskIds:[], collapsed:false });
+  saveClusters(clusters);
+  renderMap();
+}
+
+function pickTaskForCluster(cid) {
+  // build a list of unassigned tasks to pick from
+  const allClusteredIds = clusters.flatMap(c=>c.taskIds);
+  const available = tasks.filter(t => !allClusteredIds.includes(t.id) && !t.event);
+  if (!available.length) { alert('No unassigned tasks to add.'); return; }
+  const opts = available.map((t,i) => `${i+1}. ${t.title}`).join('\n');
+  const choice = prompt('Enter the number of the task to add:\n\n' + opts);
+  const idx = parseInt(choice) - 1;
+  if (isNaN(idx) || idx < 0 || idx >= available.length) return;
+  const c = clusters.find(c=>c.id===cid);
+  if (c) { c.taskIds.push(available[idx].id); saveClusters(clusters); renderMap(); }
+}
+
+// Map drag and drop
+function mapTaskDragStart(e, id, fromCid) {
+  mapDragTaskId = id;
+  mapDragFromCluster = fromCid;
+  e.dataTransfer.effectAllowed = 'move';
+  e.stopPropagation();
+}
+function mapTaskDragEnd(e) {
+  mapDragTaskId = null;
+  mapDragFromCluster = null;
+  document.querySelectorAll('.cluster').forEach(c=>c.classList.remove('drag-target'));
+}
+function mapClusterDragOver(e, cid) {
+  e.preventDefault();
+  e.stopPropagation();
+  document.querySelectorAll('.cluster').forEach(c=>c.classList.remove('drag-target'));
+  const el = document.getElementById('cluster-'+cid) || e.currentTarget;
+  if (el) el.classList.add('drag-target');
+}
+function mapClusterDragLeave(e) {
+  e.currentTarget.classList.remove('drag-target');
+}
+function mapClusterDrop(e, toCid) {
+  e.preventDefault();
+  e.stopPropagation();
+  document.querySelectorAll('.cluster').forEach(c=>c.classList.remove('drag-target'));
+  if (mapDragTaskId === null) return;
+
+  const tid = mapDragTaskId;
+  const fromCid = mapDragFromCluster;
+
+  // Remove from source cluster
+  if (fromCid !== '__unassigned') {
+    const from = clusters.find(c=>c.id===fromCid);
+    if (from) from.taskIds = from.taskIds.filter(id=>id!==tid);
+  }
+
+  // Add to target cluster (if not unassigned)
+  if (toCid !== '__unassigned') {
+    const to = clusters.find(c=>c.id===toCid);
+    if (to && !to.taskIds.includes(tid)) to.taskIds.push(tid);
+  }
+
+  saveClusters(clusters);
+  mapDragTaskId = null;
+  mapDragFromCluster = null;
+  renderMap();
+}
+
+
 function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1334,6 +1848,7 @@ function renderAll() {
   renderBoard();
   renderWeekly();
   renderTimeline();
+  renderMap();
   renderFinance();
   renderHousing();
 }
