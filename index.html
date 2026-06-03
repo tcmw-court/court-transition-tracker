@@ -452,8 +452,8 @@ const DEFAULTS = [
   {id:53, title:'Review nurses reply + act on each item',   cat:'PostOp',  status:'Urgent',    due:'Jun 1',  note:'Silicone: 6wk. PT: 4–6wk window. Lymphatic: find PT specialist. Bromelain: start now. June 16 appt confirmed.'},
   {id:54, title:'Pull and consolidate EOBs',                cat:'PostOp',  status:'Not Started',due:'Jun 1', note:'UHC should be sending these post-procedure'},
   {id:55, title:'Consolidate receipts for reimbursement',   cat:'PostOp',  status:'Not Started',due:'Jun 1', note:'Airbnb, transport, food, supplies — all in one place'},
-  {id:56, title:'File UHC travel & lodging reimbursement',  cat:'PostOp',  status:'Not Started',due:'Jun 7', note:'Confirm limit: $2K told vs $10K in benefits guide — get in writing before filing'},
-  {id:57, title:'June 16 follow-up appointment',            cat:'PostOp',  status:'Pending',    due:'Jun 16',note:'Reception team will reach out to confirm. ~1-month mark. event:true'},
+  {id:56, title:'File UHC travel & lodging reimbursement',  cat:'PostOp',  status:'Not Started',due:'Jun 7', note:'Travel benefit = lodging + transport only. NOT out-of-pocket copays. Consolidate receipts first.'},
+  {id:57, title:'Crane Center follow-up — 11:15am',        cat:'PostOp',  status:'Pending',    due:'Jun 17',note:'11:15am in-person. ~1-month post-op mark. Create Athena portal account beforehand.', event:true},
   {id:58, title:'Confirm anesthesia / hospital billing estimate', cat:'PostOp', status:'Not Started', due:'Jun 7', note:'Estimate obtained — file when bill arrives'},
   {id:59, title:'Start bromelain',                          cat:'PostOp',  status:'Urgent',    due:'Now',   note:'Nurses cleared this — okay to start alongside current meds'},
   {id:60, title:'Start silicone bandages',                  cat:'PostOp',  status:'Pending',   due:'Jun 25',note:'6 weeks from surgery (May 14). Only on well-healed incisions.'},
@@ -497,8 +497,14 @@ const DEFAULTS = [
   {id:100,title:'Strava — request meeting with team lead + L&D', cat:'Work', status:'Urgent', due:'Jun 1', note:'Performance management + development system pitch. Understand other pressing priorities first. Primary income opportunity.', work:true},
   {id:101,title:'Strava — culture team proposal',           cat:'Work',    status:'Not Started',due:'Jun 14',note:'Draft after meeting. May include other pressing priorities beyond original perf mgmt scope.', work:true},
   {id:102,title:'BHS — midpoint data report',               cat:'Work',    status:'Urgent',    due:'Jun 6',  note:'Very overdue. Need to make a real dent.', work:true},
-  {id:103,title:'BHS — summit student rating/award system', cat:'Work',    status:'Not Started',due:'TBD',   note:'Bladensburg. Deadline may shift — confirm.', work:true},
+  {id:103,title:'BHS — summit student rating/award system', cat:'Work',    status:'Not Started',due:'Jun 16',note:'Bladensburg. Summit rescheduled to Jun 16 (was Jun 2). Mary Taylor flagged finals conflict — respond.', work:true},
   {id:104,title:'3461 — conversation with Maurice',         cat:'Work',    status:'Not Started',due:'Jun 7', note:'Value vs impact, timeline. How long in Oakland practically. Not urgent but before Oakland trip.', work:true},
+  {id:105,title:'Review Jocelyn SOW — BHS summer project',  cat:'Work',    status:'Urgent',    due:'Jun 6',  note:'Jocelyn produced a SOW for a summer project. Review before responding.', work:true},
+  {id:106,title:'Call with Thomas re: MICA registration',   cat:'MICA',    status:'Urgent',    due:'May 30', note:'Tentative 1pm ET Saturday. Review additional info he sent first.'},
+  {id:107,title:'Organize coaching engagement with Lauren', cat:'Work',    status:'Not Started',due:'Jun 7', note:'Confirm scope, schedule, and logistics.', work:true},
+  {id:108,title:'Review OIE Industry Expert invite (GW)',   cat:'Work',    status:'Not Started',due:'Jun 7', note:'George Washington OIE Industry Expert invitation. Evaluate scope and decide.', work:true},
+  {id:109,title:'Add Fellowships tab to PM tracker',        cat:'MICA',    status:'Urgent',    due:'Jun 1',  note:"Clarence built a fellowships tracker. Add as a tab here. Send Clarence notes. Awesome Baltimore $1K grant deadline May 31."},
+  {id:110,title:'Create Athena portal account',             cat:'PostOp',  status:'Urgent',    due:'Jun 16', note:'Crane Center patient portal. Do before Jun 17 post-op appointment.'},
 ];
 
 // ── Storage ─────────────────────────────────────────────────────
@@ -706,15 +712,14 @@ function setFilter(f) {
 }
 
 // ── WEEKLY VIEW ──────────────────────────────────────────────────
-// Week definitions: start date, end date, energy hours, title, tasks grouped by bucket
 const WEEKS = [
   {
     num: 1, dates: 'May 26 – Jun 1', energy: 10, current: true,
     label: 'Low energy — high stakes admin',
     sections: [
-      { label: 'POST-OP', taskIds: [53, 54, 55, 59] },
-      { label: 'MICA', taskIds: [90, 91] },
-      { label: 'WORK', taskIds: [100], work: true },
+      { label: 'POST-OP', taskIds: [53, 54, 55, 59, 110] },
+      { label: 'MICA', taskIds: [90, 91, 106, 109] },
+      { label: 'WORK', taskIds: [100, 105], work: true },
       { label: 'LOGISTICS', taskIds: [70] },
     ]
   },
@@ -726,7 +731,7 @@ const WEEKS = [
       { label: 'MICA', taskIds: [92, 93] },
       { label: 'HOUSING', taskIds: [80] },
       { label: 'LOGISTICS', taskIds: [74] },
-      { label: 'WORK', taskIds: [101, 102], work: true },
+      { label: 'WORK', taskIds: [101, 102, 107, 108], work: true },
       { label: 'PERSONAL', taskIds: [65, 95] },
     ]
   },
@@ -744,7 +749,7 @@ const WEEKS = [
   },
   {
     num: 4, dates: 'Jun 16 – Jun 22', energy: 25,
-    label: 'Transition week — Airbnb ends',
+    label: 'BHS Summit + Transition week — Airbnb ends',
     sections: [
       { label: 'POST-OP', taskIds: [57, 60] },
       { label: 'HOUSING', taskIds: [82] },
@@ -802,7 +807,6 @@ function renderWeekly() {
 
   WEEKS.forEach((week, wi) => {
     const isOpen = week.current;
-    // filter sections based on taskFilter
     const sections = week.sections.filter(s => {
       if (taskFilter === 'personal') return !s.work;
       if (taskFilter === 'work') return s.work;
@@ -810,7 +814,6 @@ function renderWeekly() {
     });
     if (!sections.length) return;
 
-    // count tasks in this week that match filter
     const weekTaskIds = sections.flatMap(s => s.taskIds);
     const weekTasks = weekTaskIds.map(id => tasks.find(t=>t.id===id)).filter(Boolean);
     const doneCt = weekTasks.filter(t=>t.status==='Done').length;
@@ -877,16 +880,14 @@ const today = new Date();
 let calYear = today.getFullYear();
 let calMonth = today.getMonth() + 1;
 let selectedDay = null;
-let calDragId = null; // separate from kanban dragId
+let calDragId = null;
 
 const MONTH_SHORT = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-// Canonical date key format: "Jun 16", "Jul 25", etc.
 function makeDueKey(m, d) {
   return MONTH_SHORT[m] + ' ' + d;
 }
 
-// Parse any due string that looks like a date (Month D) → {m,d} or null
 function parseDueKey(due) {
   if (!due) return null;
   const match = due.match(/^([A-Za-z]+)\s+(\d+)$/);
@@ -904,7 +905,8 @@ function getTasksForDay(m, d) {
 }
 
 const CAL_EVENTS = [
-  {m:6, d:16, title:'Post-op follow-up', color:'#8B1A4A', bg:'#FFF0F5'},
+  {m:6, d:16, title:'BHS Summit', color:'#7A4800', bg:'#FFF0E8'},
+  {m:6, d:17, title:'Post-op 11:15am', color:'#8B1A4A', bg:'#FFF0F5'},
   {m:7, d:25, title:'Move-in window', color:'#1A2060', bg:'#EEF0FF'},
   {m:8, d:1,  title:'EcoDepot Kenya', color:'#7A2C00', bg:'#FFF0E8'},
   {m:8, d:16, title:'EcoDepot ends', color:'#7A2C00', bg:'#FFF0E8'},
@@ -931,7 +933,6 @@ function getCalEventsForDay(m,d) {
   return CAL_EVENTS.filter(e => e.m===m && e.d===d);
 }
 
-// ── Calendar drag/drop ───────────────────────────────────────────
 function calDragStart(e, id) {
   calDragId = id;
   e.dataTransfer.effectAllowed = 'move';
@@ -963,7 +964,6 @@ function calDayDrop(e, m, d) {
   }
 }
 
-// ── Task edit modal ──────────────────────────────────────────────
 function openEditModal(id) {
   const t = tasks.find(t => t.id === id);
   if (!t) return;
@@ -1049,7 +1049,6 @@ function deleteTask(id) {
   renderAll();
 }
 
-// ── Add from calendar ────────────────────────────────────────────
 function openAddFromDay(m, d) {
   const dueKey = makeDueKey(m, d);
   const cats = Object.keys(CAT_STYLES);
@@ -1148,7 +1147,6 @@ function renderCalendar() {
     html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
   }
 
-  // Track which cell index is Monday for week-jump links
   let cellIndex = firstDow;
   for (let d=1; d<=daysInMonth; d++) {
     const isToday = (calYear===todayY && calMonth===todayM && d===todayD);
@@ -1156,14 +1154,13 @@ function renderCalendar() {
     const dayEvents = getCalEventsForDay(calMonth, d);
     const phColor = getPhaseColor(calMonth, d);
     const sel = selectedDay && selectedDay.m===calMonth && selectedDay.d===d;
-    const dow = (firstDow + d - 1) % 7; // 0=Sun,1=Mon,...
+    const dow = (firstDow + d - 1) % 7;
 
     let cls = 'cal-day';
     if (isToday) cls += ' today';
     if (dayTasks.length || dayEvents.length) cls += ' has-tasks';
     if (sel) cls += ' selected';
 
-    // Week-jump: Monday header click
     const isMon = dow === 1;
     const monClick = isMon ? `goToWeek(${calMonth},${d});event.stopPropagation();` : '';
     const monTitle = isMon ? ' title="Jump to this week →"' : '';
@@ -1174,7 +1171,6 @@ function renderCalendar() {
       ondragleave="calDayDragLeave(event)"
       ondrop="calDayDrop(event,${calMonth},${d})">`;
 
-    // Day number — Monday gets a subtle week-jump affordance
     if (isMon) {
       html += `<div class="cal-day-num" style="display:flex;align-items:center;gap:3px">
         <span>${d}</span>
@@ -1186,15 +1182,12 @@ function renderCalendar() {
 
     html += `<div class="cal-dot-row">`;
 
-    // Pinned events (keep as chips — they're high level already)
     dayEvents.forEach(e => {
       html += `<span class="cal-chip" style="background:${e.bg};color:${e.color}">${e.title}</span>`;
     });
 
-    // Category dots — one dot per category that has tasks today (not per task)
     if (dayTasks.length > 0) {
       const cats = [...new Set(dayTasks.map(t => t.cat))];
-      const doneFrac = dayTasks.filter(t=>t.status==='Done').length / dayTasks.length;
       html += `<div style="display:flex;flex-wrap:wrap;gap:2px;margin-top:2px;align-items:center">`;
       cats.slice(0,4).forEach(cat => {
         const cs = CAT_STYLES[cat]||{bg:'#eee',color:'#333'};
@@ -1220,7 +1213,6 @@ function renderCalendar() {
 
   html += `</div>`;
 
-  // Phase legend
   html += `<div style="display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 10px">`;
   PHASE_BANDS.forEach(ph => {
     html += `<span style="display:inline-flex;align-items:center;gap:4px;font-family:var(--mono);font-size:9px;letter-spacing:0.04em;color:var(--text3)">
@@ -1228,14 +1220,12 @@ function renderCalendar() {
   });
   html += `</div>`;
 
-  // Detail panel
   html += `<div class="cal-detail" id="cal-detail">`;
   if (selectedDay) {
     const dayT = getTasksForDay(selectedDay.m, selectedDay.d);
     const dayE = getCalEventsForDay(selectedDay.m, selectedDay.d);
     const total = dayT.length + dayE.length;
     const done = dayT.filter(t=>t.status==='Done').length;
-    // Find Monday of this day's week
     const dayDate = new Date(calYear, selectedDay.m-1, selectedDay.d);
     const dowOfDay = dayDate.getDay();
     const monDate = new Date(dayDate);
@@ -1297,13 +1287,11 @@ function selectDay(m,d) {
 function goToWeek(m,d) {
   selectedDay = null;
   switchTab('weekly');
-  // After render, find which week block contains this date and scroll+flash it
   setTimeout(function() {
     const target = new Date(calYear, m-1, d);
     const blocks = document.querySelectorAll('.week-block');
     let found = null;
     WEEKS.forEach((wk, wi) => {
-      // Parse dates string like "Jun 2 – Jun 8" or "May 26 – Jun 1"
       const parts = wk.dates.split('–').map(s=>s.trim());
       if (parts.length < 2) return;
       const parseD = s => {
@@ -1311,7 +1299,7 @@ function goToWeek(m,d) {
         if (!p) return null;
         const mi = ['','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].indexOf(p[1]);
         if (mi<1) return null;
-        const yr = (mi < m - 3) ? calYear+1 : calYear; // rough year wrap
+        const yr = (mi < m - 3) ? calYear+1 : calYear;
         return new Date(yr, mi-1, parseInt(p[2]));
       };
       const start = parseD(parts[0]);
@@ -1357,20 +1345,20 @@ function renderFinance() {
 
   let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem;max-width:900px">';
 
-  html += card('SURGERY — SETTLED', [
-    {label:'Crane Center surgical fee', amount:'$680.62'},
-    {label:'Additional out-of-pocket', amount:'~$820'},
-    {label:'Total paid', amount:'~$1,500', total:true, positive:true},
-    {label:'Anesthesia (Westlake)', amount:'TBD', sub:'Billed separately — estimate obtained'},
-  ], 'Out-of-pocket costs covered. Anesthesia bill expected later.');
+  html += card('SURGERY — UHC CLAIMS', [
+    {label:'Pre-paid to Crane + Westlake', amount:'$765', positive:true},
+    {label:'A. DeLeon — you owe (UHC approved)', amount:'$1,022.60', sub:'Claim FU07002423 · visit 5/14/26'},
+    {label:'Hospital at Westlake — you owe', amount:'$990.00', sub:'Claim FU34747835 · visit 5/14/26'},
+    {label:'Total outstanding', amount:'~$2,012', total:true, urgent:true},
+    {label:'Anesthesia (separate bill)', amount:'TBD'},
+  ], 'EOBs not yet ready. Wait for bills before paying — reconcile against pre-paid amounts.');
 
-  html += card('UHC REIMBURSEMENT — PENDING', [
-    {label:'Travel & lodging (told)', amount:'$2,000'},
-    {label:'Travel & lodging (benefits guide)', amount:'$10,000 lifetime'},
-    {label:'Confirm limit in writing', amount:'⚠ before filing', urgent:true},
-    {label:'Airbnb Austin', amount:'$3,200', sub:'Via friend loan'},
-    {label:'Potential recovery', amount:'$2K–$10K', total:true},
-  ], 'File once EOBs and receipts are consolidated. Confirm actual limit before submitting.');
+  html += card('UHC TRAVEL BENEFIT — PENDING', [
+    {label:'Benefit covers travel costs only', amount:'$2,000', sub:'NOT copays/deductibles — separate from provider claims'},
+    {label:'Airbnb Austin', amount:'$3,200', sub:'Via friend loan — file for partial recovery'},
+    {label:'Consolidate travel receipts first', amount:'⚠ urgent', urgent:true},
+    {label:'Potential travel reimbursement', amount:'up to $2,000', total:true},
+  ], 'File via UHC travel benefit program. Covers Austin lodging + transport. Separate from the $2,012 owed to providers.');
 
   html += card('BALTIMORE HOUSING — PROJECTED', [
     {label:'Target monthly rent', amount:'<$1,800'},
@@ -1389,7 +1377,6 @@ function renderFinance() {
 
   html += '</div>';
 
-  // Fundraising
   const raised = 1500;
   const goal = 5200;
   const pct = Math.min(100, Math.round(raised/goal*100));
@@ -1429,7 +1416,6 @@ const HOUSING_PROPS = [
   {id:'sym1',name:'Symphony Center Apartments',hood:'Bolton Hill area',type:'Apartment',price:'$2,180–2,340/mo',beds:'2bd/2ba',url:'',courtVisited:true,courtVerdict:'Strong option — MICA shuttle is a big plus. $2,180 no-balcony is the value play.',notes:'COURT TOURED. Contact: Nadine. $2,340/mo (floor 10+) / $2,180/mo (no balcony). Parking included. Trash $5/mo. Water $30/mo. BGE electric. Pet $45/mo 75lb no deposit. MICA bus + JH shuttle. Whole Foods 15 min. 3% MICA discount.',defaultStatus:'Toured'},
   {id:'fitz1',name:'The Fitzgerald',hood:'Mount Royal',type:'Apartment',price:'$2,218–2,503/mo',beds:'1bd+den to 2bd',url:'',courtVisited:true,courtVerdict:'Water at $150/mo inflates true cost significantly.',notes:'COURT TOURED. 24hr concierge. Pool. Gym. Carraway 2bd/2ba $2,503 / Lanier 1bd+den $2,218 (avail July 9) / Holiday 2bd/2ba $2,402. Trash $15/mo. Water $150/mo. Pet $350 dep + $50/mo. All electric.',defaultStatus:'Decision'},
   {id:'vault1',name:'The Vault',hood:'Downtown',type:'Apartment',price:'Ruled out',beds:'TBD',url:'',courtVisited:true,courtVerdict:'Ruled out — location problem. Too far from MICA.',notes:'COURT RULED OUT. 115 N Charles St. Location does not work for MICA commute.',defaultStatus:'Decision'},
-  // ── NEW ───────────────────────────────────────────────────────
   {id:'rh5',name:'1815 Park Ave, #3',hood:'Reservoir Hill',type:'Apartment',price:'$1,695/mo',beds:'2bd/1ba',url:'https://www.zumper.com/apartments-for-rent/baltimore-md/reservoir-hill',notes:'Available Aug 1. Active listing verified May 2025. Park Ave is well-placed in Reservoir Hill — ~17 min walk to Lazarus Center.'},
   {id:'rh6',name:'The Renaissance at Reservoir Hill',hood:'Reservoir Hill',type:'Apartment',price:'TBD — call',beds:'2bd',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/apartments-for-rent/2-bedroom/',notes:'20-unit building, built 1910, renovated 2013–14. Granite counters, SS appliances, oak hardwood, in-unit W/D, central A/C. Individually metered. Architectural character preserved. Worth calling directly.'},
   {id:'rh7',name:'The Riviera / The Chateau',hood:'Reservoir Hill',type:'Apartment',price:'TBD — call',beds:'2bd',url:'https://www.homes.com/baltimore-md/reservoir-hill-neighborhood/apartments-for-rent/2-bedroom/',notes:'101-unit complex overlooking Druid Park Lake. Updated kitchens, large windows, some units with park/downtown views. No two floor plans identical. Tour for the views alone.'},
@@ -1462,7 +1448,6 @@ function renderHousing() {
   html += '<div style="background:#1A1714;color:#F5F0E8;font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:10px 16px;border-radius:6px;margin-bottom:1.25rem;display:flex;gap:2rem;flex-wrap:wrap">';
   html += '<span>VISITED: '+visited+'/'+props.length+'</span><span>STRONG YES: '+sy+'</span></div>';
 
-  // Neighborhood intel panel
   html += '<details style="margin-bottom:1.25rem;background:var(--surface2);border-radius:8px;border:1px solid var(--border)">';
   html += '<summary style="padding:.75rem 1rem;font-family:var(--mono);font-size:10px;letter-spacing:.08em;color:var(--text2);cursor:pointer;list-style:none">▸ NEIGHBORHOOD INTEL (click to expand)</summary>';
   html += '<div style="padding:.75rem 1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:.75rem">';
@@ -1527,9 +1512,6 @@ function hideH(id){ if(confirm('Hide this property?')){ const h=JSON.parse(local
 function restoreH(){ localStorage.removeItem('housing_hidden'); renderHousing(); }
 
 // ── MAP VIEW ─────────────────────────────────────────────────────
-// Clusters stored in localStorage as court_clusters
-// Each cluster: { id, title, color, note, taskIds[], collapsed }
-
 const CLUSTER_COLORS = [
   '#C17D3C','#8B1A4A','#145228','#0D3D6E','#7A2C00','#4A1275','#2A5C3A','#7A4800','#1A2060','#5A5A5A'
 ];
@@ -1538,7 +1520,7 @@ const DEFAULT_CLUSTERS = [
   {
     id:'cl1', title:'Recovery & Body', color:'#8B1A4A', collapsed:false,
     note:'Everything related to healing, PT, and rebuilding physically.',
-    taskIds:[53,54,55,56,57,58,59,60,61,62,63,64,86]
+    taskIds:[53,54,55,56,57,58,59,60,61,62,63,64,86,110]
   },
   {
     id:'cl2', title:'Community & Fundraising', color:'#C17D3C', collapsed:true,
@@ -1558,7 +1540,7 @@ const DEFAULT_CLUSTERS = [
   {
     id:'cl5', title:'MICA Enrollment', color:'#145228', collapsed:false,
     note:'Course reg, financial aid, Howard clearance — all interconnected. Howard blocks MICA aid.',
-    taskIds:[90,91,92,93,94,97]
+    taskIds:[90,91,92,93,94,97,106,109]
   },
   {
     id:'cl6', title:'EcoDepot / Kenya', color:'#7A2C00', collapsed:true,
@@ -1577,13 +1559,18 @@ const DEFAULT_CLUSTERS = [
   },
   {
     id:'cl9', title:'BHS / Bladensburg Work', color:'#7A4800', collapsed:true,
-    note:'Midpoint report is overdue. Summit system deadline TBD.',
-    taskIds:[102,103]
+    note:'Midpoint report is overdue. Summit Jun 16. Jocelyn SOW needs review.',
+    taskIds:[102,103,105]
   },
   {
     id:'cl10', title:'3461 & Oakland', color:'#4A1275', collapsed:true,
     note:'Maurice conversation needed before Oakland trip to understand value/timeline.',
     taskIds:[104,71]
+  },
+  {
+    id:'cl11', title:'New Engagements', color:'#C17D3C', collapsed:false,
+    note:'Incoming work and opportunities this week.',
+    taskIds:[107,108]
   },
 ];
 
@@ -1616,13 +1603,11 @@ function renderMap() {
   const el = document.getElementById('view-map');
   if (!el) return;
 
-  // find tasks not in any cluster
   const allClusteredIds = clusters.flatMap(c=>c.taskIds);
   const unassigned = tasks.filter(t => !allClusteredIds.includes(t.id) && !t.event);
 
   let html = `<div class="${mapEditing?'map-editing':''}">`;
 
-  // toolbar
   html += `<div class="map-toolbar">
     <button class="map-edit-btn ${mapEditing?'active':''}" onclick="toggleMapEdit()">
       ${mapEditing ? '✓ Done editing' : '✎ Edit clusters'}
@@ -1666,7 +1651,7 @@ function renderMap() {
         ${cl.note ? `<div class="cluster-note">${mapEditing ? `<input value="${cl.note}" onclick="event.stopPropagation()" onchange="updateClusterNote('${cl.id}',this.value)" style="width:100%;font-family:var(--sans);font-size:11px;background:none;border:none;border-bottom:1px dashed var(--border);outline:none;color:var(--text3);font-style:italic">` : cl.note}</div>` : ''}
         ${clTasks.map(t => {
           const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-          const ss = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
+          const ss2 = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
           const isDone = t.status==='Done';
           return `<div class="map-task"
             draggable="${mapEditing}"
@@ -1680,7 +1665,7 @@ function renderMap() {
               <div class="map-task-title ${isDone?'struck':''}">${t.title}</div>
               <div class="map-task-meta">
                 <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:8px">${t.cat}</span>
-                <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:8px">${t.status}</span>
+                <span class="badge" style="background:${ss2.bg};color:${ss2.color};font-size:8px">${t.status}</span>
                 ${t.due?`<span class="shared-tag">${t.due}</span>`:''}
               </div>
               ${t.note && !isDone ? `<div class="map-task-note">${t.note.slice(0,80)}${t.note.length>80?'…':''}</div>` : ''}
@@ -1692,7 +1677,6 @@ function renderMap() {
     </div>`;
   });
 
-  // Unassigned tasks cluster
   if (unassigned.length > 0 || mapEditing) {
     html += `<div class="cluster" style="border-style:dashed">
       <div class="cluster-header" onclick="toggleUnassigned()">
@@ -1711,7 +1695,7 @@ function renderMap() {
         ondrop="mapClusterDrop(event,'__unassigned')">
         ${unassigned.map(t => {
           const cs = CAT_STYLES[t.cat]||{bg:'#eee',color:'#333'};
-          const ss = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
+          const ss2 = STATUS_STYLES[t.status]||STATUS_STYLES['Not Started'];
           const isDone = t.status==='Done';
           return `<div class="map-task" draggable="${mapEditing}"
             ondragstart="mapTaskDragStart(event,${t.id},'__unassigned')"
@@ -1722,7 +1706,7 @@ function renderMap() {
               <div class="map-task-title ${isDone?'struck':''}">${t.title}</div>
               <div class="map-task-meta">
                 <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:8px">${t.cat}</span>
-                <span class="badge" style="background:${ss.bg};color:${ss.color};font-size:8px">${t.status}</span>
+                <span class="badge" style="background:${ss2.bg};color:${ss2.color};font-size:8px">${t.status}</span>
               </div>
             </div>
           </div>`;
@@ -1774,7 +1758,6 @@ function newCluster() {
 }
 
 function pickTaskForCluster(cid) {
-  // build a list of unassigned tasks to pick from
   const allClusteredIds = clusters.flatMap(c=>c.taskIds);
   const available = tasks.filter(t => !allClusteredIds.includes(t.id) && !t.event);
   if (!available.length) { alert('No unassigned tasks to add.'); return; }
@@ -1786,7 +1769,6 @@ function pickTaskForCluster(cid) {
   if (c) { c.taskIds.push(available[idx].id); saveClusters(clusters); renderMap(); }
 }
 
-// Map drag and drop
 function mapTaskDragStart(e, id, fromCid) {
   mapDragTaskId = id;
   mapDragFromCluster = fromCid;
@@ -1817,13 +1799,11 @@ function mapClusterDrop(e, toCid) {
   const tid = mapDragTaskId;
   const fromCid = mapDragFromCluster;
 
-  // Remove from source cluster
   if (fromCid !== '__unassigned') {
     const from = clusters.find(c=>c.id===fromCid);
     if (from) from.taskIds = from.taskIds.filter(id=>id!==tid);
   }
 
-  // Add to target cluster (if not unassigned)
   if (toCid !== '__unassigned') {
     const to = clusters.find(c=>c.id===toCid);
     if (to && !to.taskIds.includes(tid)) to.taskIds.push(tid);
