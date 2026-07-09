@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Court — Logistics Tracker</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg: #F7F5F0;
@@ -16,8 +16,8 @@
   --text3: #9E9890;
   --accent: #C17D3C;
   --accent-light: #F5EBD8;
-  --mono: 'DM Mono', monospace;
-  --sans: 'DM Sans', sans-serif;
+  --mono: 'Urbanist', sans-serif;
+  --sans: 'Urbanist', sans-serif;
   --radius: 10px;
   --radius-sm: 6px;
 }
@@ -393,6 +393,12 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
   <button class="tab" onclick="switchTab('housing')">HOUSING</button>
 </div>
 
+<div id="quick-add-bar" style="display:flex;gap:8px;align-items:center;padding:10px 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:97px;z-index:98">
+  <input id="qa-input" placeholder="Quick add — e.g. &quot;email Kea Jones re Howard fri&quot;" style="flex:1;min-width:160px;font-family:var(--sans);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface2);color:var(--text);outline:none" onkeydown="if(event.key==='Enter')quickAdd()" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'"/>
+  <button class="add-btn" onclick="quickAdd()" style="white-space:nowrap">+ ADD</button>
+  <span id="qa-feedback" style="font-family:var(--mono);font-size:10px;color:var(--text3);white-space:nowrap"></span>
+</div>
+
 <div id="view-board" class="view active"></div>
 <div id="view-weekly" class="view"></div>
 <div id="view-timeline" class="view"></div>
@@ -403,16 +409,16 @@ body { font-family: var(--sans); background: var(--bg); color: var(--text); min-
 <script>
 // ── Category + Status styles ────────────────────────────────────
 const CAT_STYLES = {
-  Surgery:   {bg:'#FFF0F5',color:'#8B1A4A'},
-  Loans:     {bg:'#E8F2FC',color:'#0D3D6E'},
-  Howard:    {bg:'#FFF8E0',color:'#7A4800'},
-  MICA:      {bg:'#EDFAF0',color:'#145228'},
-  Financial: {bg:'#F5EDFF',color:'#4A1275'},
-  Personal:  {bg:'#E0F7FA',color:'#00494E'},
-  EcoDepot:  {bg:'#FFF0E8',color:'#7A2C00'},
-  Housing:   {bg:'#EEF0FF',color:'#1A2060'},
-  Work:      {bg:'#F0F0F0',color:'#333333'},
-  PostOp:    {bg:'#FFF5F0',color:'#7A3010'},
+  Surgery:     {bg:'#FFF0F5',color:'#8B1A4A'},
+  Loans:       {bg:'#E8F2FC',color:'#0D3D6E'},
+  Howard:      {bg:'#FFF8E0',color:'#7A4800'},
+  MICA:        {bg:'#EDFAF0',color:'#145228'},
+  Financial:   {bg:'#F5EDFF',color:'#4A1275'},
+  Personal:    {bg:'#E0F7FA',color:'#00494E'},
+  EcoDepot:    {bg:'#FFF0E8',color:'#7A2C00'},
+  Housing:     {bg:'#EEF0FF',color:'#1A2060'},
+  Work:        {bg:'#F0F0F0',color:'#333333'},
+  'Body Recomp': {bg:'#EAF5E8',color:'#25562A'},
 };
 const STATUS_STYLES = {
   'Done':        {bg:'#EDFAF0',color:'#145228'},
@@ -445,22 +451,24 @@ const DEFAULTS = [
   {id:36, title:'Austin Airbnb booked through June 20',     cat:'Surgery', status:'Done', due:'Done',   note:'$3,200 via friend loan'},
   {id:37, title:'EcoDepot application submitted',           cat:'EcoDepot',status:'Done', due:'Done',   note:'Apr 20 deadline'},
   {id:42, title:'Advance Directive completed',              cat:'Surgery', status:'Done', due:'Done',   note:'Valid through August 2026. Maurice designated MPOA.'},
-  {id:50, title:'Send nurses email re: post-op questions',  cat:'PostOp',  status:'Done', due:'May 27', note:'Sent to Crane Center team'},
+  {id:50, title:'Send nurses email re: post-op questions',  cat:'Body Recomp',  status:'Done', due:'May 27', note:'Sent to Crane Center team'},
   {id:51, title:'Fundraising update email (pre-surgery)',   cat:'Personal',status:'Done', due:'Done',   note:'Sent to network before surgery'},
-  {id:52, title:'Out-of-pocket costs paid',                 cat:'PostOp',  status:'Done', due:'Done',   note:'~$1,500 total — Crane Center + Westlake combined'},
+  {id:52, title:'Out-of-pocket costs paid',                 cat:'Body Recomp',  status:'Done', due:'Done',   note:'~$1,500 total — Crane Center + Westlake combined'},
   // ── POST-OP — ACTIVE ────────────────────────────────────────
-  {id:53, title:'Review nurses reply + act on each item',   cat:'PostOp',  status:'Urgent',    due:'Jun 1',  note:'Silicone: 6wk. PT: 4–6wk window. Lymphatic: find PT specialist. Bromelain: start now. June 16 appt confirmed.'},
-  {id:54, title:'Pull and consolidate EOBs',                cat:'PostOp',  status:'Not Started',due:'Jun 1', note:'UHC should be sending these post-procedure'},
-  {id:55, title:'Consolidate receipts for reimbursement',   cat:'PostOp',  status:'Not Started',due:'Jun 1', note:'Airbnb, transport, food, supplies — all in one place'},
-  {id:56, title:'File UHC travel & lodging reimbursement',  cat:'PostOp',  status:'Not Started',due:'Jun 7', note:'Travel benefit = lodging + transport only. NOT out-of-pocket copays. Consolidate receipts first.'},
-  {id:57, title:'Crane Center follow-up — 11:15am',        cat:'PostOp',  status:'Pending',    due:'Jun 17',note:'11:15am in-person. ~1-month post-op mark. Create Athena portal account beforehand.', event:true},
-  {id:58, title:'Confirm anesthesia / hospital billing estimate', cat:'PostOp', status:'Not Started', due:'Jun 7', note:'Estimate obtained — file when bill arrives'},
-  {id:59, title:'Start bromelain',                          cat:'PostOp',  status:'Urgent',    due:'Now',   note:'Nurses cleared this — okay to start alongside current meds'},
-  {id:60, title:'Start silicone bandages',                  cat:'PostOp',  status:'Pending',   due:'Jun 25',note:'6 weeks from surgery (May 14). Only on well-healed incisions.'},
-  {id:61, title:'Research body recomp / strength rebuild',  cat:'PostOp',  status:'Not Started',due:'Jun 7', note:'Review videos, understand what rebuilding looks like post-top surgery'},
-  {id:62, title:'Get PT prescription',                      cat:'PostOp',  status:'Not Started',due:'Jul 1', note:'From PCP — ideally in-person at NYC annual physical visit'},
-  {id:63, title:'Find Baltimore PT (lymphatic + upper body)',cat:'PostOp',  status:'Not Started',due:'Jul 15',note:'UHC-covered, specializes in lymphatic drainage. Book for July/August start.'},
-  {id:64, title:'NYC PCP annual physical',                  cat:'PostOp',  status:'Not Started',due:'Jul',   note:'Book now for late June or July. Top surgery scar check. Get PT prescription. Annual physical.'},
+  {id:53, title:'Review nurses reply + act on each item',   cat:'Body Recomp',  status:'Done',    due:'Done',  note:'Reviewed and actioning individual items below.'},
+  {id:54, title:'Pull and consolidate EOBs',                cat:'Body Recomp',  status:'Done',due:'Done', note:'UHC should be sending these post-procedure'},
+  {id:55, title:'Consolidate receipts for reimbursement',   cat:'Body Recomp',  status:'Done',due:'Done', note:'Airbnb, transport, food, supplies — all in one place'},
+  {id:56, title:'File UHC travel & lodging reimbursement',  cat:'Body Recomp',  status:'Done',due:'Done', note:'Filed. Followed up with UHC since — awaiting their final decision.'},
+  {id:111, title:'Follow up with UHC for final reimbursement decision', cat:'Body Recomp', status:'Pending', due:'TBD', note:'Waiting to hear back after filing + one follow-up.'},
+  {id:57, title:'Crane Center follow-up — 11:15am',        cat:'Body Recomp',  status:'Done',    due:'Done',note:'11:15am in-person. ~1-month post-op mark.', event:true},
+  {id:58, title:'Pay/review new Crane Center bill',         cat:'Body Recomp', status:'Not Started', due:'TBD', note:'New bill received, a couple hundred dollars. No further anesthesia bills so far.'},
+  {id:59, title:'Start bromelain',                          cat:'Body Recomp',  status:'Done',    due:'Done',   note:'Started, currently using.'},
+  {id:60, title:'Research silicone + heat/sweat compatibility before starting', cat:'Body Recomp',  status:'Not Started',   due:'TBD',note:'Not started on silicone bandages yet — need to understand how silicone holds up with summer heat and sweating before applying.'},
+  {id:61, title:'Research body recomp / strength rebuild',  cat:'Body Recomp',  status:'Not Started',due:'Jun 7', note:'Review videos, understand what rebuilding looks like post-top surgery'},
+  {id:62, title:'Revisit PT once settled in Baltimore',     cat:'Body Recomp',  status:'Deferred',due:'Fall', note:'Talked to PCP about PT already. Intentionally moving slowly until fully settled in Baltimore.'},
+  {id:63, title:'Find Baltimore PT (lymphatic + upper body)',cat:'Body Recomp',  status:'Not Started',due:'Jul 15',note:'UHC-covered, specializes in lymphatic drainage. Book for July/August start.'},
+  {id:64, title:'NYC PCP annual physical',                  cat:'Body Recomp',  status:'Done',due:'Done',   note:'Completed.'},
+  {id:112, title:"Confirm PCP's One Medical referral",     cat:'Body Recomp', status:'Not Started', due:'TBD', note:'Current PCP is also looking into a new PCP within the One Medical network — confirm and follow through on that referral.'},
   {id:65, title:'Send fundraising update #2',               cat:'Personal',status:'Not Started',due:'Jun 7', note:'Replacing second email — will become the essay/article instead or alongside'},
   {id:66, title:'Write personal essay / article',           cat:'Personal',status:'Not Started',due:'TBD',   note:'Ideas in development. Potential donor pitch vehicle. Strong community angle.'},
   // ── LOGISTICS / TRAVEL ──────────────────────────────────────
@@ -477,7 +485,7 @@ const DEFAULTS = [
   {id:83, title:'USPS mail forward + address change',       cat:'Housing', status:'Not Started',due:'Jul',   note:'Banks, subscriptions, MICA financial aid, OneMed'},
   {id:84, title:'Set up utilities',                         cat:'Housing', status:'Not Started',due:'Jul',   note:'Gas, electric, internet — confirm what landlord covers'},
   {id:85, title:"Renter's insurance",                       cat:'Housing', status:'Not Started',due:'Move-in',note:'Required by most Baltimore landlords'},
-  {id:86, title:'Find Baltimore/DC/Philly PCP via OneMed',  cat:'PostOp',  status:'Not Started',due:'Jun 14',note:'Can be DC or Baltimore or Philly depending on availability. Needed before PT prescription if not doing NYC visit first.'},
+  {id:86, title:'Find Baltimore/DC/Philly PCP via OneMed',  cat:'Body Recomp',  status:'Not Started',due:'Jun 14',note:'Can be DC or Baltimore or Philly depending on availability. Needed before PT prescription if not doing NYC visit first.'},
   // ── MICA ────────────────────────────────────────────────────
   {id:90, title:'Course registration — opens June 1',       cat:'MICA',    status:'Urgent',    due:'Jun 1',  note:'Know what you are registering for BEFORE June 1. Pre-registration orientation complete.'},
   {id:91, title:'Review summer programming materials',      cat:'MICA',    status:'Urgent',    due:'Jun 1',  note:'Did not enroll. June 1 was start of first session. Understand if/how this affects fall financial aid.'},
@@ -504,7 +512,11 @@ const DEFAULTS = [
   {id:107,title:'Organize coaching engagement with Lauren', cat:'Work',    status:'Not Started',due:'Jun 7', note:'Confirm scope, schedule, and logistics.', work:true},
   {id:108,title:'Review OIE Industry Expert invite (GW)',   cat:'Work',    status:'Not Started',due:'Jun 7', note:'George Washington OIE Industry Expert invitation. Evaluate scope and decide.', work:true},
   {id:109,title:'Add Fellowships tab to PM tracker',        cat:'MICA',    status:'Urgent',    due:'Jun 1',  note:"Clarence built a fellowships tracker. Add as a tab here. Send Clarence notes. Awesome Baltimore $1K grant deadline May 31."},
-  {id:110,title:'Create Athena portal account',             cat:'PostOp',  status:'Urgent',    due:'Jun 16', note:'Crane Center patient portal. Do before Jun 17 post-op appointment.'},
+  {id:110,title:'Create Athena portal account',             cat:'Body Recomp',  status:'Done',    due:'Done', note:'Crane Center patient portal.'},
+  {id:113,title:'Complete MICAgrad orientation registration',cat:'MICA', status:'Not Started', due:'Aug 3', note:'Required even if arrival date is uncertain — confirms intent to enroll. Needs MICA ID (in the registration email) + a photo for student ID card, per the form guidelines.'},
+  {id:114,title:'MICA Grad Orientation',                    cat:'MICA', status:'Not Started', due:'Aug 18', note:'8:30am, Fred Lazarus IV Center for Graduate Studies, 131 W North Ave. Required + optional sessions — check the schedule once registered.', event:true},
+  {id:115,title:'Confirm fall schedule — last day to add',  cat:'MICA', status:'Not Started', due:'Aug 31', note:'Residential program schedule. Last chance to adjust course registration for fall.'},
+  {id:116,title:'Decide on any drop — no-transcript deadline',cat:'MICA', status:'Not Started', due:'Sep 18', note:'Last day to drop a class with no transcript record. After this, dropping leaves a W (through Oct 2).'},
 ];
 
 // ── Storage ─────────────────────────────────────────────────────
@@ -574,10 +586,66 @@ function addTask() {
   const cat = document.getElementById('new-cat').value;
   const due = document.getElementById('new-due').value.trim();
   const isWork = ['Work'].includes(cat);
-  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:'', work:isWork});
+  tasks.push({id:getNextId(), title, cat, status:'Not Started', due, note:'', work:isWork, log:[]});
   saveTasks(tasks);
   document.getElementById('new-title').value = '';
   document.getElementById('new-due').value = '';
+  renderAll();
+}
+
+// ── QUICK ADD (natural-language-ish parsing) ─────────────────────
+const QA_CAT_KEYWORDS = {
+  Howard: ['howard','kea','hope','knight','bonnette','registrar','transcript'],
+  MICA: ['mica','thomas','financial aid','fafsa','verification','fieldwork'],
+  Housing: ['housing','loran','apartment','lease','landlord','baltimore apt','listing','rent'],
+  Loans: ['loan','tisla','dmcs','consolidation','servicer'],
+  Financial: ['credit score','financial'],
+  'Body Recomp': ['pt','physical therapy','bromelain','silicone','crane','uhc','pcp','recomp','scar','lymphatic'],
+  Work: ['bhs','strava','3461','oakland','maurice','jocelyn','coaching','lauren','client'],
+  Personal: ['essay','article','johannesburg','fundraising'],
+};
+const QA_DAY_WORDS = {
+  today:0, tomorrow:1, mon:1,monday:1, tue:2,tues:2,tuesday:2, wed:3,wednesday:3,
+  thu:4,thur:4,thurs:4,thursday:4, fri:5,friday:5, sat:6,saturday:6, sun:0,sunday:0
+};
+function qaGuessCat(text) {
+  const lower = text.toLowerCase();
+  for (const [cat, words] of Object.entries(QA_CAT_KEYWORDS)) {
+    if (words.some(w => lower.includes(w))) return cat;
+  }
+  return 'Personal';
+}
+function qaGuessDue(text) {
+  const lower = text.toLowerCase();
+  const explicit = text.match(/\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2}\b/i);
+  if (explicit) return explicit[0].replace(/\.$/,'');
+  for (const [word, idx] of Object.entries(QA_DAY_WORDS)) {
+    const re = new RegExp('\\b'+word+'\\b','i');
+    if (re.test(lower)) {
+      const d = new Date();
+      const target = idx;
+      let diff = (target - d.getDay() + 7) % 7;
+      if (diff === 0 && !/today/i.test(lower)) diff = 7;
+      d.setDate(d.getDate() + diff);
+      return d.toLocaleDateString('en-US', {month:'short', day:'numeric'});
+    }
+  }
+  return '';
+}
+function quickAdd() {
+  const input = document.getElementById('qa-input');
+  const raw = input.value.trim();
+  if (!raw) return;
+  const due = qaGuessDue(raw);
+  const cat = qaGuessCat(raw);
+  const title = raw.replace(/\b(today|tomorrow|mon|monday|tue|tues|tuesday|wed|wednesday|thu|thur|thurs|thursday|fri|friday|sat|saturday|sun|sunday)\b/gi,'').replace(/\s{2,}/g,' ').trim();
+  const isWork = cat === 'Work';
+  tasks.push({id:getNextId(), title: title || raw, cat, status:'Not Started', due, note:'', work:isWork, log:[]});
+  saveTasks(tasks);
+  input.value = '';
+  const fb = document.getElementById('qa-feedback');
+  fb.textContent = `added → ${cat}${due ? ', ' + due : ''}`;
+  setTimeout(() => { if (fb) fb.textContent=''; }, 3000);
   renderAll();
 }
 
@@ -910,7 +978,18 @@ const CAL_EVENTS = [
   {m:7, d:25, title:'Move-in window', color:'#1A2060', bg:'#EEF0FF'},
   {m:8, d:1,  title:'EcoDepot Kenya', color:'#7A2C00', bg:'#FFF0E8'},
   {m:8, d:16, title:'EcoDepot ends', color:'#7A2C00', bg:'#FFF0E8'},
-  {m:9, d:1,  title:'MICA fall start', color:'#145228', bg:'#EDFAF0'},
+  {m:8, d:3,  title:'Grad orientation reg due', color:'#145228', bg:'#EDFAF0'},
+  {m:8, d:18, title:'MICA Grad Orientation begins', color:'#145228', bg:'#EDFAF0'},
+  {m:8, d:24, title:'MICA fall start', color:'#145228', bg:'#EDFAF0'},
+  {m:8, d:31, title:'Last day to add a class', color:'#145228', bg:'#EDFAF0'},
+  {m:9, d:7,  title:'Holiday — college closed', color:'#145228', bg:'#EDFAF0'},
+  {m:9, d:18, title:'Last day to drop (no transcript)', color:'#145228', bg:'#EDFAF0'},
+  {m:10,d:2,  title:'Last day to drop (W on transcript)', color:'#145228', bg:'#EDFAF0'},
+  {m:10,d:12, title:'Fall Break begins', color:'#145228', bg:'#EDFAF0'},
+  {m:10,d:19, title:'Midterm grades due', color:'#145228', bg:'#EDFAF0'},
+  {m:11,d:25, title:'Thanksgiving Break begins', color:'#145228', bg:'#EDFAF0'},
+  {m:12,d:11, title:'Classes end (Fall)', color:'#145228', bg:'#EDFAF0'},
+  {m:12,d:18, title:'Final grades due (Fall)', color:'#145228', bg:'#EDFAF0'},
 ];
 
 const PHASE_BANDS = [
@@ -918,7 +997,7 @@ const PHASE_BANDS = [
   {start:{m:6,d:12},end:{m:6,d:26}, color:'#5A8B6A',label:'PT window opens'},
   {start:{m:6,d:20},end:{m:7,d:25}, color:'#C17D3C',label:'Travel → Baltimore'},
   {start:{m:8,d:1}, end:{m:8,d:16}, color:'#7A2C00',label:'EcoDepot Kenya'},
-  {start:{m:9,d:1}, end:{m:9,d:30}, color:'#145228',label:'MICA Fall'},
+  {start:{m:8,d:18}, end:{m:12,d:11}, color:'#145228',label:'MICA Fall Semester'},
 ];
 
 function dateToNum(m,d) { return m*100+d; }
@@ -1008,6 +1087,24 @@ function openEditModal(id) {
           <label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.3rem">NOTE</label>
           <textarea id="edit-note" rows="3" style="width:100%;padding:8px 10px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:12px;color:var(--text);background:var(--surface2);outline:none;resize:vertical" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">${t.note||''}</textarea>
         </div>
+        <div style="border-top:1px solid var(--border);padding-top:.6rem">
+          <label style="font-family:var(--mono);font-size:9px;letter-spacing:.08em;color:var(--text3);display:block;margin-bottom:.4rem">UPDATES / BARRIERS</label>
+          <div id="edit-log-list" style="display:flex;flex-direction:column;gap:5px;margin-bottom:.5rem;max-height:140px;overflow-y:auto">
+            ${(t.log||[]).slice().reverse().map(entry => `
+              <div style="background:var(--surface2);border-radius:6px;padding:6px 8px">
+                <div style="font-family:var(--mono);font-size:8px;color:var(--text3);margin-bottom:2px">${entry.date}</div>
+                <div style="font-size:11px;color:var(--text)">${entry.text}</div>
+              </div>`).join('') || `<div style="font-size:11px;color:var(--text3);font-style:italic">No updates logged yet.</div>`}
+          </div>
+          <div style="display:flex;gap:6px">
+            <input id="edit-log-input" placeholder="What's the status or what's blocking this?" style="flex:1;padding:7px 9px;border:1px solid var(--border);border-radius:6px;font-family:var(--sans);font-size:12px;color:var(--text);background:var(--surface2);outline:none" onkeydown="if(event.key==='Enter'){event.preventDefault();addTaskLogEntry(${id})}"/>
+            <button onclick="addTaskLogEntry(${id})" style="font-family:var(--mono);font-size:10px;padding:7px 10px;border:1px solid var(--border);background:none;color:var(--text2);border-radius:6px;cursor:pointer;white-space:nowrap">Log</button>
+          </div>
+          <div style="display:flex;gap:.4rem;margin-top:.5rem">
+            <button onclick="flagTaskStatus(${id},'Pending')" style="font-family:var(--mono);font-size:10px;padding:6px 10px;border:1px solid var(--border);background:none;color:var(--text2);border-radius:6px;cursor:pointer">Mark pending…</button>
+            <button onclick="flagTaskStatus(${id},'Blocked')" style="font-family:var(--mono);font-size:10px;padding:6px 10px;border:1px solid #FFECEC;background:#FFECEC;color:#7A1212;border-radius:6px;cursor:pointer">Flag blocked…</button>
+          </div>
+        </div>
         <div style="display:flex;gap:.5rem;justify-content:space-between;margin-top:.25rem">
           <button onclick="deleteTask(${id})" style="font-family:var(--mono);font-size:11px;padding:8px 14px;border:1px solid #FFECEC;background:#FFECEC;color:#7A1212;border-radius:6px;cursor:pointer">Delete</button>
           <div style="display:flex;gap:.5rem">
@@ -1046,6 +1143,39 @@ function deleteTask(id) {
   tasks = tasks.filter(t => t.id !== id);
   saveTasks(tasks);
   closeEditModal();
+  renderAll();
+}
+
+function todayStamp() {
+  return new Date().toLocaleDateString('en-US', {month:'short', day:'numeric'});
+}
+
+function addTaskLogEntry(id, presetText) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  const input = document.getElementById('edit-log-input');
+  const text = (presetText !== undefined ? presetText : (input ? input.value.trim() : ''));
+  if (!text) return;
+  if (!t.log) t.log = [];
+  t.log.push({date: todayStamp(), text});
+  saveTasks(tasks);
+  closeEditModal();
+  openEditModal(id);
+}
+
+function flagTaskStatus(id, status) {
+  const t = tasks.find(t => t.id === id);
+  if (!t) return;
+  const barrier = prompt(status === 'Blocked' ? "What's blocking this?" : "What's the holdup — what are you waiting on?");
+  if (barrier === null) return;
+  t.status = status;
+  if (barrier.trim()) {
+    if (!t.log) t.log = [];
+    t.log.push({date: todayStamp(), text: `[${status}] ${barrier.trim()}`});
+  }
+  saveTasks(tasks);
+  closeEditModal();
+  openEditModal(id);
   renderAll();
 }
 
@@ -1124,13 +1254,14 @@ function renderCalendar() {
   const surgery = new Date('2026-05-14');
   const daysPost = Math.floor((today - surgery) / 86400000);
   const daysToMove = Math.ceil((new Date('2026-07-25') - today) / 86400000);
+  const classesStart = new Date('2026-08-24');
+  const daysToClasses = Math.ceil((classesStart - today) / 86400000);
 
   let html = `
   <div class="metrics" style="margin-bottom:1rem">
     <div class="metric"><div class="metric-label">POST-OP</div><div class="metric-value" style="color:#2A5C3A">${daysPost}</div><div class="metric-sub">days since surgery</div></div>
     <div class="metric"><div class="metric-label">MOVE TARGET</div><div class="metric-value">${daysToMove}</div><div class="metric-sub">days to Jul 25</div></div>
-    <div class="metric"><div class="metric-label">SILICONE START</div><div class="metric-value">Jun 25</div><div class="metric-sub">6 wks post-op</div></div>
-    <div class="metric"><div class="metric-label">PT WINDOW</div><div class="metric-value">Jun 12</div><div class="metric-sub">4 wks post-op</div></div>
+    <div class="metric"><div class="metric-label">CLASSES START</div><div class="metric-value" style="color:#145228">${daysToClasses}</div><div class="metric-sub">days to MICA fall start</div></div>
   </div>
   <div class="cal-nav">
     <button class="cal-nav-btn" onclick="calPrev()">← prev</button>
